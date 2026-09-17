@@ -1,0 +1,62 @@
+# Zelyr documentation index and governance
+
+## Reading rules
+
+Every agent and contributor must read this file and the repository-root
+[`AGENTS.md`](../AGENTS.md) before non-trivial work.  Then load the documents
+for the task using this table.
+
+| Work type | Required documents |
+|---|---|
+| Any architecture-affecting work | [ADR baseline](adr/adr-000-architecture-baseline-v0.1.md) and the applicable stage task book |
+| Stage planning / detailed design | ADR baseline, applicable task book, mandatory [concise Plan Agent guide](development/plan-agent-guidelines.md), then routed detailed-reference sections |
+| Coding | ADR baseline, applicable task book, approved detailed design, mandatory [concise Coding guide](development/coding-guidelines.md), then routed detailed-reference sections |
+| ABI or machine-model change | Above, plus `abi/` and/or `machine-types/` contracts |
+| Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering |
+| Testing / completion claim | Applicable task book plus `testing/` contracts and the stage verification record |
+
+## Normative documents and precedence
+
+The current normative sources are the [Architecture baseline
+ADR](adr/adr-000-architecture-baseline-v0.1.md), applicable stage task books,
+approved detailed designs and frozen contracts, plus the relevant concise agent
+guide and any detailed-reference sections it routes. Use the governing
+guideline's exact ordering:
+
+- Plan work: ADR → current stage task book → frozen interface/ABI/machine model
+  → established module contract → stage-local design freedom.
+- Coding: explicit task → detailed module design → interface/ABI/state-machine
+  contract → ADR → Coding Guidelines → personal preference.
+
+The baseline ADR, concise guides, and detailed references are versioned source
+documents. The concise guides are mandatory entry points; detailed references
+are mandatory when their routing trigger applies. Do not silently alter their
+decisions. Propose a new ADR for an architecture change.
+
+## Documentation layout
+
+```text
+adr/            architecture decisions and their lifecycle
+architecture/   cross-cutting architecture descriptions
+abi/            versioned ABI and wire-format contracts
+machine-types/  guest virtual-machine model contracts
+platform/       PlatformInfo, support tiers, BSP and quirk contracts
+testing/        test strategy, environments, and evidence
+security/       safety, threat-model, and unsafe-audit records
+development/    contributor, Plan Agent, and Coding Agent guidance
+stages/<id>/    task book, detailed plans, implementation notes, verification
+templates/      approved templates for new project documents
+```
+
+For each stage, keep work strictly separated:
+
+```text
+task-book-v*.md             what must be done
+plans/                      approved implementation-level design
+implementation/             implementation notes and traceability
+verification/               evidence and completion report
+```
+
+New normative documents must state status, scope, version, owner/change
+context, and what they supersede where applicable.  Informative notes must say
+they are informative.  Update affected contracts in the same change as code.

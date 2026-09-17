@@ -1,0 +1,4 @@
+# Platform contracts
+
+Store PlatformInfo, capability, BSP, firmware, discovery, and quirk contracts
+here.  Core code must not substitute board-name checks for these contracts.

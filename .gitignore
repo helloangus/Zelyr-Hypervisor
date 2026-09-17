@@ -1,0 +1,11 @@
+/target/
+/build/
+/dist/
+/out/
+*.log
+*.elf
+*.bin
+*.img
+*.qcow2
+.DS_Store
+codex.sh
