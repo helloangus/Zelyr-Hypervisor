@@ -34,3 +34,9 @@ applicable P0/P1 detailed design.
 ## License
 
 Zelyr is licensed under the [Apache License 2.0](LICENSE).
+
+## Contribution flow
+
+Post-policy development is performed on a new branch and reaches `main` only
+through a GitHub pull request whose configured required online checks pass.
+See the [branch and pull-request integration workflow](docs/development/integration-workflow.md).

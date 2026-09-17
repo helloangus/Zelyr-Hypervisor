@@ -43,12 +43,11 @@ validation evidence under ../verification/.
 | [W16](p0-w16-version-build-metadata-baseline.md) | W03, W04, W12 | W17, W19, P1+ |
 | [W17](p0-w17-artifact-naming-baseline.md) | W05, W16 | W19, W20, P1+ |
 | [W18](p0-w18-dependency-governance.md) | W05, W06, W10 | P1+ dependency decisions |
-| [W19](p0-w19-reproducible-development-workflow.md) | W01–W03, W07–W09, W16–W17 | W20, P1 onboarding |
-| [W20](p0-w20-ci-baseline.md) | W02, W03, W07–W09, W19 | P0 completion, P1+ |
+| [W19](p0-w19-reproducible-development-workflow.md) | W01–W03, W07–W09, W16–W17 | W20, P1 onboarding; branch/PR contributors |
+| [W20](p0-w20-ci-baseline.md) | W02, W03, W07–W09, W19 | P0 completion, P1+; GitHub PR and `main` protection |
 | [W21](p0-w21-stage-plan-implementation-workflow.md) | W05, W06 | every later stage |
 | [W22](p0-w22-stage-dependency-map.md) | W01–W21 | P0 completion, P1 planning |
 
 Packages in a row may proceed only when their listed prerequisites provide the
 required contract. Evidence of implementation belongs to its package record;
 this index does not claim that any plan has been implemented.
-

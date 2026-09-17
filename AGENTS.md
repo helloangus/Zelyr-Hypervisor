@@ -41,6 +41,11 @@ ADR-required issue; do not silently choose a new architecture.
 
 ## Scope and delivery rules
 
+- Develop every post-policy change on a new branch. Push it to GitHub, open a
+  pull request targeting `main`, wait for every configured required online
+  check to pass, and merge only through that pull request. Read the
+  [integration workflow](docs/development/integration-workflow.md) before
+  preparing a merge; do not develop or push directly to `main`.
 - Keep P0, P1, and later-stage work separate.  Do not implement future-stage
   mechanisms merely because a directory already exists.
 - Preserve crate layering: generic core must not depend directly on a board,

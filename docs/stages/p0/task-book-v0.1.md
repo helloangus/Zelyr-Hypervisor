@@ -23,7 +23,8 @@ binary to run, a guest to boot, or a QEMU smoke test to pass.
 - build/profile, quality, dependency, unsafe, portability, diagnostic,
   versioning, artifact, and documentation governance;
 - CI and QEMU-runner entry points, with host-side testing support;
-- reproducible development instructions and a P1 handoff package.
+- reproducible development instructions, branch/PR integration policy, and a
+  P1 handoff package.
 
 ### Reserved
 
@@ -112,8 +113,8 @@ index.
 | P0-W16 | Build identity and compatibility metadata have a defined baseline and extension point. | P0-V14 |
 | P0-W17 | Artifact names are machine-processable and distinguish relevant dimensions. | P0-V14 |
 | P0-W18 | Dependencies are evaluated for TCB, no_std, license, maintenance, unsafe, and platform risk. | P0-V09 |
-| P0-W19 | A documented clean-environment path reaches build, test, target build, and QEMU entry. | P0-V01–V05, P0-V13 |
-| P0-W20 | CI classifies required, informational, and later manual/hardware checks. | P0-V08 |
+| P0-W19 | A documented clean-environment path reaches build, test, target build, QEMU entry, and the branch-to-GitHub-PR integration flow. | P0-V01–V05, P0-V13 |
+| P0-W20 | CI classifies required, informational, and later manual/hardware checks, and enforces verified PR-only integration to `main`. | P0-V08 |
 | P0-W21 | ADR → task book → plan/design → implementation → verification workflow is explicit. | P0-V09, P0-V15 |
 | P0-W22 | P0 outputs and later-stage consumers are mapped so P1 need not recreate P0. | P0-V15 |
 
@@ -128,7 +129,7 @@ index.
 | P0-V05 | AArch64 target build | bare-metal AArch64 artifact builds successfully |
 | P0-V06 | Formatting | required formatting check reports no violation |
 | P0-V07 | Lint | required lint policy passes |
-| P0-V08 | CI | required pipeline checks pass and their classifications are visible |
+| P0-V08 | CI and PR integration | required pipeline checks pass and their classifications are visible; GitHub requires a PR with those checks passing before post-policy development changes reach `main` |
 | P0-V09 | Documentation review | required documentation paths, links, statuses, and responsibilities are coherent |
 | P0-V10 | ADR governance review | lifecycle and supersession path can be followed from repository documents |
 | P0-V11 | Unsafe governance review | policy and inventory location exist and are usable for a first unsafe change |
@@ -148,9 +149,11 @@ criteria hold:
    work without asserting final crate boundaries.
 3. ADR/document/stage governance, unsafe policy, portability guardrails, and
    diagnostic semantics are available before low-level code begins.
-4. P1 has a single QEMU runner entry, identifiable build artifacts, and a
+4. `main` accepts post-policy development changes only through GitHub PRs with
+   required online checks passing.
+5. P1 has a single QEMU runner entry, identifiable build artifacts, and a
    discoverable handoff package.
-5. No P0 deliverable encodes future EL2, VM, memory, IRQ, device, or guest
+6. No P0 deliverable encodes future EL2, VM, memory, IRQ, device, or guest
    implementation decisions.
 
 The P1 handoff package contains this task book, the P0 completion report,
@@ -172,4 +175,3 @@ The final review answers:
 
 Any no fails P0. Any attempt to settle later-stage module/API/runtime design
 inside P0 is a scope violation, not a substitute for completion evidence.
-
