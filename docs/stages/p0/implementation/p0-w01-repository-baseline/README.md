@@ -89,14 +89,12 @@ developer-local directory or undocumented command.  The artifact contract
 defines the owner of each statement so two documents do not become competing
 sources of truth.
 
-## Open decision / completion blocker
+## Resolved license decision
 
-The current authority does not select a software license.  The implementing
-agent must ask the project owner for the approved license text and copyright
-notice before adding root `LICENSE`.  It may prepare every other W01 artifact,
-but cannot claim P0-V01/P0-V09 or close W01 while the required license location
-is absent or contains an invented choice.  Record the answer and exact file in
-the W01 implementation record.
+The project owner selected Apache License 2.0 with `Copyright 2026 Angus Lee`.
+The complete approved license text is in root `LICENSE` and the root README
+links to it. Any future change to this decision requires a new owner-approved
+legal decision; W01 does not own dependency or third-party notice analysis.
 
 ## Downstream handoff
 

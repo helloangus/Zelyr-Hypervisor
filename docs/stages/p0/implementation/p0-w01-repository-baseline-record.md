@@ -1,6 +1,6 @@
 # P0-W01 Repository Baseline — Implementation Record
 
-**Status:** Implemented with a license decision blocker; closure is not claimed.
+**Status:** Completed; verification evidence recorded.
 **Work package:** [P0-W01](../plans/p0-w01-repository-baseline.md)
 **Detailed design:** [W01 implementation design](p0-w01-repository-baseline/README.md)
 
@@ -20,8 +20,8 @@ baseline before clone and scope reviews could be meaningful.
 - Retained the existing `.editorconfig` and `.gitignore` after review; the
   local `codex.sh` helper remains ignored and is not a project entry point.
 - Added this implementation record and the W01 verification record.
-- Did not add `LICENSE`: no owner-approved license text or copyright notice is
-  present in the available project authority.
+- Added root `LICENSE` with the owner-approved complete Apache License 2.0
+  text and `Copyright 2026 Angus Lee`; README links to it.
 
 ## Final marker inventory
 
@@ -72,9 +72,8 @@ additional markers.
   creation remains pending until those inputs are available; it must not be
   guessed from the local email address.
 
-## Open blocker
+## Resolved license decision
 
-The root `LICENSE` cannot be created until the owner supplies the approved
-complete license text and copyright holder/year notice. A guessed SPDX
-license, placeholder, or copied third-party text would violate W01. The
-verification record marks the licensing review blocked for this reason.
+The owner selected Apache License 2.0 with `Copyright 2026 Angus Lee` on
+2026-09-17. The root `LICENSE` contains the full approved text. W18 remains
+the owner of any future dependency or third-party notice analysis.

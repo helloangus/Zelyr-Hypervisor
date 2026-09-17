@@ -10,7 +10,7 @@ For code changes, the repository `AGENTS.md` and the mandatory
 
 | Work package | Detailed design / record | Status |
 |---|---|---|
-| P0-W01 | [Repository Baseline detailed implementation design](p0-w01-repository-baseline/README.md) and [implementation record](p0-w01-repository-baseline-record.md) | Implemented; license decision blocks closure |
+| P0-W01 | [Repository Baseline detailed implementation design](p0-w01-repository-baseline/README.md) and [implementation record](p0-w01-repository-baseline-record.md) | Completed; verification evidence recorded |
 
 Actual command logs and pass/fail evidence belong in `../verification/`, not in
 this index or a detailed design.

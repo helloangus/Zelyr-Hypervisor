@@ -30,3 +30,7 @@ detailed contents await later approved designs.  Intentionally reserved empty
 directories contain a tracked `.gitkeep` marker, so a fresh clone does not
 require manual `mkdir` steps.  Adding code or Cargo manifests requires the
 applicable P0/P1 detailed design.
+
+## License
+
+Zelyr is licensed under the [Apache License 2.0](LICENSE).
