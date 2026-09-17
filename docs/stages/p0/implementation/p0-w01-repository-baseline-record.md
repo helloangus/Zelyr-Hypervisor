@@ -66,9 +66,11 @@ additional markers.
 - No Cargo manifest, Rust source, target, build profile, CI job, QEMU command,
   or runtime interface was added. These remain with their applicable P0 work
   packages.
-- No remote was configured or published because no canonical remote URL or
-  hosting choice was supplied at implementation start. Remote publication
-  remains pending and must use an owner-provided destination and authorization.
+- GitHub is the selected hosting platform. No remote was configured or
+  published because this environment has no `gh` CLI, no detected GitHub
+  authentication, and no owner/repository name or canonical URL. Remote
+  creation remains pending until those inputs are available; it must not be
+  guessed from the local email address.
 
 ## Open blocker
 
