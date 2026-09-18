@@ -14,6 +14,7 @@ for the task using this table.
 | Repository contribution / integration | [Branch and pull-request integration workflow](development/integration-workflow.md), applicable work-package plan, and the relevant implementation/verification record |
 | Toolchain setup, restoration, or update | [Toolchain baseline](development/toolchain-baseline.md) and the root `rust-toolchain.toml` manifest |
 | Target/build-class or AArch64 build-path work | [Build-target baseline](development/build-target-baseline.md) and the root `Cargo.toml` workspace |
+| New feature/profile/build switch, or switch-classification questions | [Build-profile / feature governance](development/build-profile-governance.md) |
 | ABI or machine-model change | Above, plus `abi/` and/or `machine-types/` contracts |
 | Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering |
 | Testing / completion claim | Applicable task book plus `testing/` contracts and the stage verification record |
