@@ -34,6 +34,7 @@ for the task using this table.
 | QEMU automation or runner-entry work | [QEMU runner entry contract](testing/qemu-runner-entry.md) (P0: interface-only placeholder) |
 | Introducing or reviewing `unsafe` Rust | [Unsafe Rust policy](security/unsafe-rust-policy.md) and the [unsafe inventory](security/unsafe-inventory.md) |
 | Failure-path design or fatal-path review | [Failure classification](security/failure-classification.md) |
+| Address/identifier semantics in a new interface | [Address & identifier type-safety requirements](development/address-identifier-type-safety.md) |
 
 ## Normative documents and precedence
 
