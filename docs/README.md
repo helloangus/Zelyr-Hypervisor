@@ -37,6 +37,7 @@ for the task using this table.
 | Address/identifier semantics in a new interface | [Address & identifier type-safety requirements](development/address-identifier-type-safety.md) |
 | Diagnostic channel/level/visibility questions | [Diagnostics baseline](development/diagnostics-baseline.md) |
 | Trace-event naming or telemetry namespace questions | [Trace event namespace](development/trace-event-namespace.md) |
+| Artifact identity / version-metadata questions | [Version & build metadata baseline](development/version-build-metadata.md) |
 
 ## Normative documents and precedence
 
