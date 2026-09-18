@@ -18,7 +18,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P0-W06 | [ADR Governance detailed implementation design](p0-w06-adr-governance/README.md) and [implementation record](p0-w06-adr-governance-record.md) | Implemented; verification evidence recorded |
 | P0-W07 | [Development Quality Gates detailed implementation design](p0-w07-development-quality-gates/README.md) and [implementation record](p0-w07-development-quality-gates-record.md) | Implemented; verification evidence recorded |
 | P0-W08 | [Host-Side Testing Baseline detailed implementation design](p0-w08-host-side-testing-baseline/README.md) and [implementation record](p0-w08-host-side-testing-baseline-record.md) | Implemented; verification evidence recorded |
-| P0-W09 | [QEMU Automation Entry Baseline detailed implementation design](p0-w09-qemu-automation-entry-baseline/README.md) | Proposed design; implementation not claimed |
+| P0-W09 | [QEMU Automation Entry Baseline detailed implementation design](p0-w09-qemu-automation-entry-baseline/README.md) and [implementation record](p0-w09-qemu-automation-entry-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W10 | [Unsafe Rust Governance detailed implementation design](p0-w10-unsafe-rust-governance/README.md) | Proposed design; implementation not claimed |
 | P0-W11 | [Platform Portability Guardrails detailed implementation design](p0-w11-platform-portability-guardrails/README.md) | Proposed design; implementation not claimed |
 | P0-W12 | [Logging & Diagnostic Baseline detailed implementation design](p0-w12-logging-diagnostic-baseline/README.md) | Proposed design; implementation not claimed |

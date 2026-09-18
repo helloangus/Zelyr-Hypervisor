@@ -31,6 +31,7 @@ for the task using this table.
 | Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering |
 | Testing / completion claim | Applicable task book plus `testing/` contracts and the stage verification record |
 | Writing or reviewing host-side tests | [Host-test baseline](testing/host-test-baseline.md) |
+| QEMU automation or runner-entry work | [QEMU runner entry contract](testing/qemu-runner-entry.md) (P0: interface-only placeholder) |
 
 ## Normative documents and precedence
 
