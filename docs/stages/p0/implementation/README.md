@@ -12,7 +12,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 |---|---|---|
 | P0-W01 | [Repository Baseline detailed implementation design](p0-w01-repository-baseline/README.md) and [implementation record](p0-w01-repository-baseline-record.md) | Completed; verification evidence recorded |
 | P0-W02 | [Rust Toolchain Baseline detailed implementation design](p0-w02-rust-toolchain-baseline/README.md) and [implementation record](p0-w02-rust-toolchain-baseline-record.md) | Implemented; verification evidence recorded |
-| P0-W03 | [AArch64 Build Target Baseline detailed implementation design](p0-w03-aarch64-build-target-baseline/README.md) | Proposed design; implementation not claimed |
+| P0-W03 | [AArch64 Build Target Baseline detailed implementation design](p0-w03-aarch64-build-target-baseline/README.md) and [implementation record](p0-w03-aarch64-build-target-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W04 | [Build Profile / Feature Governance detailed implementation design](p0-w04-build-profile-feature-governance/README.md) | Proposed design; implementation not claimed |
 | P0-W05 | [Documentation Baseline detailed implementation design](p0-w05-documentation-baseline/README.md) | Proposed design; implementation not claimed |
 | P0-W06 | [ADR Governance detailed implementation design](p0-w06-adr-governance/README.md) | Proposed design; implementation not claimed |
