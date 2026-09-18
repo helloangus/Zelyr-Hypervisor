@@ -15,7 +15,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P0-W03 | [AArch64 Build Target Baseline detailed implementation design](p0-w03-aarch64-build-target-baseline/README.md) and [implementation record](p0-w03-aarch64-build-target-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W04 | [Build Profile / Feature Governance detailed implementation design](p0-w04-build-profile-feature-governance/README.md) and [implementation record](p0-w04-build-profile-feature-governance-record.md) | Implemented; verification evidence recorded |
 | P0-W05 | [Documentation Baseline detailed implementation design](p0-w05-documentation-baseline/README.md) and [implementation record](p0-w05-documentation-baseline-record.md) | Implemented; verification evidence recorded |
-| P0-W06 | [ADR Governance detailed implementation design](p0-w06-adr-governance/README.md) | Proposed design; implementation not claimed |
+| P0-W06 | [ADR Governance detailed implementation design](p0-w06-adr-governance/README.md) and [implementation record](p0-w06-adr-governance-record.md) | Implemented; verification evidence recorded |
 | P0-W07 | [Development Quality Gates detailed implementation design](p0-w07-development-quality-gates/README.md) | Proposed design; implementation not claimed |
 | P0-W08 | [Host-Side Testing Baseline detailed implementation design](p0-w08-host-side-testing-baseline/README.md) | Proposed design; implementation not claimed |
 | P0-W09 | [QEMU Automation Entry Baseline detailed implementation design](p0-w09-qemu-automation-entry-baseline/README.md) | Proposed design; implementation not claimed |
