@@ -1,0 +1,242 @@
+# Zelyr CI realization of the quality gates.
+# Normative policy: docs/development/ci-baseline.md — check mapping,
+# triggers, protection, and future-class rules live there; this file mirrors
+# it as data and carries no policy prose.
+# Supply chain: first-party run steps and the official rustup installer only
+# (no third-party marketplace actions); toolchain/components/targets come
+# exclusively from rust-toolchain.toml via rustup.
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+# The one permitted cancellation: a superseded in-progress run on the same PR.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: never
+
+jobs:
+  QG-FMT:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out head commit
+        run: |
+          git clone --no-checkout "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" .
+          git fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA"
+      - name: Install rustup (official installer)
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: QG-FMT
+        run: |
+          echo "QG-FMT on $GITHUB_SHA"
+          cargo fmt --all -- --check
+
+  QG-LINT:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out head commit
+        run: |
+          git clone --no-checkout "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" .
+          git fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA"
+      - name: Install rustup (official installer)
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: QG-LINT (host-class members)
+        run: |
+          echo "QG-LINT (host) on $GITHUB_SHA"
+          cargo clippy --workspace --exclude hypervisor --all-targets -- -D warnings
+      - name: QG-LINT (bare-metal member, own target)
+        run: |
+          echo "QG-LINT (target) on $GITHUB_SHA"
+          cargo clippy --target aarch64-unknown-none-softfloat -p hypervisor -- -D warnings
+
+  QG-WARN:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out head commit
+        run: |
+          git clone --no-checkout "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" .
+          git fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA"
+      - name: Install rustup (official installer)
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: QG-WARN (zero warnings in gate-bearing builds)
+        run: |
+          echo "QG-WARN on $GITHUB_SHA"
+          set -o pipefail
+          cargo build --workspace --exclude hypervisor 2>&1 | tee host-build.log
+          cargo test --workspace --exclude hypervisor 2>&1 | tee host-test.log
+          cargo build --target aarch64-unknown-none-softfloat -p hypervisor 2>&1 | tee target-build.log
+          ! grep -e '^warning' -e 'warning:' host-build.log host-test.log target-build.log
+
+  QG-TEST-HOST:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out head commit
+        run: |
+          git clone --no-checkout "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" .
+          git fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA"
+      - name: Install rustup (official installer)
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: QG-TEST-HOST
+        run: |
+          echo "QG-TEST-HOST on $GITHUB_SHA"
+          cargo test --workspace --exclude hypervisor
+
+  QG-BUILD-TARGET:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out head commit
+        run: |
+          git clone --no-checkout "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" .
+          git fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA"
+      - name: Install rustup (official installer)
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --profile minimal --default-toolchain none
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+      - name: QG-BUILD-TARGET
+        run: |
+          echo "QG-BUILD-TARGET on $GITHUB_SHA"
+          set -o pipefail
+          cargo build --target aarch64-unknown-none-softfloat -p hypervisor 2>&1 | tee target-build.log
+          test -f target/aarch64-unknown-none-softfloat/debug/hypervisor
+      - name: Retain compiler/linker output on failure
+        if: failure()
+        run: |
+          # Failure artifact (ci-baseline §6): the complete build log is
+          # printed into the job log, which the platform retains under its
+          # default retention; no third-party upload action is authorized.
+          echo "QG-BUILD-TARGET failure log (commit $GITHUB_SHA)"
+          cat target-build.log
+
+  QG-DOCS:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out head commit
+        run: |
+          git clone --no-checkout "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY" .
+          git fetch --no-tags --depth 1 origin "$GITHUB_SHA"
+          git checkout "$GITHUB_SHA"
+      - name: QG-DOCS (links, reachability, headers)
+        run: |
+          echo "QG-DOCS on $GITHUB_SHA"
+          python3 - <<'PYEOF'
+          import os, re, collections, sys
+
+          # (1) link integrity: every relative link resolves from a fresh
+          # checkout. Exemption (quality-gates §7, recorded class): forward
+          # references inside a stage's implementation designs that point at
+          # that stage's own future verification/record paths.
+          broken = []
+          for dp, _, fns in os.walk('.'):
+              parts = set(dp.split(os.sep))
+              if '.git' in parts or 'target' in parts:
+                  continue
+              for fn in fns:
+                  if not fn.endswith('.md'):
+                      continue
+                  p = os.path.join(dp, fn)
+                  text = open(p, encoding='utf-8').read()
+                  for m in re.finditer(r'\]\(([^)#]+?)(#[^)]*)?\)', text):
+                      t = m.group(1).strip()
+                      if t.startswith(('http', 'mailto:')) or t == '':
+                          continue
+                      tp = os.path.normpath(os.path.join(dp, t))
+                      if os.path.exists(tp):
+                          continue
+                      in_impl = re.match(r'\./?docs/stages/[^/]+/implementation/', dp + '/')
+                      future_record = ('/verification/' in tp) or tp.endswith('-record.md')
+                      if in_impl and future_record and '/docs/stages/' in '/' + tp:
+                          continue  # recorded forward-reference exemption
+                      broken.append((p, t))
+          if broken:
+              print('BROKEN LINKS:')
+              for p, t in broken:
+                  print(f'  {p} -> {t}')
+              sys.exit(1)
+
+          # (2) reachability: every normative governance document reachable
+          # from entry points within 4 hops.
+          def links(p):
+              dp = os.path.dirname(p)
+              out = []
+              try:
+                  s = open(p, encoding='utf-8').read()
+              except OSError:
+                  return out
+              for m in re.finditer(r'\]\(([^)#]+?)(#[^)]*)?\)', s):
+                  t = m.group(1).strip()
+                  if t.startswith(('http', 'mailto:')) or t == '':
+                      continue
+                  tp = os.path.normpath(os.path.join(dp, t))
+                  if os.path.exists(tp):
+                      out.append(tp)
+              return out
+
+          starters = ['README.md', 'AGENTS.md', 'docs/README.md']
+          seen = set(starters)
+          q = collections.deque((s, 0) for s in starters)
+          while q:
+              p, d = q.popleft()
+              if d >= 4:
+                  continue
+              for tp in links(p):
+                  if tp not in seen:
+                      seen.add(tp)
+                      q.append((tp, d + 1))
+          normative = []
+          for d in ('docs/development', 'docs/security', 'docs/testing'):
+              if os.path.isdir(d):
+                  for fn in sorted(os.listdir(d)):
+                      # Directory READMEs are conditional-class indexes, not
+                      # normative governance documents (documentation
+                      # baseline §1); docs/README.md is covered separately.
+                      if fn.endswith('.md') and fn != 'README.md':
+                          normative.append(os.path.join(d, fn))
+          unreachable = [n for n in normative if n not in seen]
+          if unreachable:
+              print('UNREACHABLE NORMATIVE DOCS (>4 hops):')
+              for n in unreachable:
+                  print(' ', n)
+              sys.exit(1)
+
+          # (3) status-header presence on normative documents.
+          required = ['Status', 'Version', 'Owner/change context', 'Supersedes']
+          header_fail = []
+          for h in normative + ['docs/README.md']:
+              head = ' '.join(open(h, encoding='utf-8').read()[:1500].split())
+              missing = [f for f in required if f'**{f}:**' not in head]
+              if missing:
+                  header_fail.append((h, missing))
+          if header_fail:
+              print('MISSING HEADER FIELDS:')
+              for h, missing in header_fail:
+                  print(f'  {h}: {missing}')
+              sys.exit(1)
+          print('QG-DOCS: links, reachability, headers OK')
+          PYEOF
