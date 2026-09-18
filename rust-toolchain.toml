@@ -1,0 +1,7 @@
+# Zelyr pinned Rust toolchain baseline.
+# Normative policy: docs/development/toolchain-baseline.md — do not duplicate it here.
+[toolchain]
+channel = "1.98.1"
+profile = "minimal"
+components = ["rustfmt", "clippy"]
+targets = []
