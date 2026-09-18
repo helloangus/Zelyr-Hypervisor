@@ -1,5 +1,15 @@
 # Zelyr documentation index and governance
 
+**Status:** Normative documentation governance (routing, precedence, and the
+documentation layout).  
+**Scope:** How to find and classify repository documentation; taxonomy and
+metadata detail live in the [documentation
+baseline](development/documentation-baseline.md).  
+**Version:** v0.1  
+**Owner/change context:** P0 engineering baseline; updated whenever the
+documentation layout changes.  
+**Supersedes:** None.
+
 ## Reading rules
 
 Every agent and contributor must read this file and the repository-root
@@ -15,6 +25,7 @@ for the task using this table.
 | Toolchain setup, restoration, or update | [Toolchain baseline](development/toolchain-baseline.md) and the root `rust-toolchain.toml` manifest |
 | Target/build-class or AArch64 build-path work | [Build-target baseline](development/build-target-baseline.md) and the root `Cargo.toml` workspace |
 | New feature/profile/build switch, or switch-classification questions | [Build-profile / feature governance](development/build-profile-governance.md) |
+| Creating, versioning, or classifying documentation | [Documentation baseline](development/documentation-baseline.md) |
 | ABI or machine-model change | Above, plus `abi/` and/or `machine-types/` contracts |
 | Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering |
 | Testing / completion claim | Applicable task book plus `testing/` contracts and the stage verification record |
