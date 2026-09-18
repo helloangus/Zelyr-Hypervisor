@@ -14,12 +14,7 @@ use core::panic::PanicInfo;
 // P0-W03 build placeholder, replaced by the P1 EL2-entry design. Parks the
 // core in a wait-for-interrupt loop; asserts no CPU mode, exception level,
 // MMU state, stack, or memory state, and performs no system-register access.
-global_asm!(
-    ".globl _start",
-    "_start:",
-    "1:  wfi",
-    "    b 1b",
-);
+global_asm!(".globl _start", "_start:", "1:  wfi", "    b 1b",);
 
 // P0-W03 panic-handler placeholder, succeeded by the P0-W14 (failure
 // classification) and P0-W12 (crash information) designs. Last-resort park:

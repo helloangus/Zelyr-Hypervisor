@@ -21,6 +21,7 @@ for the task using this table.
 | Any architecture-affecting work | [ADR baseline](adr/adr-000-architecture-baseline-v0.1.md), [ADR lifecycle and process](adr/README.md), and the applicable stage task book |
 | Stage planning / detailed design | ADR baseline, applicable task book, mandatory [concise Plan Agent guide](development/plan-agent-guidelines.md), then routed detailed-reference sections |
 | Coding | ADR baseline, applicable task book, approved detailed design, mandatory [concise Coding guide](development/coding-guidelines.md), then routed detailed-reference sections |
+| Quality-gate questions (format, lint, warnings, tests, builds, docs checks) | [Quality gates](development/quality-gates.md) |
 | Repository contribution / integration | [Branch and pull-request integration workflow](development/integration-workflow.md), applicable work-package plan, and the relevant implementation/verification record |
 | Toolchain setup, restoration, or update | [Toolchain baseline](development/toolchain-baseline.md) and the root `rust-toolchain.toml` manifest |
 | Target/build-class or AArch64 build-path work | [Build-target baseline](development/build-target-baseline.md) and the root `Cargo.toml` workspace |
