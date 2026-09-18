@@ -17,9 +17,6 @@ mod tests {
     fn host_entry_executes_and_reports() {
         // Entry health = the harness executes this test inside the member's
         // package context and reports the outcome truthfully.
-        assert_eq!(
-            std::env::var("CARGO_PKG_NAME").as_deref(),
-            Ok("host-test-baseline")
-        );
+        assert_eq!(std::env::var("CARGO_PKG_NAME").as_deref(), Ok("host-test-baseline"));
     }
 }
