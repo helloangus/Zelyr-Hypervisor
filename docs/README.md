@@ -38,6 +38,7 @@ for the task using this table.
 | Diagnostic channel/level/visibility questions | [Diagnostics baseline](development/diagnostics-baseline.md) |
 | Trace-event naming or telemetry namespace questions | [Trace event namespace](development/trace-event-namespace.md) |
 | Artifact identity / version-metadata questions | [Version & build metadata baseline](development/version-build-metadata.md) |
+| Naming an artifact that leaves the build tree | [Artifact naming baseline](development/artifact-naming.md) |
 
 ## Normative documents and precedence
 
