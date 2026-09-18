@@ -3,8 +3,8 @@
 **Status:** P0 stage completion claim — the only document authorized to make
 it (stage workflow L7).  
 **Date:** 2026-09-19 (Asia/Shanghai)  
-**Basis:** every P0 package's [implementation record](../implementation/README.md)
-and [verification record](README.md) (W01–W22), the [P0 handoff
+**Basis:** every P0 package's [implementation records](../implementation/README.md)
+and [verification records](p0-w22-stage-dependency-map-verification.md) (W01–W22), the [P0 handoff
 map](../p0-handoff-map.md), and the [P0 task book](../task-book-v0.1.md).
 
 ## 1. Validation matrix status
@@ -76,11 +76,11 @@ No ID is `unverified` or `blocked`.
   (restated by pointer, per the single-home rule).
 - **What P0 evidence does not prove:** no EL2 execution, no guest boot, no
   QEMU execution, no hardware behavior — host results prove host-side logic
-  only ([host-test proof boundary](../../testing/host-test-baseline.md));
-  the runner entry is interface-only ([placeholder marking](../../testing/qemu-runner-entry.md));
+  only ([host-test proof boundary](../../../testing/host-test-baseline.md));
+  the runner entry is interface-only ([placeholder marking](../../../testing/qemu-runner-entry.md));
   CI checks prove only the configured gates, never future-class scope
-  ([CI baseline §5](../../development/ci-baseline.md)); the target build
-  proves the compilation chain only ([build-target baseline](../../development/build-target-baseline.md)).
+  ([CI baseline §5](../../../development/ci-baseline.md)); the target build
+  proves the compilation chain only ([build-target baseline](../../../development/build-target-baseline.md)).
 
 ## 5. P1 handoff package (assembled by linking, per the handoff rule)
 
@@ -88,29 +88,29 @@ Per task book §7, the package consists of:
 
 - This task book: [task-book-v0.1.md](../task-book-v0.1.md) and this
   completion report.
-- Toolchain and target/build baseline: [W02](../../development/toolchain-baseline.md)
-  + `rust-toolchain.toml`; [W03](../../development/build-target-baseline.md)
+- Toolchain and target/build baseline: [W02](../../../development/toolchain-baseline.md)
+  + `rust-toolchain.toml`; [W03](../../../development/build-target-baseline.md)
   + workspace manifests.
-- Quality/CI and test baseline: [W07](../../development/quality-gates.md);
-  [W20](../../development/ci-baseline.md) + `.github/workflows/ci.yml` +
-  `main` protection; [W08](../../testing/host-test-baseline.md).
-- QEMU runner baseline: [W09](../../testing/qemu-runner-entry.md).
-- Diagnostics/metadata rules: [W12](../../development/diagnostics-baseline.md);
-  [W13](../../development/trace-event-namespace.md);
-  [W16](../../development/version-build-metadata.md);
-  [W17](../../development/artifact-naming.md).
-- Unsafe and dependency policy: [W10](../../security/unsafe-rust-policy.md) +
-  [inventory](../../security/unsafe-inventory.md);
-  [W18](../../development/dependency-governance.md) +
-  [register](../../development/dependency-register.md).
-- ADR and documentation workflow: [W06](../../adr/README.md);
-  [W05](../../development/documentation-baseline.md).
-- Platform guardrails: [W11](../../development/platform-portability-rules.md).
-- Feature/profile governance: [W04](../../development/build-profile-governance.md).
-- Failure, type-safety, and platform governance: [W14](../../security/failure-classification.md);
-  [W15](../../development/address-identifier-type-safety.md).
-- Contributor path and stage workflow: [W19](../../development/contributor-workflow.md);
-  [W21](../../development/stage-workflow.md); integration
-  [policy](../../development/integration-workflow.md).
+- Quality/CI and test baseline: [W07](../../../development/quality-gates.md);
+  [W20](../../../development/ci-baseline.md) + `.github/workflows/ci.yml` +
+  `main` protection; [W08](../../../testing/host-test-baseline.md).
+- QEMU runner baseline: [W09](../../../testing/qemu-runner-entry.md).
+- Diagnostics/metadata rules: [W12](../../../development/diagnostics-baseline.md);
+  [W13](../../../development/trace-event-namespace.md);
+  [W16](../../../development/version-build-metadata.md);
+  [W17](../../../development/artifact-naming.md).
+- Unsafe and dependency policy: [W10](../../../security/unsafe-rust-policy.md) +
+  [inventory](../../../security/unsafe-inventory.md);
+  [W18](../../../development/dependency-governance.md) +
+  [register](../../../development/dependency-register.md).
+- ADR and documentation workflow: [W06](../../../adr/README.md);
+  [W05](../../../development/documentation-baseline.md).
+- Platform guardrails: [W11](../../../development/platform-portability-rules.md).
+- Feature/profile governance: [W04](../../../development/build-profile-governance.md).
+- Failure, type-safety, and platform governance: [W14](../../../security/failure-classification.md);
+  [W15](../../../development/address-identifier-type-safety.md).
+- Contributor path and stage workflow: [W19](../../../development/contributor-workflow.md);
+  [W21](../../../development/stage-workflow.md); integration
+  [policy](../../../development/integration-workflow.md).
 - The dependency map: [p0-handoff-map.md](../p0-handoff-map.md) — the entry
   point that links every row above with status and evidence.
