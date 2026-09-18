@@ -1,0 +1,12 @@
+# Zelyr Cargo workspace.
+# Normative build-target policy: docs/development/build-target-baseline.md —
+# do not duplicate it here.
+[workspace]
+resolver = "3"
+members = [
+    "hypervisor",
+]
+# No [workspace.package]: introduced when a second member needs shared keys.
+# No [workspace.dependencies]: the workspace has zero dependencies; the first
+#   dependency decision is governed by P0-W18.
+# No [profile.*]: profile governance is P0-W04's; built-in dev/release only.

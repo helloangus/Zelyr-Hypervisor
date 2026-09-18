@@ -1,0 +1,9 @@
+# Zelyr baseline hypervisor member.
+# Normative build-target policy: docs/development/build-target-baseline.md.
+# This member is a build-chain probe, not a hypervisor skeleton; see the
+# P0-W03 design. Identity semantics for `version` are P0-W16/W17 scope.
+[package]
+name = "hypervisor"
+version = "0.1.0"
+edition = "2024"
+# No dependencies, no build-dependencies, no build script, no features.
