@@ -20,7 +20,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P0-W08 | [Host-Side Testing Baseline detailed implementation design](p0-w08-host-side-testing-baseline/README.md) and [implementation record](p0-w08-host-side-testing-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W09 | [QEMU Automation Entry Baseline detailed implementation design](p0-w09-qemu-automation-entry-baseline/README.md) and [implementation record](p0-w09-qemu-automation-entry-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W10 | [Unsafe Rust Governance detailed implementation design](p0-w10-unsafe-rust-governance/README.md) and [implementation record](p0-w10-unsafe-rust-governance-record.md) | Implemented; verification evidence recorded |
-| P0-W11 | [Platform Portability Guardrails detailed implementation design](p0-w11-platform-portability-guardrails/README.md) | Proposed design; implementation not claimed |
+| P0-W11 | [Platform Portability Guardrails detailed implementation design](p0-w11-platform-portability-guardrails/README.md) and [implementation record](p0-w11-platform-portability-guardrails-record.md) | Implemented; verification evidence recorded |
 | P0-W12 | [Logging & Diagnostic Baseline detailed implementation design](p0-w12-logging-diagnostic-baseline/README.md) | Proposed design; implementation not claimed |
 | P0-W13 | [Trace Event Namespace Baseline detailed implementation design](p0-w13-trace-event-namespace-baseline/README.md) | Proposed design; implementation not claimed |
 | P0-W14 | [Panic / Failure Classification Baseline detailed implementation design](p0-w14-panic-failure-classification/README.md) | Proposed design; implementation not claimed |
