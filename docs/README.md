@@ -19,7 +19,7 @@ for the task using this table.
 | Work type | Required documents |
 |---|---|
 | Any architecture-affecting work | [ADR baseline](adr/adr-000-architecture-baseline-v0.1.md), [ADR lifecycle and process](adr/README.md), and the applicable stage task book |
-| Stage planning / detailed design | ADR baseline, applicable task book, mandatory [concise Plan Agent guide](development/plan-agent-guidelines.md), then routed detailed-reference sections |
+| Stage planning / detailed design | ADR baseline, applicable task book, mandatory [concise Plan Agent guide](development/plan-agent-guidelines.md), then routed detailed-reference sections; layer responsibilities and admission rules in the [stage workflow](development/stage-workflow.md) |
 | Coding | ADR baseline, applicable task book, approved detailed design, mandatory [concise Coding guide](development/coding-guidelines.md), then routed detailed-reference sections |
 | Quality-gate questions (format, lint, warnings, tests, builds, docs checks) | [Quality gates](development/quality-gates.md) |
 | Repository contribution / integration | [Branch and pull-request integration workflow](development/integration-workflow.md), applicable work-package plan, and the relevant implementation/verification record |
