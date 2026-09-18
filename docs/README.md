@@ -29,6 +29,7 @@ for the task using this table.
 | ABI or machine-model change | Above, plus `abi/` and/or `machine-types/` contracts |
 | Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering |
 | Testing / completion claim | Applicable task book plus `testing/` contracts and the stage verification record |
+| Writing or reviewing host-side tests | [Host-test baseline](testing/host-test-baseline.md) |
 
 ## Normative documents and precedence
 
