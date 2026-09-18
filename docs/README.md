@@ -28,7 +28,7 @@ for the task using this table.
 | New feature/profile/build switch, or switch-classification questions | [Build-profile / feature governance](development/build-profile-governance.md) |
 | Creating, versioning, or classifying documentation | [Documentation baseline](development/documentation-baseline.md) |
 | ABI or machine-model change | Above, plus `abi/` and/or `machine-types/` contracts |
-| Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering |
+| Platform / BSP work | Above, plus `platform/` contracts; preserve Core/Arch/SoC/Board layering per the [platform portability rules](development/platform-portability-rules.md) |
 | Testing / completion claim | Applicable task book plus `testing/` contracts and the stage verification record |
 | Writing or reviewing host-side tests | [Host-test baseline](testing/host-test-baseline.md) |
 | QEMU automation or runner-entry work | [QEMU runner entry contract](testing/qemu-runner-entry.md) (P0: interface-only placeholder) |
