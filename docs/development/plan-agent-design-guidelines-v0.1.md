@@ -1,5 +1,10 @@
 # Zelyr Hypervisor Plan Agent Design Guidelines v0.1 — Detailed Reference
 
+**Status:** Normative detailed reference (routed from the mandatory concise guide).  
+**Version:** v0.1  
+**Owner/change context:** P0 engineering baseline; updated when planning policy changes.  
+**Supersedes:** None.
+
 > **Use:** This is the complete, topic-indexed reference. Every Plan Agent
 > must first read [the mandatory concise guide](plan-agent-guidelines.md), then
 > read the relevant sections of this document when its task triggers them.

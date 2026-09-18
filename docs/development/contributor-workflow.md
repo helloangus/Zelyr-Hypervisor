@@ -149,12 +149,13 @@ cited contracts, not here.
 
 ### 3.4 Enforcement status
 
-The branch→PR policy (see §4) is adopted and binding as **human process**.
-GitHub required checks and branch protection are **not yet configured**;
-they are the CI-baseline package's deliverable (P0-V08). Until that package
-delivers, "required online checks" names the checks it will configure — do
-not expect to observe them yet. This statement is retired by that package's
-delivery, not by an edit motivated from here.
+The branch→PR policy (see §4) is adopted policy and is technically enforced:
+the [CI baseline](ci-baseline.md) configures the required checks, and GitHub
+branch protection on `main` requires a pull request with those checks
+passing before merge. The required set is defined by the CI baseline's
+check-mapping register; its class boundaries (what is *not* verified) are
+stated there — PR checks prove only the configured gates, never EL2, guest,
+QEMU, or hardware behavior.
 
 ## 4. Integration path (stage S6)
 
@@ -179,8 +180,8 @@ contributor-side entry into it and never amends it.
    run and not run, and any unresolved conflict.
 5. **Required online checks:** per the policy, every configured required
    check must pass; a missing, cancelled, skipped, or failed required check
-   is not passing evidence. The configured set does not exist until the
-   CI-baseline package delivers it (§3.4 above).
+   is not passing evidence. The configured set is the CI baseline's
+   check-mapping register (§3.4 above).
 6. **Merge:** an authorized maintainer merges the PR after the required
    checks pass, per the policy's merge-method rule. Direct pushes to `main`
    are prohibited by the policy; nothing here softens that.
