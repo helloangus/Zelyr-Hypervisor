@@ -26,7 +26,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P0-W14 | [Panic / Failure Classification Baseline detailed implementation design](p0-w14-panic-failure-classification/README.md) and [implementation record](p0-w14-panic-failure-classification-record.md) | Implemented; verification evidence recorded |
 | P0-W15 | [Address & Identifier Type-Safety Requirement detailed implementation design](p0-w15-address-identifier-type-safety/README.md) and [implementation record](p0-w15-address-identifier-type-safety-record.md) | Implemented; verification evidence recorded |
 | P0-W16 | [Version & Build Metadata Baseline detailed implementation design](p0-w16-version-build-metadata-baseline/README.md) and [implementation record](p0-w16-version-build-metadata-baseline-record.md) | Implemented; verification evidence recorded |
-| P0-W17 | [Artifact Naming Baseline detailed implementation design](p0-w17-artifact-naming-baseline/README.md) | Proposed design; implementation not claimed |
+| P0-W17 | [Artifact Naming Baseline detailed implementation design](p0-w17-artifact-naming-baseline/README.md) and [implementation record](p0-w17-artifact-naming-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W18 | [Dependency Governance detailed implementation design](p0-w18-dependency-governance/README.md) | Proposed design; implementation not claimed |
 | P0-W19 | [Reproducible Development Workflow detailed implementation design](p0-w19-reproducible-development-workflow/README.md) | Proposed design; implementation not claimed |
 | P0-W20 | [CI Baseline detailed implementation design](p0-w20-ci-baseline/README.md) | Proposed design; implementation not claimed |
