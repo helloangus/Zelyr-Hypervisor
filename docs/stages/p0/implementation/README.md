@@ -31,7 +31,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P0-W19 | [Reproducible Development Workflow detailed implementation design](p0-w19-reproducible-development-workflow/README.md) and [implementation record](p0-w19-reproducible-development-workflow-record.md) | Implemented; verification evidence recorded |
 | P0-W20 | [CI Baseline detailed implementation design](p0-w20-ci-baseline/README.md) and [implementation record](p0-w20-ci-baseline-record.md) | Implemented; verification evidence recorded |
 | P0-W21 | [Stage / Plan / Implementation Workflow detailed implementation design](p0-w21-stage-plan-implementation-workflow/README.md) and [implementation record](p0-w21-stage-plan-implementation-workflow-record.md) | Implemented; verification evidence recorded |
-| P0-W22 | [Stage Dependency Map detailed implementation design](p0-w22-stage-dependency-map/README.md) | Proposed design; implementation not claimed |
+| P0-W22 | [Stage Dependency Map detailed implementation design](p0-w22-stage-dependency-map/README.md) and [implementation record](p0-w22-stage-dependency-map-record.md) | Implemented; verification evidence recorded |
 
 Actual command logs and pass/fail evidence belong in `../verification/`, not in
 this index or a detailed design.
