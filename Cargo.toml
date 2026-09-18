@@ -5,6 +5,7 @@
 resolver = "3"
 members = [
     "hypervisor",
+    "crates/host-test-baseline",
 ]
 # No [workspace.package]: introduced when a second member needs shared keys.
 # No [workspace.dependencies]: the workspace has zero dependencies; the first

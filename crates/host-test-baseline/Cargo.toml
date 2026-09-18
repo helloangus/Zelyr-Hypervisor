@@ -1,0 +1,11 @@
+# Zelyr host-test baseline member.
+# P0-W08 placeholder: proves the host-test execution entry executes and
+# reports truthfully. It is infrastructure verification, never product
+# coverage; the first real host-tested logic supersedes it (retirement is a
+# recorded minor change). Build-target class: host-native (see
+# docs/development/build-target-baseline.md).
+[package]
+name = "host-test-baseline"
+version = "0.1.0"
+edition = "2024"
+# No dependencies, no features, no build script.
