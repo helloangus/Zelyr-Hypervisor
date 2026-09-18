@@ -23,6 +23,7 @@ for the task using this table.
 | Coding | ADR baseline, applicable task book, approved detailed design, mandatory [concise Coding guide](development/coding-guidelines.md), then routed detailed-reference sections |
 | Quality-gate questions (format, lint, warnings, tests, builds, docs checks) | [Quality gates](development/quality-gates.md) |
 | Repository contribution / integration | [Branch and pull-request integration workflow](development/integration-workflow.md), applicable work-package plan, and the relevant implementation/verification record |
+| New-contributor onboarding (clone to merged PR) | [Contributor workflow](development/contributor-workflow.md) |
 | Toolchain setup, restoration, or update | [Toolchain baseline](development/toolchain-baseline.md) and the root `rust-toolchain.toml` manifest |
 | Target/build-class or AArch64 build-path work | [Build-target baseline](development/build-target-baseline.md) and the root `Cargo.toml` workspace |
 | New feature/profile/build switch, or switch-classification questions | [Build-profile / feature governance](development/build-profile-governance.md) |
