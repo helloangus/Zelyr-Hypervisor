@@ -2,6 +2,7 @@
 
 **Status:** Normative project policy; GitHub enforcement is planned in P0-W20.
 **Scope:** All development changes made after adoption of this policy.
+**Version:** v0.1  
 **Owner/change context:** Repository integration policy, adopted 2026-09-17.
 **Supersedes:** The absence of an explicit branch-and-PR integration policy.
 

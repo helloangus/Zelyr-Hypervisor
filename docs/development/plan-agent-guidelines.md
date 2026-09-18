@@ -2,7 +2,11 @@
 
 **Status:** Mandatory for every Plan Agent task.  
 **Scope:** Turn an approved stage task book into an implementable design; do
-not write production code or redefine project architecture.
+not write production code or redefine project architecture.  
+**Version:** v0.1  
+**Owner/change context:** P0 engineering baseline; updated when planning
+policy changes.  
+**Supersedes:** None.
 
 Read this document, the repository [agent instructions](../../AGENTS.md), the
 baseline ADR, and the applicable Stage Task Book before planning. Read only the

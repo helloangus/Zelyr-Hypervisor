@@ -2,7 +2,11 @@
 
 **Status:** Mandatory for every code-change task.  
 **Scope:** Rust implementation of an approved design. This is not permission
-to change architecture, ABI, state machines, ownership, locking, or layering.
+to change architecture, ABI, state machines, ownership, locking, or layering.  
+**Version:** v0.1  
+**Owner/change context:** P0 engineering baseline; updated when coding policy
+changes.  
+**Supersedes:** None.
 
 Read this document, the repository [agent instructions](../../AGENTS.md), the
 baseline ADR, applicable Stage Task Book, and approved detailed design before

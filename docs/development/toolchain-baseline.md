@@ -12,7 +12,7 @@ declaration existed in the repository).
 
 ## 1. Single source of truth
 
-The root [`rust-toolchain.toml`](../../../rust-toolchain.toml) is the only
+The root [`rust-toolchain.toml`](../../rust-toolchain.toml) is the only
 authoritative toolchain declaration for this repository. No other tracked file
 — script, CI configuration, or document — may pin a toolchain version,
 channel, component set, or target set. Documents reference this contract
