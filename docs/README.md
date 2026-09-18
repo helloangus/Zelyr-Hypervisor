@@ -33,6 +33,7 @@ for the task using this table.
 | Writing or reviewing host-side tests | [Host-test baseline](testing/host-test-baseline.md) |
 | QEMU automation or runner-entry work | [QEMU runner entry contract](testing/qemu-runner-entry.md) (P0: interface-only placeholder) |
 | Introducing or reviewing `unsafe` Rust | [Unsafe Rust policy](security/unsafe-rust-policy.md) and the [unsafe inventory](security/unsafe-inventory.md) |
+| Failure-path design or fatal-path review | [Failure classification](security/failure-classification.md) |
 
 ## Normative documents and precedence
 
