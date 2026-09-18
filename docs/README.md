@@ -36,6 +36,7 @@ for the task using this table.
 | Failure-path design or fatal-path review | [Failure classification](security/failure-classification.md) |
 | Address/identifier semantics in a new interface | [Address & identifier type-safety requirements](development/address-identifier-type-safety.md) |
 | Diagnostic channel/level/visibility questions | [Diagnostics baseline](development/diagnostics-baseline.md) |
+| Trace-event naming or telemetry namespace questions | [Trace event namespace](development/trace-event-namespace.md) |
 
 ## Normative documents and precedence
 
