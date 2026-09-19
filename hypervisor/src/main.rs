@@ -1,25 +1,14 @@
-//! Build-chain probe for the freestanding AArch64 bare-metal target.
+//! Zelyr hypervisor image — P1 EL2 minimum bring-up.
 //!
-//! This member exists to prove the `no_std` + linking + assembly build path
-//! (P0-W03). It defines no EL2 entry, vector table, memory setup, or console:
-//! the entry symbol is replaced by the P1 EL2-entry design; the panic handler
-//! semantics are owned by P0-W14 (failure classification) and P0-W12 (crash
-//! information).
+//! Contracts: the P1-W01 reference boot contract (pre-transfer tier,
+//! rejection reporter, entry-state table) and the P1-W02 minimal runtime
+//! design (establishment sequence, boot context, panic route, build
+//! identity). The runtime establishes stages 1–8 of the W02 establishment
+//! order and terminates through the recorded route at the unlinked W09
+//! seam; no console, allocator, vectors, EL2 baseline, or MMU mechanism
+//! exists — those are W03–W08 subjects.
+
 #![no_std]
 #![no_main]
 
-use core::arch::global_asm;
-use core::panic::PanicInfo;
-
-// P0-W03 build placeholder, replaced by the P1 EL2-entry design. Parks the
-// core in a wait-for-interrupt loop; asserts no CPU mode, exception level,
-// MMU state, stack, or memory state, and performs no system-register access.
-global_asm!(".globl _start", "_start:", "1:  wfi", "    b 1b",);
-
-// P0-W03 panic-handler placeholder, succeeded by the P0-W14 (failure
-// classification) and P0-W12 (crash information) designs. Last-resort park:
-// no allocation, no unwinding, no device access, no payload inspection.
-#[panic_handler]
-fn baseline_panic(_info: &PanicInfo) -> ! {
-    loop {}
-}
+mod boot;

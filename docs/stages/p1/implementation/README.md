@@ -11,7 +11,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | Work package | Detailed design / record | Status |
 |---|---|---|
 | P1-W01 | [Reference boot contract detailed implementation design](p1-w01-reference-boot-contract/README.md) and [implementation record](p1-w01-reference-boot-contract-record.md) | Implemented; verification evidence recorded |
-| P1-W02 | [Minimal Rust EL2 runtime detailed implementation design](p1-w02-minimal-rust-el2-runtime/README.md) | Proposed design; implementation not claimed |
+| P1-W02 | [Minimal Rust EL2 runtime detailed implementation design](p1-w02-minimal-rust-el2-runtime/README.md) and [implementation record](p1-w02-minimal-rust-el2-runtime-record.md) | Implemented; verification evidence recorded |
 | P1-W03 | [AArch64 capability inventory detailed implementation design](p1-w03-aarch64-capability-inventory/README.md) | Proposed design; implementation not claimed |
 | P1-W04 | [EL2 architectural-state baseline detailed implementation design](p1-w04-el2-architectural-state-baseline/README.md) | Proposed design; implementation not claimed |
 | P1-W05 | [EL2 exception entry baseline detailed implementation design](p1-w05-el2-exception-entry-baseline/README.md) | Proposed design; implementation not claimed |
