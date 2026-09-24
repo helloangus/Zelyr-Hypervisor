@@ -16,7 +16,7 @@ runner entry, image build path, accepted W01/W09 designs or records).
 Stop and obtain direction instead of guessing when any of the following
 occurs:
 
-- the P0 runner entry does not exist or its contract lacks serial capture,
+- the P0 runner interface contract does not exist or lacks serial capture,
   timeout, exit status, or evidence collection — upstream defect (task book §1);
   record the blocker; do not write a second, competing QEMU invocation path;
 - the W01 canonical invocation is ambiguous or the image cannot be built
@@ -31,6 +31,18 @@ occurs:
   (P0-W20 boundary); the contract is consumable, the wiring is not.
 
 ## 2. Ordered implementation steps
+
+### Step 0 — supply the runner foundation
+
+Implement the single tracked runner under `scripts/` against the
+[foundation contract](01-automation-contract.md#11-runner-foundation).
+Record P0's interface-only state, then implement frozen grammar, profiles,
+process lifecycle, complete capture, hard timeout, six statuses and evidence
+finalization. Record any W01 image conversion entry separately; the driver
+does not build the hypervisor and only the runner launches QEMU. Before Step 1,
+the runner must be callable for exploration and its mechanism checks must
+pass. W10-DV03/DV04 record results. Missing executable code is work for this
+step; a contradictory normative interface remains a contract finding.
 
 ### Step 1 — fix the marker rules and environment facts
 
@@ -154,7 +166,7 @@ those are Reserved.
 
 Before handing W10 to a reviewer, provide:
 
-- the exact changed-file list (driver implementation and any tracked tooling
+- the exact changed-file list (runner, driver and any tracked tooling
   wiring; nothing else);
 - the frozen marker rules: stable token, class tokens, exit set, timeout
   value with rationale, canonical invocation;
@@ -163,7 +175,7 @@ Before handing W10 to a reviewer, provide:
 - confirmation that no second QEMU invocation path, no CI workflow, no guest
   artifact, no performance metric, and no boot-path change was introduced;
 - confirmation that the P0-W09 runner contract was consumed, not modified,
-  and that any discovered runner gap is recorded as an upstream defect;
+  and that any discovered contract gap is recorded with its owning package;
 - open items: W11 re-anchoring of R2 on the real panic scenario; W12
   reference-environment and evidence-map inputs; P2-W09 precedent note —
   recorded, not resolved here.

@@ -136,7 +136,9 @@ inside W02's entry module).
 - **W10** consumes the canonical invocation recipe and treats the rejection
   line as a forbidden marker class on normal boots.
 - **W11** executes NC1 against the `EL` rejection class (reference spelling:
-  `virtualization=off`) and NC2 against `DTB` per its own design.
+  `virtualization=off`). NC2 owns missing-required-capability validation.
+  A separate DTB rejection execution closes T2 evidence and must not be
+  reported as NC2 capability evidence.
 - **W12** assembles this record's contract content into the stage boot
   contract document; the recorded limitations are the Non-secure assumption
   (E3), the single-CPU canonical environment (E4), the unvalidated second

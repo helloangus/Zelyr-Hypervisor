@@ -104,6 +104,28 @@ no decision blocker is outstanding for the design itself.
 
 ## Resolved design decisions and their authority
 
+### NC2 validation correction (2026-09-24)
+
+NC2's preferred environment-only case remains unavailable on reference QEMU
+8.2.2: model inspection exposes no granule-selection property, and the
+[versioned model definitions](https://github.com/qemu/qemu/blob/v8.2.2/target/arm/tcg/cpu64.c)
+report supported TGran4 for the AArch64 models, including `max`. The only
+other W03 Required fact, EL2 execution, is rejected earlier by W01 when absent.
+NC2 therefore permits the narrowly scoped validation-image variant in the
+[scenario matrix](01-fault-scenario-matrix.md#nc2--missing-required-capability).
+This supersedes the environment-only restriction for NC2 in decision 2 below
+and the historical ledger. NC1 remains environment-only. The amendment
+enables the package's required missing-capability policy check without
+changing W03's production required set or claiming hardware absence.
+
+The variant changes one sampled register field before the unchanged W03
+decoder, classifier, required check and terminal diagnostic execute at EL2.
+It proves fail-fast handling of an absent required fact (P1-V06) and its real
+failure route. It does not prove that a physical or emulated CPU lacking that
+capability was used. Retain the environment-only case as unavailable with
+this reason; record injected execution separately. Default-image containment
+review remains required.
+
 1. **Validation-only triggers behind an explicit selection.** Every
    intentional trigger lives behind a distinct validation selection (a
    scenario identifier fixed at build time). The default build contains zero
@@ -111,12 +133,14 @@ no decision blocker is outstanding for the design itself.
    standing guard. Rationale: the plan forbids changing normal P1 scope, and
    this makes compliance mechanically checkable rather than rhetorical.
    Authority: P1-W11 plan work seq 3; Coding Guidelines on minimal changes.
-2. **Environment variations for environment-class scenarios.** NC1 and NC2
+2. **Environment variations for environment-class scenarios.** NC1 and the
+   preferred environment-only variant of NC2
    vary the *execution environment* (machine/CPU properties available from
    the reference platform), not the image. The technique category is fixed
    here; the exact property spelling follows the W01/P0-W09 contracts at
    implementation time. Rationale: these classes are about the environment,
-   so the trigger must not be in the image at all.
+   so those variants have no image trigger. The separately recorded NC2
+   validation-image variant follows the correction above.
 3. **Expected outcome per scenario is a diagnostic class plus a terminal
    outcome — never a recovery.** P1 has no recovery policy (plan out of
    scope); every scenario must end in the bounded terminal behavior its
