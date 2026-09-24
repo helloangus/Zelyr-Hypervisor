@@ -3,6 +3,8 @@
 Read the [preflight amendment](00-preflight-amendment.md) first. It supersedes
 the explicitly named portions of this proposed design; remaining contracts
 and separate implementation/verification evidence requirements still apply.
+Then read the [implementation reconciliation](06-implementation-reconciliation.md)
+for the fatal-stack and syndrome-validity corrections before coding.
 
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
