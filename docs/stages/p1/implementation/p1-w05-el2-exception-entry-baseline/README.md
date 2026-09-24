@@ -1,5 +1,9 @@
 # P1-W05 EL2 Exception Entry Baseline — Detailed Implementation Design
 
+Read the [preflight amendment](00-preflight-amendment.md) first. It supersedes
+the explicitly named portions of this proposed design; remaining contracts
+and separate implementation/verification evidence requirements still apply.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** The EL2 exception entry baseline required by
