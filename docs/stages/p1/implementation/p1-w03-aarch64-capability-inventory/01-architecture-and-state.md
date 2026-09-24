@@ -34,8 +34,8 @@ it exists. Growing the set is a design change (parent README decision 7).
 | `Granule4k` | 4 KiB granule support | `ID_AA64MMFR0_EL1.TGran4` | **Required** (`supported` demanded) | the granule P1's later mapping work (W08) is designed around; absence makes P1 continuation meaningless |
 | `Granule16k` | 16 KiB granule support | `ID_AA64MMFR0_EL1.TGran16` | Optional | reported limit knowledge |
 | `Granule64k` | 64 KiB granule support | `ID_AA64MMFR0_EL1.TGran64` | Optional | reported limit knowledge |
-| `Stage2Support` | Virtual Host extensions (Stage-2 capability) | `ID_AA64MMFR1_EL1.VH` | Future | the plan's "Stage-2 capability" fact; P4+ consumes it |
-| `El2VirtualTimer` | EL2 virtual timer presence | derived: `Stage2Support` present | Optional | guards W04's optional baseline write |
+| `VirtualHostExtensions` | Virtualization Host Extensions (VHE) | `ID_AA64MMFR1_EL1.VH` | Future | future virtualization context; absence does not imply absent Stage-2 |
+| `El2VirtualTimer` | EL2 virtual timer presence | derived: `VirtualHostExtensions` present | Optional | guards W04's optional baseline write |
 | `CounterFrequency` | system counter frequency | `CNTFRQ_EL0` | **Required** (readable, non-zero demanded) | a zero/unreadable frequency means the timer platform is broken; later timer work is meaningless |
 | `El2PhysicalTimer` | EL2 physical timer presence | architectural: present whenever EL2 is | Optional (constant-valued) | documents the timer baseline's write target for W04 |
 
@@ -52,7 +52,7 @@ Observation: Present(u64) | Absent | Unreadable
   Present  — the source was read and the fact's field decoded; u64 carries
              the raw field value (decoding helpers give semantics)
   Absent   — the field exists architecturally but reports "not implemented"
-             (e.g. TGran16 == 0b1111) or the derived precondition is false
+             (e.g. TGran16 == 0b0000), is reserved, or the derived precondition is false
   Unreadable — the source could not be read; for P1's set this is an
              architectural impossibility for every listed source, so any
              Unreadable observation is itself an invariant violation and is
@@ -111,7 +111,7 @@ rendering (called once, in boot context, from the W09 `console` phase wiring).
 | `capabilities` phase placement; tracker attribution | [W09](../p1-w09-initialization-sequencing/README.md) (accepted design) | when the inventory runs and how failures are attributed | seam mismatch is raised per W09 §1, never adapted locally |
 | Channel write; marker/format rules | [W06](../p1-w06-early-console-logging/README.md) (parallel design) | rendering the report lines | if the channel cannot accept the emit-callback seam, the coordination issue is recorded; rendering stays unrendered rather than re-owned |
 | Baseline consumption; Stage-1 knowledge (transitive) | [P1-W04](../p1-w04-el2-architectural-state-baseline/README.md) (parallel design; the plan index's named consumer), [P1-W08](../p1-w08-host-stage1-address-space/README.md) only via W04's baseline record unless its design names a direct query dependency | the query API's consumer set | consumers failing to query (branching on names instead) is a W03-DV05 review finding against that consumer |
-| NC2 variability | [P1-W11](../p1-w11-negative-fault-validation/README.md) (accepted design) | the scenario's dependency note | if no required fact is variable on the reference platform, NC2 records blocked with the finding (parent README decision 8) |
+| NC2 variability | [P1-W11](../p1-w11-negative-fault-validation/README.md) (accepted design, 2026-09-24 NC2 correction) | the scenario's dependency note | environment-only absence remains unavailable on the reference model; W11 owns the explicitly classified validation-image injection, without claiming real hardware absence |
 
 Produced for consumers: the published `CAPABILITIES` report, the query API,
 the rejection vocabulary, and the render/emit seam.

@@ -1,7 +1,9 @@
 # Zelyr agent instructions
 
-This repository is in P0.  Establish the documented engineering baseline before
-implementing EL2, VM, memory, GIC, or guest functionality.
+This repository is implementing P1 on the completed P0 engineering baseline.
+See the [P0 completion report](docs/stages/p0/verification/p0-completion-report.md)
+and [P1 implementation index](docs/stages/p1/implementation/README.md) for
+current evidence. Keep VM, GIC, and guest functionality in their owning stages.
 
 ## Mandatory reading
 
@@ -59,6 +61,7 @@ ADR-required issue; do not silently choose a new architecture.
 
 ## Current repository state
 
-The directories are intentionally a P0 scaffold, not implemented crates.
-Do not infer API, Cargo workspace membership, target layout, or module trees
-from their names: those require the relevant Plan Agent design.
+The workspace contains the P1 hypervisor and host-test baseline. Other
+directories may still be scaffolds. Do not infer API, workspace membership,
+target layout, or module trees from names; inspect the current workspace and
+the applicable detailed design.

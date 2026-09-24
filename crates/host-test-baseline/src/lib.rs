@@ -1,11 +1,11 @@
-//! P0-W08 placeholder host-test member.
+//! Host execution baseline and source-shared P1 pure-logic test harness.
 //!
 //! This member exists only to prove that the repository's host-test execution
 //! entry executes and reports truthfully (see
 //! `docs/testing/host-test-baseline.md`). Its single test asserts the entry's
 //! own health and encodes no product logic; it is never counted as product
-//! coverage and is expected to be superseded by the first real host-tested
-//! logic.
+//! coverage. Integration tests compile the production P1 capability decoder;
+//! the entry-health check remains separately identified infrastructure evidence.
 
 #[cfg(test)]
 mod tests {

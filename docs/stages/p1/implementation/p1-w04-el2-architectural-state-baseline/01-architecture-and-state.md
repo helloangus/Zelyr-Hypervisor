@@ -26,7 +26,7 @@ the W03 facts it is guarded or justified by (work seq 1; ADR-044):
 |---|---|---|
 | C1 Execution state | `SPSel=1`, `DAIF` all-masked — **established by W02**, asserted here via read-back | (none; these are W02 invariants, not CPU facts) |
 | C2 Exception routing | `DAIF` mask (assert); physical-interrupt routing posture via `HCR_EL2` IMO/FMO/AMO = 0; `SCR_EL3` explicitly **not owned** (firmware domain, ADR-008) | `ExecutionLevel` (the category is only meaningful at EL2) |
-| C3 Trap policy | `HCR_EL2` = `RW` only (no trap groups enabled; TGE=0) | `Stage2Support` (context for the reserved VM field — read as fact, not acted on) |
+| C3 Trap policy | `HCR_EL2` = `RW` only (no trap groups enabled; TGE=0) | `VirtualHostExtensions` (VHE context only; does not establish Stage-2 support and is not acted on) |
 | C4 FP/SIMD | `CPTR_EL2.TFP=1` (deny at EL2); `CPACR_EL1.FPEN=00` (deny at EL1/EL0) | (none; deny-by-default posture) |
 | C5 Debug/performance | `MDCR_EL2` trap bits (TDA, TDOSA, TDE, TPM, TPMCR); `MDSCR_EL1 = 0` | (none) |
 | C6 Timer | `CNTHCTL_EL2` EL1 gates = 0 (EL1 physical timer access denied); `CNTKCTL_EL1 = 0` (EL0 virtual-timer/event access denied); `CNTHP_CTL_EL2` disabled+masked; `CNTHV_CTL_EL2` disabled+masked **guarded** | `El2VirtualTimer` (guard), `CounterFrequency`, `El2PhysicalTimer` |

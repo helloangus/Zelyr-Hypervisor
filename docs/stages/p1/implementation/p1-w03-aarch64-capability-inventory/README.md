@@ -12,6 +12,13 @@ report interface consumed by W04, W09 and handed to P2.
 
 ## Purpose and use
 
+The [implementation reconciliation](05-implementation-reconciliation.md)
+corrects identification-field semantics and records concrete module/test
+placement against the delivered W02 runtime. Read it with the contracts.
+Implementation and evidence are separate in the
+[record](../p1-w03-aarch64-capability-inventory-record.md) and
+[verification](../../verification/p1-w03-aarch64-capability-inventory-verification.md).
+
 This is the implementation-level design for P1-W03. W03 is the stage's
 knowledge mechanism: it reads the CPU's self-description, classifies every
 fact it reports, blocks continuation on absent required facts, and hands a
@@ -158,7 +165,11 @@ coordination item, not a blocker for this design.
    Rationale: a capability inventory that grows by convenience becomes a
    discovery framework — P2's job. The Reserved trigger names who may add
    facts and how. Authority: plan out-of-scope list; task book §2.
-8. **NC2 coordination requirement recorded, not engineered around.** W11's
+8. **NC2 coordination requirement recorded, not engineered around.** The
+   [W11 correction](../p1-w11-negative-fault-validation/README.md) of
+   2026-09-24 permits an explicitly identified validation-image variant;
+   this supersedes the historical environment-only blocking disposition
+   below. W03's production required set remains unchanged. W11's
    NC2 needs at least one required fact that the reference platform can
    vary; the required set of decision 2 may not be variable on QEMU `virt`
    CPU models. W03 records this honestly: the required set follows P1's

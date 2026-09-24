@@ -181,6 +181,13 @@ boundary for the results it reports.
 
 ## 8. Placeholder baseline status
 
+P1-W03 adds source-shared production capability decoder/policy tests under
+`crates/host-test-baseline/tests/p1_capabilities.rs`; their unit cases remain
+in the owning pure source module. This is a recorded minor content addition,
+not a workspace or canonical entry change. Privileged reads and publication
+are excluded from host execution. The entry-health test remains infrastructure
+evidence and is counted separately from product tests.
+
 The `crates/host-test-baseline` member is the P0-W08 placeholder: its single
 test proves the entry executes and reports truthfully. It is infrastructure
 verification, never product coverage, and is expected to be superseded by the
