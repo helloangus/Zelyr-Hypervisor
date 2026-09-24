@@ -1,5 +1,9 @@
 # P1-W04 EL2 Architectural-State Baseline — Detailed Implementation Design
 
+Read the [preflight amendment](00-preflight-amendment.md) first. It supersedes
+the explicitly named portions of this proposed design; remaining contracts
+and separate implementation/verification evidence requirements still apply.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** The explicit EL2 architectural-state baseline required by
