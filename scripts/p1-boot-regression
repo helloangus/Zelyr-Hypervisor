@@ -1,0 +1,5 @@
+#!/usr/bin/env python3
+import sys
+from p1_runner import regression
+
+raise SystemExit(regression(sys.argv[1:]))
