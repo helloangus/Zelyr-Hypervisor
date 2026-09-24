@@ -1,7 +1,7 @@
 # Zelyr QEMU Runner Entry Contract
 
-**Status:** Normative interface contract — **P0 placeholder: interface only,
-no runner implemented** (see §8).  
+**Status:** Normative interface contract; P1-W10 supplies its first executable
+foundation (see §8); integrated boot validation remains pending.  
 **Scope:** The single automated-QEMU execution entry: single-entry rule,
 responsibility boundary, invocation grammar, reserved parameter classes,
 runtime behavior requirements, exit-status taxonomy, evidence content set,
@@ -164,6 +164,15 @@ it is not. Retention locations follow the stage verification conventions
   future-class promotion per the quality-gates thresholds.
 
 ## 8. P0 placeholder status
+
+**Current implementation:** [`scripts/qemu-runner`](../../scripts/qemu-runner)
+implements this unchanged v0.1 interface. Its P1 profiles, defaults, dependencies
+and evidence behavior are recorded in the
+[W10 implementation record](../stages/p1/implementation/p1-w10-qemu-boot-regression-record.md).
+The [verification record](../stages/p1/verification/p1-w10-qemu-boot-regression-verification.md)
+distinguishes mechanism checks from pending integrated execution. This does
+not promote a QEMU check into CI. The paragraph below records P0's historical
+boundary; it does not describe the current executable state.
 
 **In P0 this entry is an interface-only placeholder. No runner program
 exists; the entry cannot be invoked; no QEMU execution has occurred under

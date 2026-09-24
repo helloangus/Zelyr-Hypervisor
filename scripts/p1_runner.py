@@ -134,7 +134,10 @@ def capture(command, directory, timeout, required, forbidden, observe=OBSERVE):
                             reason = "running"
                         if reason != "running":
                             stopped = now
-                            os.killpg(process.pid, signal.SIGTERM)
+                            try:
+                                os.killpg(process.pid, signal.SIGTERM)
+                            except ProcessLookupError:
+                                pass
                     elif now - stopped >= 0.5:
                         # Kill the group even if the leader exited with pipes
                         # held open by a descendant; drain buffered bytes below.
