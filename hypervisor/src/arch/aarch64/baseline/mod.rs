@@ -11,10 +11,12 @@ struct RecordedControl {
     value: AtomicU64,
 }
 impl RecordedControl {
-    const NEW: Self = Self {
-        status: AtomicU8::new(0),
-        value: AtomicU64::new(0),
-    };
+    const fn new() -> Self {
+        Self {
+            status: AtomicU8::new(0),
+            value: AtomicU64::new(0),
+        }
+    }
     fn publish(&self, value: u64) {
         self.value.store(value, Ordering::Relaxed);
         self.status.store(1, Ordering::Release);
@@ -35,7 +37,7 @@ struct BaselineDeclaration {
 static EL2_BASELINE: BaselineDeclaration = BaselineDeclaration {
     started: AtomicBool::new(false),
     categories: [const { AtomicBool::new(false) }; 8],
-    controls: [const { RecordedControl::NEW }; ControlId::COUNT],
+    controls: [const { RecordedControl::new() }; ControlId::COUNT],
 };
 
 /// Category readiness: optional controls are classified separately.

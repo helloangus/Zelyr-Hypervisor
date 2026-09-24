@@ -145,6 +145,59 @@ completed.
 - **audit-status:** author and independent root soundness review complete
 - **permanence:** boot report retention through P2 handoff; no reset API
 
+
+### U-005 — EL2 baseline register reads
+
+- **status:** proposed
+- **title:** W04 closed-set architectural control reads
+- **boundary-category:** `arch-register`
+- **location:** `hypervisor/src/arch/aarch64/baseline/mod.rs` (`read_sysreg`)
+- **necessity:** Rust has no safe EL2 system-register read primitive.
+- **safety-preconditions:** W01-established EL2, boot CPU only, DAIF masked;
+  W03 report published; optional CNTHV accessed only when its fact is Present.
+- **establishment:** the W04 phase checks C1 and upstream facts; only the
+  static specifications select writes; masks preserve unowned fields and
+  constants honor RES1. No memory or stack effects; the closed selector excludes arbitrary system registers.
+- **failure-class:** FC-INVARIANT, terminal; pre-vector register faults retain
+  the documented unowned-vector limitation.
+- **authorizing-design:** [W04 design](../stages/p1/implementation/p1-w04-el2-architectural-state-baseline/README.md)
+  and its preflight synchronization amendment.
+- **owner:** P1-W04 architecture baseline.
+- **review-record:** independent soundness review required on the carrying PR
+  before merge; this proposed entry is not self-approval.
+- **validation:** [W04 verification](../stages/p1/verification/p1-w04-el2-architectural-state-baseline-verification.md);
+  host tests cover masks, not hardware effects. QEMU execution is deferred to
+  W09/W10 and real-hardware validation to its owning stage.
+- **audit-status:** first-review complete; independent review pending.
+- **permanence:** P1 boot boundary; re-audit on control-set, feature-guard,
+  synchronization or execution-context changes.
+
+### U-006 — EL2 baseline register writes and ISB
+
+- **status:** proposed
+- **title:** W04 closed-set architectural control writes and ISB
+- **boundary-category:** `arch-register`
+- **location:** `hypervisor/src/arch/aarch64/baseline/mod.rs` (`write_sysreg`)
+- **necessity:** Rust has no safe EL2 system-register write primitive.
+- **safety-preconditions:** W01-established EL2, boot CPU only, DAIF masked;
+  W03 report published; optional CNTHV accessed only when its fact is Present.
+- **establishment:** the W04 phase checks C1 and upstream facts; only the
+  static specifications select writes; masks preserve unowned fields and
+  constants honor RES1. Each write is immediately followed by ISB; no nomem annotation hides control effects.
+- **failure-class:** FC-INVARIANT, terminal; pre-vector register faults retain
+  the documented unowned-vector limitation.
+- **authorizing-design:** [W04 design](../stages/p1/implementation/p1-w04-el2-architectural-state-baseline/README.md)
+  and its preflight synchronization amendment.
+- **owner:** P1-W04 architecture baseline.
+- **review-record:** independent soundness review required on the carrying PR
+  before merge; this proposed entry is not self-approval.
+- **validation:** [W04 verification](../stages/p1/verification/p1-w04-el2-architectural-state-baseline-verification.md);
+  host tests cover masks, not hardware effects. QEMU execution is deferred to
+  W09/W10 and real-hardware validation to its owning stage.
+- **audit-status:** first-review complete; independent review pending.
+- **permanence:** P1 boot boundary; re-audit on control-set, feature-guard,
+  synchronization or execution-context changes.
+
 ## History
 
 No superseded or removed entries yet.
