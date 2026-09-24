@@ -71,7 +71,7 @@ when two domains could claim a fact.
 
 | Canonical name | Domain | Owning design | Meaning | Status | Replaced-by |
 |---|---|---|---|---|---|
-| *(none — registry intentionally empty in P0)* | | | | | |
+| `cpu.capability.fact` | `cpu` | [P1-W03](../stages/p1/implementation/p1-w03-aarch64-capability-inventory/05-implementation-reconciliation.md) | One classified boot CPU capability observation in the retained inventory | declared | — |
 
 ## 4. Compatibility and deprecation rules
 

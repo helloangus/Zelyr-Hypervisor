@@ -1,7 +1,7 @@
 # Zelyr Unsafe Inventory
 
 **Status:** Normative register.  
-**Version:** v0.2 — first two entries, created by the P1-W02 runtime change.  
+**Version:** v0.3 — W03 identification reads and report publication.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
 only by real, merged unsafe changes under the policy's review rules.  
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
@@ -89,6 +89,61 @@ completed.
 - **permanence:** panic-path permanent (channel-independent route per the
   W06/W07 boundaries); marker output superseded by W06's channel when it
   lands
+
+### U-003 — AArch64 capability identification reads
+
+- **status:** accepted
+- **title:** six side-effect-free EL2 identification register reads
+- **boundary-category:** `arch-register`
+- **location:** `hypervisor/src/arch/aarch64/capabilities/mod.rs`,
+  `read_current_el`, `read_mpidr`, `read_id_aa64pfr0`, `read_id_aa64mmfr0`,
+  `read_id_aa64mmfr1`, `read_cntfrq`
+- **necessity:** Rust has no safe intrinsic for these privileged MRS reads;
+  pure decoding and policy stay outside the assembly boundary
+- **safety-preconditions:** W01-established EL2 and trusted firmware register
+  accessibility; W02 live runtime, boot CPU and masked DAIF
+- **establishment:** only the W03 phase body calls the six reads; W09 owns
+  invocation after runtime establishment; assembly declares all outputs and
+  no memory, stack, or flags side effects
+- **failure-class:** FC-INVARIANT if the execution/firmware contract is violated
+- **authorizing-design:** [W03 extraction contracts](../stages/p1/implementation/p1-w03-aarch64-capability-inventory/02-code-contracts-fact-extraction.md)
+  and [reconciliation](../stages/p1/implementation/p1-w03-aarch64-capability-inventory/05-implementation-reconciliation.md)
+- **owner:** P1-W03
+- **review-record:** root systems reviewer, 2026-09-24: six isolated MRS
+  wrappers, explicit outputs/no memory effects, W01 EL2 precondition;
+  boundary sound for the masked boot CPU
+- **validation:** host decoder tests and target compilation in the
+  [W03 verification record](../stages/p1/verification/p1-w03-aarch64-capability-inventory-verification.md);
+  executing register evidence assigned to W09/W10, hardware not run
+- **audit-status:** author and independent root soundness review complete
+- **permanence:** P1 boot inventory; re-audit if EL/firmware prerequisites change
+
+### U-004 — immutable capability report publication
+
+- **status:** accepted
+- **title:** `UnsafeCell<Option<CapabilityReport>>` behind monotone publication state
+- **boundary-category:** `low-level-struct`
+- **location:** `hypervisor/src/arch/aarch64/capabilities/mod.rs`, `ReportCell`,
+  `unsafe impl Sync`, `publish`, `get`
+- **necessity:** no_std has no safe static once-cell; no dependency added;
+  consumers require retained immutable boot facts
+- **safety-preconditions:** exactly one exclusive writer before any reference
+  escapes; reads only after a complete publication; value never mutated again
+- **establishment:** compare_exchange claims unpublished→publishing once;
+  write completes before release-published; readers acquire-published before
+  borrowing, and early/repeated access panics before touching storage
+- **failure-class:** FC-INVARIANT, terminal via panic for protocol misuse
+- **authorizing-design:** [W03 report contracts](../stages/p1/implementation/p1-w03-aarch64-capability-inventory/03-code-contracts-classification-and-report.md)
+  and [reconciliation](../stages/p1/implementation/p1-w03-aarch64-capability-inventory/05-implementation-reconciliation.md)
+- **owner:** P1-W03
+- **review-record:** root systems reviewer, 2026-09-24: exclusive 0→1 claim,
+  Option write before Release 2, immutable reads after Acquire 2, report
+  fields Sync; boundary sound for the masked boot CPU
+- **validation:** complete-draft policy host tests, publication source review,
+  and target compilation in the [W03 verification record](../stages/p1/verification/p1-w03-aarch64-capability-inventory-verification.md);
+  execution deferred to W09/W10, no hardware or SMP claim
+- **audit-status:** author and independent root soundness review complete
+- **permanence:** boot report retention through P2 handoff; no reset API
 
 ## History
 

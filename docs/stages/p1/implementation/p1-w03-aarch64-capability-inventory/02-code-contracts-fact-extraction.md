@@ -61,11 +61,13 @@ Key decodes (field semantics fixed here; exact bit ranges per the announced
   ArchProfile     <- PFR0 EL0/EL1/EL2/EL3 nibbles packed
   GicVersion      <- PFR0.GIC (0 = no CPU-side GIC interface)
   PaRange         <- MMFR0.PARange encodings -> bits
-  Granule4k/16k/64k <- MMFR0 TGran4/TGran16/TGran64 (0b0000 = supported;
-                     0b1111 = not supported; others = reserved -> Absent)
-  Stage2Support   <- MMFR1.VH != 0
-  CounterFrequency<- CNTFRQ raw hertz value; 0 maps to Absent
-  El2VirtualTimer <- derived from Stage2Support (no separate read)
+  Granule4k      <- MMFR0.TGran4: 0 or 1 supported (1 includes LPA2)
+  Granule16k     <- MMFR0.TGran16: 1 or 2 supported (2 includes LPA2)
+  Granule64k     <- MMFR0.TGran64: 0 supported
+                   other encodings map conservatively to Absent
+  VirtualHostExtensions <- MMFR1.VH == 1 (VHE, not Stage-2 presence)
+  CounterFrequency<- CNTFRQ[31:0] hertz; 0 maps to Absent
+  El2VirtualTimer <- derived from VirtualHostExtensions (no separate read)
   El2PhysicalTimer<- constant Present (architectural whenever EL2 is)
 Validation: W03-DV01 fact-set review; decode spot-checks against the
   architecture reference recorded in the implementation record.
