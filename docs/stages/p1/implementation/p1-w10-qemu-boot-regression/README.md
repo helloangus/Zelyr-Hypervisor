@@ -15,9 +15,23 @@ entry contract, the verdict rules, the outcome classification, the evidence
 layout, and the 100-cycle procedure. It defines **what the regression must
 establish and how evidence is retained**; it is not a validation result, and
 nothing here claims that a run has happened. It deliberately does **not**
-build the hypervisor image (W01–W09), implement the QEMU runner itself
-(P0-W09), configure CI providers (P0-W20 boundary), benchmark performance, or
+build the hypervisor image (W01–W09), configure CI providers (P0-W20 boundary), benchmark performance, or
 prove anything about real hardware.
+
+### Foundation correction (2026-09-24)
+
+The delivered [P0 runner contract](../../../../testing/qemu-runner-entry.md)
+§§7–8 explicitly assigns its first executable implementation to W10. P0
+delivered its interface only. W10 therefore owns both the runner foundation
+and the regression driver. This correction supersedes the historical
+driver-only assumption and runner ownership entries below; it changes no P0
+grammar, reserved parameter class, exit taxonomy or architectural policy.
+The observed baseline `a05fca6` has a buildable W02 image and the P0 contract,
+but no runner executable. Supplying that executable is Required foundation
+work for P1-V16, with W10-DV03/DV04 covering lifecycle and evidence behavior.
+An absent normative contract remains a prerequisite defect; an absent runner
+program is the work of W10. The remaining W01–W09 runtime dependencies remain
+owned by their respective packages.
 
 An implementing agent starts with this file and the mandatory
 [Coding Guidelines](../../../../development/coding-guidelines.md). It then
@@ -61,7 +75,7 @@ The governing order is ADR baseline → P1 task book → P1-W10 plan → this de
 - The task book assigns CI wiring to P0-W20; this design's output is a locally
   and CI-invocable entry whose contract CI can consume, not a workflow file.
 
-Classification: the entry contract, verdict rules, outcome classification,
+Classification: the runner foundation, entry contract, verdict rules, outcome classification,
 evidence layout, and 100-cycle procedure are **Required**. Parameterized
 variations beyond the canonical boot (RAM/CPU sizes, SMP, future-stage
 machines) are **Reserved** with recorded triggers. Guest boot, performance
@@ -101,8 +115,9 @@ to be true and who owns it.
 | Repeatability independent of output order (work seq 4) | N/A yet | Matching rules that never depend on line order, timing, or full-text equality | Order-only criteria break on benign output changes and hide real failures | W10 | W10-DV06 |
 
 No row requires selecting CI tooling, guest images, or performance targets; no
-decision blocker is outstanding for the design itself. The prerequisite rows
-are failure boundaries, not work W10 may absorb.
+decision blocker is outstanding for the design itself. The runner foundation
+is W10 work per the correction above; other prerequisites remain assigned to
+their owners.
 
 ## Resolved design decisions and their authority
 

@@ -29,8 +29,9 @@ occurs:
 - W10's conventions are absent or contradictory — upstream defect to W10;
   do not invent a parallel evidence scheme;
 - the W03 required list contains no reference-platform-variable capability —
-  record NC2 as blocked with that finding (an upstream limitation), do not
-  fabricate a capability absence in software.
+  record environment-only NC2 as unavailable; execute only the explicitly
+  scoped NC2 validation-image variant in the scenario matrix. Its result is
+  injected policy/failure-route evidence, never CPU hardware-absence evidence.
 
 ## 2. Ordered implementation steps
 

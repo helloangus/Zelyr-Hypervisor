@@ -13,10 +13,49 @@ W09 lifecycle (assumed contract: stable state + marker vocabulary)
 W07 fatal path (assumed contract: crash/panic report marker classes)
 ```
 
-The driver is the only component W10 implements. It contains no QEMU
+W10 implements the first P0-contract runner and the driver. The driver contains no QEMU
 invocation details of its own beyond what the W01 canonical path and the P0
 runner entry already fix; duplicating them would recreate the runner drift
 P0-W09 exists to prevent.
+
+### 1.1 Runner foundation
+
+The runner alone owns QEMU process creation, serial capture, termination,
+cleanup and per-run evidence. Its public grammar remains P0 v0.1:
+`run --profile NAME [--param CLASS=VALUE ...] [--timeout DURATION]
+[--evidence-dir PATH]`, plus `--version`. Record the executable path,
+profile/value domains and defaults before execution. Unknown or unsupported
+values are usage errors. The driver passes image selection through a
+profile-defined `boot-smoke` value domain; no guest interpretation is implied.
+W11 scenario profiles use this same execution entry.
+
+Lifecycle: validate → create evidence → launch → observe → terminate/reap →
+finalize evidence. Profiles supply the W01 recipe and caller-owned success
+condition; the runner supplies mechanics. P0 statuses remain 0 success,
+1 usage, 2 launch, 3 timeout, 4 target failure, 5 internal error. Preserve the
+raw child exit status separately. Failed evidence creation is status 5;
+failures retain whatever partial evidence can be written.
+
+The target idles indefinitely at stable. The caller fixes and records a finite
+post-marker observation interval before verdict-bearing runs. Continue capture
+through that interval to catch subsequent panic/fatal output, then terminate
+and reap QEMU and classify the final capture. Completion must precede the
+independent hard timeout: timeout is always status 3, even after stable was
+seen. Negative profiles similarly observe after the expected terminal
+diagnostic. Unexpected early child exit is classified explicitly and never
+accepted solely because a marker was printed.
+
+Stream complete serial bytes to disk through termination and final drain;
+bound matcher memory, individual lines and total output with recorded limits.
+Crossing a limit terminates the child with an explicit failure while retaining
+all bytes received through cleanup. Never silently truncate or sample capture.
+Pass process arguments as an argument vector; serial content must never be
+executed or used to derive paths. Host allocation and bounded blocking are
+allowed. This adds no target ABI or runtime interface.
+
+W10-DV03/DV04 validate grammar, all six statuses, unwritable evidence, cleanup,
+complete capture, output-limit handling and late fatal detection. Controlled
+child fixtures may test runner mechanics; only QEMU supplies boot evidence.
 
 ## 2. Regression entry contract
 

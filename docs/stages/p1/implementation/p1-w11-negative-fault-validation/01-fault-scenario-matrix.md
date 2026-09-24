@@ -60,9 +60,24 @@ is a recorded coordination issue, never a locally redefined field list.
   distinguishable and do not abort.
 - Proves: fail-fast policy is real and specific. Does not prove: the
   completeness of W03's required list, or hardware CPU-feature behavior.
-- Dependency: W03's design must expose at least one required capability that
-  the reference platform can vary; if none is variable, the scenario is
-  recorded blocked with that finding (an upstream limitation, not waived).
+- Reference-environment limitation: QEMU 8.2.2 exposes no supported way to
+  remove W03's Required 4 KiB capability while retaining EL2 entry. Record
+  environment-only NC2 as unavailable; never substitute DTB rejection for it.
+- Authorized validation-image variant: a compile-time NC2 selection applies
+  `inject_nc2_sample(raw: u64) -> u64` immediately after acquisition of
+  `ID_AA64MMFR0_EL1` and before its existing decoder. It replaces only bits
+  31:28 (TGran4) with `0xf`, preserving every other sampled bit. The function
+  is pure, owns no state, allocates nothing, cannot fail, and exists only in
+  the selected validation build. The ordinary decoder, classifier, Required
+  policy and failure route are unchanged. No runtime or external input may
+  select it. Its caller is exactly that acquisition boundary; it is not the
+  divergent `fault_scenario` entry used by NC3–NC6.
+- Variant acceptance: build default and NC2 images, inspect containment and
+  the single-field delta, then execute the variant twice through the runner.
+  Both executions must identify the absent required 4 KiB fact and terminate
+  in phase `capabilities`, without later normal continuation. Record image
+  identities and the injected field explicitly. This is executed policy and
+  failure-route evidence for P1-V06, not evidence of CPU hardware absence.
 
 ### NC3 — Intentional synchronous fault (post-vector window)
 
@@ -170,7 +185,7 @@ Validation: W11-DV02 containment review; W10 regression on the default
   image is the standing guard.
 ```
 
-Environment-class scenarios (NC1, NC2) have no in-image trigger; their
+Environment-class scenarios (NC1 and the preferred NC2 environment variant) have no in-image trigger; their
 containment is that nothing in the image changes at all — verified by using
 the identical image identity as the passing R1 run of W10.
 
