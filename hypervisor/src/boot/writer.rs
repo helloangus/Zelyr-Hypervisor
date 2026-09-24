@@ -1,7 +1,7 @@
 //! Early diagnostic writer: raw polling writes to the reference UART.
 //!
-//! Contract: P1-W02 design, panic/identity contracts §3. The only
-//! post-transfer raw output path in P1; the panic route (and, through W07's
+//! Contract: P1-W02 design, panic/identity contracts §3. The
+//! panic route (and, through W07's
 //! extension seam, its report body) is the caller. W06's channel supersedes
 //! this writer for markers and phase output and defines its own
 //! reference-console assumption — no sharing of the constant below.
