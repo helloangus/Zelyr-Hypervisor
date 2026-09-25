@@ -8,6 +8,7 @@
 //! design decision.
 
 use core::arch::global_asm;
+use core::sync::atomic::AtomicU8;
 
 // The W08 table/transition consumer is not linked in this foundation step.
 // Full W08 removes this transitional allowance when the typed helpers are used.
@@ -42,19 +43,20 @@ const P1_BOOT_UART_BASE: u64 = 0x0900_0000;
 const P1_BOOT_STACK_SIZE_BYTES: u64 = 64 * 1024;
 
 #[repr(C, align(16))]
-struct BootStack([u8; P1_BOOT_STACK_SIZE_BYTES as usize]);
+struct BootStack([AtomicU8; P1_BOOT_STACK_SIZE_BYTES as usize]);
 
 // SAFETY comment contract: plain zeroed static; contents are owned by the
 // executing code after the entry loads SP from its top boundary symbol.
-// `link_section` pins the region into `.bss.*` (writable, image-layout
-// resident, mapped by W08 as one writable non-executable region) — without
+// `link_section` pins the region into W08's dedicated zeroed stack output
+// (writable, image-layout resident, non-executable) — without
 // it an immutable zeroed static may be emitted into read-only .rodata.
 // `non_upper_case_globals` is scoped to this item: the name is the W02
 // design's linker-facing contract symbol.
 #[allow(non_upper_case_globals)]
-#[unsafe(link_section = ".bss.__p1_boot_stack")]
+#[unsafe(link_section = ".p1_boot_stack")]
 #[unsafe(no_mangle)]
-static __p1_boot_stack: BootStack = BootStack([0; P1_BOOT_STACK_SIZE_BYTES as usize]);
+static __p1_boot_stack: BootStack =
+    BootStack([const { AtomicU8::new(0) }; P1_BOOT_STACK_SIZE_BYTES as usize]);
 
 global_asm!(
     "

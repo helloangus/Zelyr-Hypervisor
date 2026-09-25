@@ -16,7 +16,11 @@ SECTIONS
   . = 0x40080040;
 
   .text.boot : {
+    __p1_boot_code_start = 0x40080000;
     KEEP(*(.text.boot))
+    ASSERT(. <= 0x40081000, "W08 boot text exceeds first page")
+    . = ALIGN(4096);
+    __p1_boot_code_end = .;
   }
 
   .p1_vectors : ALIGN(4096) {
@@ -28,28 +32,46 @@ SECTIONS
   }
 
   .text : ALIGN(4096) {
+    __p1_text_start = .;
     *(.text .text.*)
+    . = ALIGN(4096);
+    __p1_text_end = .;
   }
 
-  .rodata : ALIGN(16) {
+  .rodata : ALIGN(4096) {
+    __p1_rodata_start = .;
     *(.rodata.boot)
     *(.rodata .rodata.*)
+    . = ALIGN(4096);
+    __p1_rodata_end = .;
   }
 
-  .data : ALIGN(16) {
+  .data : ALIGN(4096) {
+    __p1_data_start = .;
     *(.data .data.*)
     *(.got .got.*)
     *(.data.rel.ro .data.rel.ro.*)
   }
 
-  .bss : ALIGN(16) {
+  .bss : ALIGN(4096) {
     __p1_bss_start = .;
     *(.bss .bss.*)
     *(.sbss .sbss.*)
     *(COMMON)
-    . = ALIGN(16);
+    . = ALIGN(4096);
+    __p1_data_end = .;
+  }
+
+  .p1_boot_stack (NOLOAD) : ALIGN(4096) {
+    __p1_stack_start = .;
+    KEEP(*(.p1_boot_stack))
+    . = ALIGN(4096);
+    __p1_stack_end = .;
     __p1_bss_end = .;
   }
+
+  ASSERT(__p1_stack_end - __p1_stack_start == 65536, "W08 boot stack must be 64 KiB")
+  ASSERT(__p1_stack_end <= 0x40200000, "W08 image exceeds one L3 window")
 
   /DISCARD/ : {
     *(.eh_frame .eh_frame.*)
