@@ -61,11 +61,16 @@ entry):
 ```sh
 cargo build --target aarch64-unknown-none-softfloat -p hypervisor
 rust-objcopy -O binary \
-  target/aarch64-unknown-none-softfloat/release/hypervisor hypervisor.raw
+  target/aarch64-unknown-none-softfloat/debug/hypervisor hypervisor.raw
 # 64-byte Image header (little-endian): code0 = 0x14000010 (branch over the
 # header), code1 = 0, text_offset = 0x80000, image_size = 64 + len(raw),
 # flags = 0, magic = 0x644d5241 at 0x38; header || raw -> hypervisor-boot.img
 ```
+
+W10 materializes this conversion in `scripts/p1-image` using installed
+`llvm-objcopy`, records converter provenance and image hashes, and selects
+the debug artifact matching the build command above. This corrects the
+historical release-path typo without changing the image format.
 
 Reference invocation:
 
