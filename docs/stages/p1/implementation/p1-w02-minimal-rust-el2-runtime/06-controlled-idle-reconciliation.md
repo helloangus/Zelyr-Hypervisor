@@ -1,9 +1,9 @@
 # W02 controlled-idle unsafe boundary reconciliation
 
-**Status:** Proposed detailed-design correction; implementation and validation are recorded separately.  
-**Scope:** The W02 `controlled_idle()` instruction boundary realized at W09 integration.  
-**Version:** v0.1  
-**Owner/change context:** P1-W02/W09 integration, 2026-09-25.  
+**Status:** Proposed detailed-design correction; implementation and validation are recorded separately.
+**Scope:** The W02 `controlled_idle()` instruction boundary realized at W09 integration.
+**Version:** v0.1
+**Owner/change context:** P1-W02/W09 integration, 2026-09-25.
 **Supersedes:** The unsafe-boundary count in W02 [implementation/review §4](05-implementation-and-review.md) and any implication in the [runtime contract §5](03-code-contracts-rust-runtime.md) that `wfi` requires no audited unsafe boundary. The `loop { wfi }` behavior remains unchanged.
 
 ## Goal, observed gap and authority
