@@ -1,7 +1,7 @@
 # Zelyr Unsafe Inventory
 
 **Status:** Normative register.
-**Version:** v0.4 — W04 baseline and W05 exception-entry boundaries.
+**Version:** v0.5 — adds W06 reference-console MMIO after W04/W05 boundaries.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
 only by real, merged unsafe changes under the policy's review rules.
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
@@ -145,7 +145,6 @@ completed.
 - **audit-status:** author and independent root soundness review complete
 - **permanence:** boot report retention through P2 handoff; no reset API
 
-
 ### U-005 — EL2 baseline register reads
 
 - **status:** accepted
@@ -231,6 +230,23 @@ completed.
 - **validation:** [W05 verification](../stages/p1/verification/p1-w05-el2-exception-entry-baseline-verification.md); static link inspection and host tests pass, known-register/recursive fault injection deferred to W11.
 - **audit-status:** author and independent soundness review complete; execution proof pending.
 - **permanence:** P1 single-CPU terminal entry; re-audit for SMP, TLS, return or MMU mapping changes.
+
+### U-010 — reference early-console volatile MMIO
+
+- **status:** accepted
+- **title:** closed PL011 DR/FR/CR read/write boundary
+- **boundary-category:** `mmio-volatile`
+- **location:** `hypervisor/src/boot/console.rs`, `read_register` and `write_register`
+- **necessity:** Rust cannot safely access physical device registers with volatile semantics through ordinary references
+- **safety-preconditions:** W01 canonical QEMU virt PL011 at `0x0900_0000`, 32-bit aligned register offsets in a 4 KiB window, single masked boot CPU writer; W08 preserves the window as Device-nGnRE after MMU enablement
+- **establishment:** fixed base and closed offsets in W06, W01 boot premise, W08 mapping obligation; no external input chooses register addresses
+- **failure-class:** FC-PLATFORM for a false reference-device premise; W09 routes init readback failure and does not continue normally
+- **authorizing-design:** [W06 channel contracts](../stages/p1/implementation/p1-w06-early-console-logging/02-code-contracts-channel.md) and [reconciliation](../stages/p1/implementation/p1-w06-early-console-logging/05-implementation-reconciliation.md)
+- **owner:** P1-W06
+- **review-record:** `/root/integration_audit`, 2026-09-25: independently checked fixed base, closed aligned offsets, volatile read/write, UARTCR preservation and readback, single-CPU writer, and W08 Device-nGnRE premise; no soundness defect found; see W06 verification record
+- **validation:** target compilation and source review in [W06 verification](../stages/p1/verification/p1-w06-early-console-logging-verification.md); QEMU/post-MMU exercise belongs to W09–W11
+- **audit-status:** author and independent soundness review complete; integrated execution pending W09–W11
+- **permanence:** P1 reference transport only; re-audit at W08 mapping and P2 discovery replacement
 
 ## History
 

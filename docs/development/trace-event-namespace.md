@@ -72,6 +72,8 @@ when two domains could claim a fact.
 | Canonical name | Domain | Owning design | Meaning | Status | Replaced-by |
 |---|---|---|---|---|---|
 | `cpu.capability.fact` | `cpu` | [P1-W03](../stages/p1/implementation/p1-w03-aarch64-capability-inventory/05-implementation-reconciliation.md) | One classified boot CPU capability observation in the retained inventory | declared | — |
+| `boot.phase.enter` | `boot` | [P1-W06](../stages/p1/implementation/p1-w06-early-console-logging/05-implementation-reconciliation.md) | One boot phase has begun, emitted at its W09-owned transition | declared | — |
+| `boot.phase.complete` | `boot` | [P1-W06](../stages/p1/implementation/p1-w06-early-console-logging/05-implementation-reconciliation.md) | One boot phase has completed, emitted at its W09-owned transition | declared | — |
 
 ## 4. Compatibility and deprecation rules
 

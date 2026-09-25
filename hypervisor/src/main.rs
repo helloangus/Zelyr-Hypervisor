@@ -5,8 +5,8 @@
 //! design (establishment sequence, boot context, panic route, build
 //! identity). The runtime establishes stages 1–8 of the W02 establishment
 //! order and terminates through the recorded route at the unlinked W09
-//! seam; no console, allocator, vectors, EL2 baseline, or MMU mechanism
-//! exists — those are W03–W08 subjects.
+//! seam. The W03 inventory and W06 console mechanisms are linked but their
+//! W09 phase callers are not; later packages own vectors, baseline and MMU.
 
 #![no_std]
 #![no_main]

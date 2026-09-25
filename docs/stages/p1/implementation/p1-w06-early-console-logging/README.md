@@ -1,5 +1,8 @@
 # P1-W06 Early Console and Bring-up Logging — Detailed Implementation Design
 
+Read the [current-state reconciliation](05-implementation-reconciliation.md)
+first for delivered P0 diagnostic semantics and the init-time write boundary.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** The early console required by
