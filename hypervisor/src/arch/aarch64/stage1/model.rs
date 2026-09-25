@@ -6,6 +6,8 @@ const WINDOW_BYTES: u64 = 2 * 1024 * 1024;
 const ADDRESS_MASK: u64 = 0x0000_ffff_ffff_f000;
 const VALID_PAGE: u64 = 3;
 const AF: u64 = 1 << 10;
+// Non-VHE EL2 uses one VA range: AP[1] is RES1 in every page descriptor.
+const EL2_AP_ONE_VA_RANGE: u64 = 1 << 6;
 const READ_ONLY: u64 = 1 << 7;
 const XN: u64 = 1 << 54;
 pub const MAIR: u64 = 0x04_ff_ee;
@@ -27,7 +29,12 @@ impl MappingClass {
             Self::DataRw | Self::BootStack => (1, false, true),
             Self::ConsoleMmio => (2, false, true),
         };
-        VALID_PAGE | AF | (index << 2) | if ro { READ_ONLY } else { 0 } | if xn { XN } else { 0 }
+        VALID_PAGE
+            | AF
+            | EL2_AP_ONE_VA_RANGE
+            | (index << 2)
+            | if ro { READ_ONLY } else { 0 }
+            | if xn { XN } else { 0 }
     }
 }
 #[derive(Clone, Copy, Debug)]
@@ -58,6 +65,64 @@ pub struct Stage1Error {
 impl Stage1Error {
     pub const fn new(step: Stage1Step, detail: &'static str) -> Self {
         Self { step, detail }
+    }
+    /// Closed, allocation-free handoff to W09's static FailureReason.
+    /// Every production error has a step-qualified token; unfamiliar input
+    /// (possible in host model tests) remains an explicit invariant label.
+    pub fn static_message(self) -> &'static str {
+        match self.step {
+            Stage1Step::Premise => match self.detail {
+                "C8 not established" => "premise:C8-not-established",
+                "SCTLR undeclared" => "premise:SCTLR-undeclared",
+                "SCTLR M/C/I already on" => "premise:SCTLR-MCI-on",
+                "HCR undeclared" => "premise:HCR-undeclared",
+                "HCR VM already on" => "premise:HCR-VM-on",
+                "vectors not established" => "premise:vectors-unestablished",
+                "vector base mismatch" => "premise:vector-base-mismatch",
+                "fatal or console not ready" => "premise:diagnostics-unready",
+                "4K granule absent" => "premise:granule-4k-absent",
+                "PA range absent" => "premise:pa-range-absent",
+                "Stage1 repeated" => "premise:Stage1-repeated",
+                "PA width" => "premise:PA-width-unsupported",
+                _ => "premise:unrecognized",
+            },
+            Stage1Step::Build => match self.detail {
+                "table end overflow" => "build:table-end-overflow",
+                "tables outside data" => "build:tables-outside-data",
+                "page overflow" => "build:page-overflow",
+                "table overflow" => "build:table-overflow",
+                "table address" => "build:table-address",
+                "no image" => "build:no-image",
+                "no console" => "build:no-console",
+                "L1 collision" => "build:L1-collision",
+                "window overflow" => "build:window-overflow",
+                "window capacity" => "build:window-capacity",
+                "overlap" => "build:overlap",
+                "table offset" => "build:table-offset",
+                "table page index" => "build:table-page-index",
+                "boot-code" => "build:boot-code-bounds",
+                "vectors" => "build:vector-bounds",
+                "text" => "build:text-bounds",
+                "rodata" => "build:rodata-bounds",
+                "data" => "build:data-bounds",
+                "stack" => "build:stack-bounds",
+                "console" => "build:console-bounds",
+                _ => "build:unrecognized",
+            },
+            Stage1Step::Verify => match self.detail {
+                "descriptor/inventory mismatch" => "verify:descriptor-inventory-mismatch",
+                "table page index" => "verify:table-page-index",
+                "table copy mismatch" => "verify:table-copy-mismatch",
+                _ => "verify:unrecognized",
+            },
+            Stage1Step::Program => "program:translation-register-readback",
+            Stage1Step::PostVerify => match self.detail {
+                "SCTLR M/C/I readback" => "postverify:SCTLR-MCI-readback",
+                "rodata sentinel" => "postverify:rodata-sentinel",
+                "data sentinel" => "postverify:data-sentinel",
+                _ => "postverify:unrecognized",
+            },
+        }
     }
 }
 fn invalid(detail: &'static str) -> Stage1Error {
@@ -100,6 +165,19 @@ impl Tables {
             console_l3: Table::zeroed(),
         }
     }
+    /// The five physical pages in the descriptor order used by table links.
+    /// W08 copies these words into its aligned static atomic backing only
+    /// after the model has passed complete verification.
+    pub fn page_words(&self, page: usize) -> Option<&[u64; 512]> {
+        match page {
+            0 => Some(&self.l1.0),
+            1 => Some(&self.image_l2.0),
+            2 => Some(&self.console_l2.0),
+            3 => Some(&self.image_l3.0),
+            4 => Some(&self.console_l3.0),
+            _ => None,
+        }
+    }
     fn clear(&mut self) {
         self.l1.0.fill(0);
         self.image_l2.0.fill(0);
@@ -135,7 +213,8 @@ impl Tables {
     /// Every descriptor is inspected, including invalid holes and both directions
     /// of inventory closure. Arbitrary descriptor pointers are never dereferenced.
     pub fn verify(&self, regions: &[Region], base: PhysAddr) -> Result<(), Stage1Error> {
-        let layout = Layout::validate(regions, base)?;
+        let layout = Layout::validate(regions, base)
+            .map_err(|error| Stage1Error::new(Stage1Step::Verify, error.detail))?;
         let mismatch = || Stage1Error::new(Stage1Step::Verify, "descriptor/inventory mismatch");
         for i in 0..512 {
             let expected_l1 = if i == TableIndex::for_level(layout.image, 30).0 {

@@ -53,6 +53,9 @@ loads only the linked supporting file needed for its assigned step:
   mandatory W08/W09 preflight correction: W08 returns a fallible mechanism
   result and W09 alone owns terminal phase dispatch; read before transition
   or adapter implementation.
+- [06-activation-reconciliation.md](06-activation-reconciliation.md) —
+  required safe table-storage representation and three audited boundaries;
+  read before Stage-1 activation or unsafe review.
 
 Before editing, the agent must also follow the Coding Guidelines preflight:
 repository [AGENTS.md](../../../../../AGENTS.md), [documentation

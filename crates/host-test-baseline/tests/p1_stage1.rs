@@ -110,6 +110,7 @@ fn mappings_never_combine_write_and_execute() {
         let a = c.attributes();
         assert!(a & (1 << 7) != 0 || a & (1 << 54) != 0);
         assert_eq!(a & 3, 3);
+        assert_ne!(a & (1 << 6), 0, "EL2 one-VA-range AP[1] is RES1");
         assert_ne!(a & (1 << 10), 0);
     }
     assert_eq!((C::ConsoleMmio.attributes() >> 2) & 7, 2);
@@ -127,4 +128,42 @@ fn typed_arithmetic_and_tcr_bounds() {
         assert_ne!(tcr & (1 << 23), 0);
     }
     assert!(model::tcr_for_pa_bits(0).is_err());
+}
+
+#[test]
+fn terminal_error_tokens_preserve_stage1_step() {
+    use model::{Stage1Error, Stage1Step};
+    for (step, detail, expected) in [
+        (
+            Stage1Step::Premise,
+            "vector base mismatch",
+            "premise:vector-base-mismatch",
+        ),
+        (
+            Stage1Step::Build,
+            "tables outside data",
+            "build:tables-outside-data",
+        ),
+        (
+            Stage1Step::Verify,
+            "table copy mismatch",
+            "verify:table-copy-mismatch",
+        ),
+        (
+            Stage1Step::Program,
+            "translation register readback",
+            "program:translation-register-readback",
+        ),
+        (
+            Stage1Step::PostVerify,
+            "rodata sentinel",
+            "postverify:rodata-sentinel",
+        ),
+    ] {
+        assert_eq!(Stage1Error::new(step, detail).static_message(), expected);
+    }
+    assert_eq!(
+        Stage1Error::new(Stage1Step::Build, "unexpected").static_message(),
+        "build:unrecognized"
+    );
 }
