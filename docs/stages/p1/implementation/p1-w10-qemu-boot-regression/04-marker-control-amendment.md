@@ -1,6 +1,6 @@
 # W10 R4 marker-control amendment
 
-**Status:** Proposed detailed-design correction; no implementation or verification claim.
+**Status:** Adopted detailed-design correction for W10 R4; implementation and verification are recorded separately.
 **Scope:** R4's missing-Stable detection control only.
 **Version:** v0.1.
 **Owner/change context:** W10 scenario execution after W09 integration.
