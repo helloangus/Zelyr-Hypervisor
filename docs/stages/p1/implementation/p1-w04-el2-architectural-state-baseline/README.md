@@ -1,5 +1,9 @@
 # P1-W04 EL2 Architectural-State Baseline — Detailed Implementation Design
 
+Implementation status and concrete contract resolutions are recorded in the
+[implementation record](../p1-w04-el2-architectural-state-baseline-record.md);
+executed checks are in the [verification record](../../verification/p1-w04-el2-architectural-state-baseline-verification.md).
+
 Read the [preflight amendment](00-preflight-amendment.md) first. It supersedes
 the explicitly named portions of this proposed design; remaining contracts
 and separate implementation/verification evidence requirements still apply.
