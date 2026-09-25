@@ -34,6 +34,9 @@ only the linked supporting file needed for its assigned step:
   implementation steps.
 - [03-implementation-and-review.md](03-implementation-and-review.md) — ordered
   workflow, validation matrix, observability model, and handoff checklist.
+- [04-foundation-reconciliation.md](04-foundation-reconciliation.md) — the
+  current raw-value, Stable-index and atomic-construction corrections; read
+  before implementing tracker types or consuming them from W07.
 
 Before editing, the agent must also follow the Coding Guidelines preflight:
 repository [AGENTS.md](../../../../../AGENTS.md), [documentation
