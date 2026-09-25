@@ -21,9 +21,12 @@ were addressed: formatter truncation now has an explicit suffix and UTF-8
 conversion has a nonpanicking fallback. The review does not prove hardware
 behavior.
 
-Local execution so far: `cargo fmt --all -- --check`,
+Local execution passed: `cargo fmt --all -- --check`,
+`cargo clippy --workspace --exclude hypervisor --all-targets -- -D warnings`,
 `cargo clippy --target aarch64-unknown-none-softfloat -p hypervisor -- -D warnings`,
-and `cargo test --workspace --exclude hypervisor` (six host tests passed).
+`cargo build --target aarch64-unknown-none-softfloat -p hypervisor`,
+`cargo test --workspace --exclude hypervisor` (six host tests passed), and
+`git diff --check`. The two builds/lints emitted no warnings.
 The host suite exercises W03 logic only and proves no PL011 behavior.
 The remaining integration gate set and QEMU execution are required before
 W06's executed acceptance is claimed.
