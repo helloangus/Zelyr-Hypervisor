@@ -15,8 +15,19 @@ SECTIONS
 {
   . = 0x40080040;
 
-  .text : {
+  .text.boot : {
     KEEP(*(.text.boot))
+  }
+
+  .p1_vectors : ALIGN(4096) {
+    __p1_vectors_start = .;
+    KEEP(*(.p1_vectors))
+    ASSERT(. - __p1_vectors_start == 2048, "W05 vector table must have sixteen slots")
+    . = __p1_vectors_start + 4096;
+    __p1_vectors_end = .;
+  }
+
+  .text : ALIGN(4096) {
     *(.text .text.*)
   }
 

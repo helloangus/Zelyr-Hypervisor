@@ -47,6 +47,8 @@ static __p1_boot_stack: BootStack = BootStack([0; P1_BOOT_STACK_SIZE_BYTES as us
 
 global_asm!(
     "
+    .globl __p1_boot_stack_top
+    .set __p1_boot_stack_top, __p1_boot_stack + {stack_size}
     .section .text.boot, \"ax\"
     .globl p1_el2_entry
     .type p1_el2_entry, %function
