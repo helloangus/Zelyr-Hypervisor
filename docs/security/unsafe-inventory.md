@@ -1,7 +1,7 @@
 # Zelyr Unsafe Inventory
 
 **Status:** Normative register.
-**Version:** v0.6 — accepts reviewed W07 fatal-entry register reads after W06 MMIO.
+**Version:** v0.7 — records independently reviewed W08 Stage-1 activation boundaries after W07.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
 only by real, merged unsafe changes under the policy's review rules.
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
@@ -264,6 +264,57 @@ completed.
 - **validation:** [W07 verification](../stages/p1/verification/p1-w07-fatal-crash-diagnostics-verification.md); host formatter tests and target build/Clippy pass; EL2 fault execution pending.
 - **audit-status:** author and independent soundness review complete; integrated execution pending W08–W11.
 - **permanence:** P1 terminal report boundary; re-audit for compiler entry-layout, SMP or report-source changes.
+
+### U-012 — W08 EL2 Stage-1 register and instruction boundary
+
+- **status:** accepted
+- **title:** closed MAIR/TTBR0/TCR/SCTLR access and activation barriers
+- **boundary-category:** `arch-register`
+- **location:** `hypervisor/src/arch/aarch64/stage1/regs.rs`, all small register and instruction wrappers
+- **necessity:** safe Rust cannot encode EL2 `msr`, `mrs`, `dsb`, `isb`, `tlbi alle2` or `ic iallu`.
+- **safety-preconditions:** W01-established EL2 and one DAIF-masked boot CPU; W03 required 4 KiB/PA facts, W04 baseline, W05 vectors, W06 console and W07 fatal route complete; W08 verified five-page tables and fixed control values before the one-time enable.
+- **establishment:** W09 will be the sole caller of the single-shot W08 entry; W08 checks the declared predecessors, verifies and copies the full tables, uses explicit asm operands without `nomem` on control writes/barriers, and follows the W08 preflight `DSB SY`/TLBI/I-cache/ISB order. A second entry is rejected.
+- **failure-class:** FC-INVARIANT terminal via W09 Stage1 failure route or W05/W07 vector path if an architectural fault occurs mid-transition.
+- **authorizing-design:** [W08 design](../stages/p1/implementation/p1-w08-host-stage1-address-space/README.md), [preflight](../stages/p1/implementation/p1-w08-host-stage1-address-space/00-preflight-amendment.md) and [activation reconciliation](../stages/p1/implementation/p1-w08-host-stage1-address-space/06-activation-reconciliation.md).
+- **owner:** P1-W08.
+- **review-record:** `/root/w08_soundness`, 2026-09-25: independently reviewed closed asm scope, barrier/control order, MAIR/TCR/XN and AP encoding against Arm-maintained reference definitions; identified missing EL2 AP[1] RES1 bit, then re-reviewed and accepted the corrected six-class encoding and U-012 boundary.
+- **validation:** [W08 activation verification](../stages/p1/verification/p1-w08-mmu-activation-verification.md); target build/Clippy and six host W08 tests pass; actual MMU execution belongs to W09/W10/W11 integration.
+- **audit-status:** author and independent soundness review complete; integrated execution pending.
+- **permanence:** P1 fixed reference Stage-1 transition; re-audit for register policy, P2 remapping or SMP.
+
+### U-013 — W08 linker-bound address inventory
+
+- **status:** accepted
+- **title:** addresses of twelve fixed linker region bounds
+- **boundary-category:** `memory-mgmt`
+- **location:** `hypervisor/src/arch/aarch64/stage1/mod.rs`, linker-symbol `unsafe extern` declaration and `inventory`
+- **necessity:** linker-defined mapping bounds cannot be declared as Rust-owned statics; their addresses are required to construct the exact Stage-1 inventory.
+- **safety-preconditions:** the W08 linker script uniquely defines page-separated symbols; no declared `u8` is dereferenced; the symbol addresses remain in the fixed P1 image window.
+- **establishment:** `addr_of!` obtains addresses only, the pure table model rejects unaligned, overlapping, reversed or out-of-window bounds, and the vector base is checked against the vector bound before activation.
+- **failure-class:** FC-INVARIANT terminal on a false linker/layout premise; unmapped execution would enter W05/W07 if the premise escaped checks.
+- **authorizing-design:** [W08 page-layout record](../stages/p1/implementation/p1-w08-page-layout-record.md) and [activation reconciliation](../stages/p1/implementation/p1-w08-host-stage1-address-space/06-activation-reconciliation.md).
+- **owner:** P1-W08.
+- **review-record:** `/root/w08_soundness`, 2026-09-25: independently reviewed address-only extern declarations, checked linker-bound inventory and memory-management classification; accepted U-013, with final linked table/sentinel placement reserved for W09 integration.
+- **validation:** [W08 activation verification](../stages/p1/verification/p1-w08-mmu-activation-verification.md); merged linker section/bound evidence exists, integrated table placement remains pending W09.
+- **audit-status:** author and independent soundness review complete; integrated ELF placement and execution pending.
+- **permanence:** P1 fixed linker inventory; re-audit on image layout or relocation changes.
+
+### U-014 — W08 forced post-MMU read-only sentinel
+
+- **status:** accepted
+- **title:** volatile load of an in-image read-only sentinel
+- **boundary-category:** `memory-mgmt`
+- **location:** `hypervisor/src/arch/aarch64/stage1/mod.rs`, `post_mmu_checks`
+- **necessity:** an ordinary read may be folded to a constant and fail to test the RoData mapping after MMU enablement; one volatile read forces the access.
+- **safety-preconditions:** the sentinel is a valid aligned `u64` in the linker RoData region and that region is mapped read-only before the access.
+- **establishment:** W08 builds and verifies the linker-bounded RoData page descriptors before setting SCTLR.M; the read occurs only after the enable ISB; no pointer arithmetic or write is performed.
+- **failure-class:** FC-INVARIANT terminal; a bad mapping faults through the armed W05/W07 path rather than returning success.
+- **authorizing-design:** [W08 transition contracts](../stages/p1/implementation/p1-w08-host-stage1-address-space/03-code-contracts-mapping-and-transition.md) §5 and [activation reconciliation](../stages/p1/implementation/p1-w08-host-stage1-address-space/06-activation-reconciliation.md).
+- **owner:** P1-W08.
+- **review-record:** `/root/w08_soundness`, 2026-09-25: independently reviewed aligned immutable sentinel, one bounded volatile read and the verified RoData-map precondition; accepted U-014, with emitted load and post-MMU execution reserved for W09 integration.
+- **validation:** [W08 activation verification](../stages/p1/verification/p1-w08-mmu-activation-verification.md); target compilation is not post-MMU execution evidence, which W09/W10/W11 must collect.
+- **audit-status:** author and independent soundness review complete; emitted-access and execution evidence pending.
+- **permanence:** P1 post-enable sentinel; re-audit if the mapping check changes or is removed.
 
 ## History
 
