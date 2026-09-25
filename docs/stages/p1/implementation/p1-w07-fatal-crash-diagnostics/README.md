@@ -34,6 +34,9 @@ loads only the linked supporting file needed for its assigned step:
   lifecycle, the transport-preference model across the MMU transition, the
   concurrency model, and the assumed-contract table. Load this first for
   any step.
+- [00-implementation-reconciliation.md](00-implementation-reconciliation.md)
+  — mandatory preflight corrections to failure-class escalation, safe guard
+  storage, and bounded-line sizing; read before implementing any entry.
 - [02-code-contracts-report-model.md](02-code-contracts-report-model.md) —
   the report model: field list per kind, availability classes, fixed
   ordering, marker-class prefixes, and the sizing arithmetic.
@@ -85,9 +88,10 @@ design → Coding Guidelines. In particular:
   parallel designs consumed through recorded seams.
 - The P0 contracts are **assumed contracts**:
   [P0-W14](../../../p0/plans/p0-w14-panic-failure-classification.md)
-  (failure-class semantics: every P1 failure is a hypervisor-invariant
-  class; the guest-caused class is untouched in P1; this design's reports
-  never upgrade or downgrade a class), and
+  (failure-class semantics and the explicit escalation rule; a terminal
+  report is an FC-INVARIANT exit, but missing capabilities are first
+  FC-UNSUPPORTED and false platform premises first FC-PLATFORM; see the
+  [reconciliation](00-implementation-reconciliation.md)), and
   [P0-W12](../../../p0/plans/p0-w12-logging-diagnostic-baseline.md)
   (minimal crash-information principle and identity association). W07
   cites their semantics; it does not restate or re-own them.
