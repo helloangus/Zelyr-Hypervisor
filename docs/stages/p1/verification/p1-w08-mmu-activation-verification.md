@@ -30,3 +30,14 @@ peak. No QEMU boot with SCTLR.M set, physical table readback, negative fault,
 or hardware trace was collected in this change. W09 integration must make the
 path reachable; W10/W11 then collect real P1-V13/P1-V14 and fault evidence.
 This checkpoint does not close the full W08 acceptance criteria.
+
+## Later W09 integration observation (2026-09-25)
+
+The historical paragraph above describes the standalone W08 PR. The
+[W09 integrated verification](p1-w09-initialization-sequencing-verification.md)
+now records one QEMU runner boot reaching `Stage1.complete` and Stable, with
+the five-page static at `0x4009b000..0x400a0000` inside DataRw, the forced
+RoData sentinel inside RoData, the writable sentinel inside DataRw, and an
+emitted post-enable load. This establishes one reference-path transition,
+not a hardware proof or W11 post-MMU fault/vector/fatal exercise. P1-V14's
+remaining continuity and negative evidence stays open.

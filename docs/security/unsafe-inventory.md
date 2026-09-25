@@ -1,7 +1,7 @@
 # Zelyr Unsafe Inventory
 
 **Status:** Normative register.
-**Version:** v0.8 — adds the proposed P1-W09 integrated idle instruction boundary.
+**Version:** v0.8 — adds the independently reviewed P1-W09/W02 stable-idle instruction boundary.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
 only by real, merged unsafe changes under the policy's review rules.
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
@@ -318,19 +318,19 @@ completed.
 
 ### U-015 — P1 stable idle WFI instruction
 
-- **status:** proposed
+- **status:** accepted
 - **title:** one AArch64 `wfi` instruction inside the stable boot-CPU idle loop
 - **boundary-category:** `arch-register`
 - **location:** `hypervisor/src/arch/aarch64/idle.rs`, `wait_for_interrupt`
 - **necessity:** stable Rust has no safe intrinsic for the W02-designed AArch64 WFI idle operation.
 - **safety-preconditions:** W01-established EL2 boot CPU, W04-maintained DAIF mask, W09 `Stable` transition completed; WFI has no memory or stack operand. Normal completion returns to the W02 loop; EL3 firmware may trap it under `SCR_EL3.TWI`, which P1 does not control.
 - **establishment:** W02 glue invokes `controlled_idle` only after `run_init_sequence` returns and `enter_stable` succeeds; that loop is the one arch wrapper's sole P1 call site.
-- **failure-class:** FC-INVARIANT terminal on a false execution-level or lifecycle premise; an exception after Stable is routed by W05/W07.
+- **failure-class:** FC-INVARIANT terminal on a false execution-level or lifecycle premise; an EL2 exception taken through the installed vectors after Stable is routed by W05/W07. EL3 traps are firmware-owned and not claimed by this route.
 - **authorizing-design:** [W02 controlled-idle reconciliation](../stages/p1/implementation/p1-w02-minimal-rust-el2-runtime/06-controlled-idle-reconciliation.md), [W02 runtime contracts](../stages/p1/implementation/p1-w02-minimal-rust-el2-runtime/03-code-contracts-rust-runtime.md) §5 and [W09 state machine](../stages/p1/implementation/p1-w09-initialization-sequencing/01-init-state-machine.md) §2.
 - **owner:** P1-W09 integration of the W02 deferred seam.
-- **review-record:** independent architecture/soundness review requested; pending.
-- **validation:** [W09 verification](../stages/p1/verification/p1-w09-initialization-sequencing-verification.md); manual QEMU diagnostic reached Stable, formal runner evidence pending.
-- **audit-status:** proposed; blocks merge until an independent reviewer accepts.
+- **review-record:** `/root/w09_unsafe_review`, 2026-09-25: independently reviewed the W02 detailed-design correction, unique Stable-only call path, masked-DAIF premise, WFI asm options and EL3 firmware-trap limitation; accepted the U-015 instruction boundary. Required precise EL2-only exception wording and the linked W09 verification record, both added before merge.
+- **validation:** [W09 verification](../stages/p1/verification/p1-w09-initialization-sequencing-verification.md); target build/Clippy and one W10-runner canonical QEMU Stable boot pass; real-hardware power state, wake and EL3 trap behavior are not proven.
+- **audit-status:** author and independent soundness review complete; hardware behavior remains out of scope.
 - **permanence:** P1 boot CPU idle; firmware WFI trapping and power-state behavior remain reference-environment limitations; re-audit for interrupt delivery, SMP or scheduler idle.
 
 ## History

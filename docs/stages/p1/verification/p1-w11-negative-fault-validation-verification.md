@@ -64,3 +64,14 @@ P1-V18 remains open because none of NC1–NC6 has paired real executions.
 P1-V19 remains open because S1–S6 were not completed. W11-DV01 matrix
 coverage is documented in the detailed design; W11-DV02 full binary
 containment and W11-DV06 downstream handoff remain pending.
+
+## Later W09 integration observation (2026-09-25)
+
+The scenario table above is the standalone NC2 foundation's PR-time state.
+The [W09 verification](p1-w09-initialization-sequencing-verification.md)
+records one selected NC2 image run through the clean-boot runner: it returned
+`FAIL-PANIC`, while the serial report identified `capabilities.enter` and
+`cap-reject fact=granule-4k`. This is supporting evidence that W09 invokes
+the unchanged W03 required-fact route; the clean-boot runner's failure is not
+a W11 scenario-specific pass. A second NC2 run, paired comparison and the
+NC1/NC3–NC6 fault scenarios remain unperformed; P1-V18/P1-V19 stay open.
