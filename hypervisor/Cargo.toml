@@ -8,4 +8,8 @@ name = "hypervisor"
 version = "0.1.0"
 edition = "2024"
 build = "build.rs"
-# No dependencies, no build-dependencies, no features.
+# No dependencies or build-dependencies. The default image contains no
+# intentional-fault validation selection; W11's NC2 variant is explicit.
+[features]
+default = []
+p1-w11-nc2 = []

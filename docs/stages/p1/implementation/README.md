@@ -20,7 +20,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P1-W08 | [Host Stage-1 address space detailed implementation design](p1-w08-host-stage1-address-space/README.md), [table foundation](p1-w08-stage1-foundation-record.md), [page layout](p1-w08-page-layout-record.md), and [activation mechanism](p1-w08-mmu-activation-record.md) | Mechanism compiled and model checked; W09 invocation and executed MMU evidence pending |
 | P1-W09 | [Initialization sequencing detailed implementation design](p1-w09-initialization-sequencing/README.md) and [lifecycle foundation record](p1-w09-lifecycle-foundation-record.md) | Pure type/tracker foundation only; sequencing and P1-V15 pending |
 | P1-W10 | [QEMU boot regression detailed implementation design](p1-w10-qemu-boot-regression/README.md) and [implementation record](p1-w10-qemu-boot-regression-record.md) | Runner foundation implemented; integrated W09 execution pending |
-| P1-W11 | [Negative and fault validation detailed implementation design](p1-w11-negative-fault-validation/README.md) | Proposed design; implementation not claimed |
+| P1-W11 | [Negative and fault validation detailed implementation design](p1-w11-negative-fault-validation/README.md) and [NC2 validation-image foundation record](p1-w11-negative-fault-validation-record.md) | NC2 sample injection compiled and host-tested; W09 wiring and executed fault evidence pending |
 | P1-W12 | [P1 documentation and P2 handoff detailed implementation design](p1-w12-p1-documentation-handoff/README.md) | Proposed design; implementation not claimed |
 
 Actual command logs and pass/fail evidence belong in `../verification/`, not in

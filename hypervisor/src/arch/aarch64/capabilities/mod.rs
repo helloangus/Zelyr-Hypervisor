@@ -1,5 +1,7 @@
 //! W03 phase entry and once-published report. W09 owns wiring.
 mod facts;
+#[cfg(feature = "p1-w11-nc2")]
+mod validation_nc2;
 pub(crate) use facts::{FactId, FactRecord};
 // W04 needs the observation vocabulary when its consumer lands.
 use core::cell::UnsafeCell;
@@ -52,11 +54,14 @@ impl ReportCell {
 /// After W02 establishment, on the boot CPU with DAIF masked.
 #[allow(dead_code)] // W09 owns phase wiring; remove when W09 integrates.
 pub(crate) fn build_capability_report() {
+    let mmfr0 = read_id_aa64mmfr0();
+    #[cfg(feature = "p1-w11-nc2")]
+    let mmfr0 = validation_nc2::inject_nc2_sample(mmfr0);
     let report = CapabilityReport::from_registers(&RawRegisters {
         current_el: read_current_el(),
         mpidr: read_mpidr(),
         pfr0: read_id_aa64pfr0(),
-        mmfr0: read_id_aa64mmfr0(),
+        mmfr0,
         mmfr1: read_id_aa64mmfr1(),
         cntfrq: read_cntfrq(),
     });
