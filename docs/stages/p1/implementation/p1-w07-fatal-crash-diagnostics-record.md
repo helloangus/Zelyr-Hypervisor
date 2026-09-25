@@ -1,6 +1,6 @@
 # P1-W07 fatal-report implementation record
 
-**Status:** In progress; W09 lifecycle seam and target build pending.
+**Status:** Mechanism linked and target-built; integrated fault evidence pending.
 **Scope:** P1 terminal report model, panic ownership transfer and exception route.
 **Version:** v0.1
 **Owner/change context:** P1-W07, 2026-09-25.
@@ -34,8 +34,9 @@ New unsafe U-011 comprises only closed `CurrentEL` and handler-entry SP/LR
 reads; safe atomics own guard/readiness. No new dependency, feature, external
 ABI or public API is intended; crate-local fatal/report seams are new. The
 W09-owned `InitPhase`, `LifecyclePosition`, `FailureReason` and `TRACKER`
-interfaces have been agreed but are not yet present on this branch. Consequently
-target compilation and complete W07 validation are blocked until the
-coherent W09 lifecycle foundation lands. No placeholder tracker or fabricated
-phase value is added here. W08 mapping and W11 fault execution remain separate
-owners. There are no recovery, storage, Guest or GIC additions.
+interfaces are linked from the merged W09 foundation. W07 reads the tracker
+without writing or inventing a phase. Until the full W09 sequencer links its
+writer and fatal-path phase, a documented `dead_code` allowance is scoped to
+the lifecycle module and the three deferred fatal call sites; W09 must remove
+these allowances when it connects them. W08 mapping and W11 fault execution
+remain separate owners. There are no recovery, storage, Guest or GIC additions.

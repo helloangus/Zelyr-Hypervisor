@@ -60,8 +60,9 @@ fn bounded_stop() -> ! {
 
 fn current_el() -> u64 {
     let value;
-    // SAFETY: U-011. W01 established AArch64 EL2. CurrentEL is a closed,
-    // side-effect-free read with no memory or stack access. Guard held.
+    // SAFETY: U-011. W01 established AArch64 EL2 and the W07 guard is held.
+    // CurrentEL is a closed, side-effect-free read with no memory or stack
+    // access. A broken execution premise is terminal FC-INVARIANT.
     unsafe {
         core::arch::asm!("mrs {}, CurrentEL", out(reg) value, options(nomem, nostack, preserves_flags));
     }
@@ -167,6 +168,7 @@ pub(crate) fn report_fatal_exception(
 }
 
 /// W09 calls this only for post-arm Stage1/Stable phase failures.
+#[allow(dead_code)] // W09 will wire the sequencer's terminal failure route.
 pub(crate) fn report_fatal_phase(phase: InitPhase, reason: FailureReason) -> ! {
     acquire_guard();
     let transport = Transport::select();
@@ -183,6 +185,7 @@ pub(crate) fn report_fatal_phase(phase: InitPhase, reason: FailureReason) -> ! {
 }
 
 /// W09's fatal-path phase invokes this once after Console.complete.
+#[allow(dead_code)] // W09 will wire the fatal-path readiness phase.
 pub(crate) fn arm_fatal_path() {
     if FATAL_PATH_READY.load(Ordering::Relaxed)
         || FATAL_PATH_GUARD.load(Ordering::Relaxed)
@@ -203,6 +206,7 @@ pub(crate) fn stop_if_reporting() {
         bounded_stop();
     }
 }
+#[allow(dead_code)] // Used by arm_fatal_path once W09 links that call site.
 pub(crate) fn readiness_failure() -> ! {
     // Do not invoke the renderer whose readiness is being established.
     // Claim the same guard so a fault in the minimal writer stops silently.

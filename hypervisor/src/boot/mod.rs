@@ -14,6 +14,10 @@ pub(crate) mod context;
 pub(crate) mod fatal;
 pub(crate) mod fatal_line;
 pub(crate) mod identity;
+// W09 owns the phase writer and Stable transition. W07 links only the
+// snapshot reader; remove this narrow transitional allowance in full W09.
+#[allow(dead_code)]
+pub(crate) mod lifecycle;
 pub(crate) mod panic;
 pub(crate) mod writer;
 
