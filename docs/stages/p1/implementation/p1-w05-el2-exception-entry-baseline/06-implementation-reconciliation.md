@@ -61,8 +61,9 @@ diagnostic register values only, never pointers used for enrichment.
 ## Install and declaration
 
 `arch::aarch64::exceptions::install_el2_exception_entry()` asserts W04 C1–C4
-are Established, arms the guard, installs and reads back VBAR, executes ISB,
-then publishes `VectorStatus::Established`. Repeated install fails before
+are Established, arms the guard, writes VBAR, executes ISB, reads back VBAR,
+then publishes `VectorStatus::Established`. The ISB is before the dependent
+readback and publication. Repeated install fails before
 rearming. `vector_status()` and `vector_base()` report the retained state;
 the atomic base (zero means absent) suffices without a second unsafe cell.
 `VectorBase` is an internal semantic HVA wrapper at the sysreg boundary.
@@ -75,7 +76,8 @@ W07. Before W09 exists phase availability is explicitly `unavailable`, never
 an invented current phase. W09 replaces this with its snapshot read.
 The W07-owned fatal prefix is coordinated before runtime evidence.
 It is `ZELYR P1 FATAL`. The pre-arm line also includes `fc=FC-INVARIANT`,
-`site=vector`, and W02 build identity fields to satisfy P0's fatal minimum;
+the threatened invariant `inv=el2_exception_no_safe_resume`, `site=vector`,
+and W02 build identity fields to satisfy P0's fatal minimum;
 unavailable identity fields retain their honest unavailable tokens. The
 fixed 512-byte buffer covers the longest current line with ample slack.
 

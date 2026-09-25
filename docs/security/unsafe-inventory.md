@@ -1,9 +1,9 @@
 # Zelyr Unsafe Inventory
 
-**Status:** Normative register.  
-**Version:** v0.3 — W03 identification reads and report publication.
+**Status:** Normative register.
+**Version:** v0.4 — W04 baseline and W05 exception-entry boundaries.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
-only by real, merged unsafe changes under the policy's review rules.  
+only by real, merged unsafe changes under the policy's review rules.
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
 
 Entry schema, lifecycle, and update rules: see the [unsafe Rust
@@ -197,6 +197,40 @@ completed.
 - **audit-status:** author and independent soundness review complete.
 - **permanence:** P1 boot boundary; re-audit on control-set, feature-guard,
   synchronization or execution-context changes.
+
+### U-008 — W05 exception-register access and synchronization
+
+- **status:** accepted
+- **title:** closed VBAR_EL2/FAR_EL2 access and context synchronization
+- **boundary-category:** `arch-register`
+- **location:** `hypervisor/src/arch/aarch64/exceptions/mod.rs` (`vbar_write`, `vbar_read`, `exception_barrier_isb`, conditional FAR read)
+- **necessity:** Rust has no safe primitive for these EL2 registers or ISB.
+- **safety-preconditions:** W01 EL2 and masked boot CPU; W04 C1–C4 established; aligned executable vector page; FAR is read only for architecturally valid synchronous classes.
+- **establishment:** W04 declaration checked before install; linker symbol and runtime alignment checked; ISB occurs after VBAR write before dependent readback; pure validity classifier guards FAR.
+- **failure-class:** FC-INVARIANT terminal if entry/control premises fail; before vector installation the documented unowned-window limit applies.
+- **authorizing-design:** [W05 design](../stages/p1/implementation/p1-w05-el2-exception-entry-baseline/README.md) and its preflight/reconciliation amendments.
+- **owner:** P1-W05.
+- **review-record:** independent root review, 2026-09-25: closed register set, placement, barrier/readback order and FAR validity accepted.
+- **validation:** [W05 verification](../stages/p1/verification/p1-w05-el2-exception-entry-baseline-verification.md); target build and host validity tests pass, QEMU fault execution deferred to W11.
+- **audit-status:** author and independent soundness review complete; execution proof pending.
+- **permanence:** P1 EL2 entry boundary; re-audit if register set, vector mapping or validity table changes.
+
+### U-009 — W05 guard-first vector assembly and frame bridge
+
+- **status:** accepted
+- **title:** sixteen vector slots, exclusive guard/frame storage and terminal Rust bridge
+- **boundary-category:** `asm-glue`
+- **location:** `hypervisor/src/arch/aarch64/exceptions/entry.S` and `mod.rs` (`p1_exception_rust_entry`, guard initialization)
+- **necessity:** exception entry cannot preserve original GPRs, claim a guard and capture machine state through safe Rust alone.
+- **safety-preconditions:** one masked boot CPU; W02 stack and BSS initialized; W04 EL2 baseline established; landing code, guard, frame and stack remain accessible; no return path.
+- **establishment:** sixteen 128-byte branch slots in one aligned page; TPIDR_EL2 holds original x0; guard is read/taken before frame or stack access; fixed repr(C) offsets and size are compile-time checked; captured SP is retained before switch to W02 boot-stack top; Rust receives one initialized frame.
+- **failure-class:** FC-INVARIANT terminal; recursive entry after guard claim silently stops, while inaccessible entry code/guard remains outside containment.
+- **authorizing-design:** [W05 design](../stages/p1/implementation/p1-w05-el2-exception-entry-baseline/README.md), [preflight](../stages/p1/implementation/p1-w05-el2-exception-entry-baseline/00-preflight-amendment.md) and [reconciliation](../stages/p1/implementation/p1-w05-el2-exception-entry-baseline/06-implementation-reconciliation.md).
+- **owner:** P1-W05.
+- **review-record:** independent root review, 2026-09-25: all original GPRs and SP, guard-before-store, frame validity, stack alignment, non-return and linker layout accepted.
+- **validation:** [W05 verification](../stages/p1/verification/p1-w05-el2-exception-entry-baseline-verification.md); static link inspection and host tests pass, known-register/recursive fault injection deferred to W11.
+- **audit-status:** author and independent soundness review complete; execution proof pending.
+- **permanence:** P1 single-CPU terminal entry; re-audit for SMP, TLS, return or MMU mapping changes.
 
 ## History
 

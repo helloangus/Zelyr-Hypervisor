@@ -85,6 +85,9 @@ pub(crate) fn install_el2_exception_entry() {
         );
     }
     vbar_write(base);
+    // VBAR is a context-synchronizing control: the write must become
+    // effective before a dependent read or readiness publication.
+    exception_barrier_isb();
     let observed = vbar_read();
     if observed != base.0 {
         fail_vector(VectorError {
@@ -93,7 +96,6 @@ pub(crate) fn install_el2_exception_entry() {
             observed,
         });
     }
-    exception_barrier_isb();
     VECTOR_BASE.store(base.0, Ordering::Release);
 }
 
@@ -226,13 +228,13 @@ fn emit_pre_arm_summary(
     if frame.far_valid {
         let _ = write!(line, "{:016x}", frame.far);
     } else {
-        let _ = line.write_str("->");
+        let _ = line.write_str("na");
     }
     // W09 replaces unavailable with its exception-safe tracker snapshot.
     let identity = &crate::boot::identity::BUILD_IDENTITY;
     let _ = write!(
         line,
-        " ph=unavailable fc=FC-INVARIANT site=vector version={} arch={} profile={} rev={} dirty={}\r\n",
+        " ph=unavailable fc=FC-INVARIANT inv=el2_exception_no_safe_resume site=vector version={} arch={} profile={} rev={} dirty={}\r\n",
         identity.project_version,
         identity.target_architecture,
         identity.build_profile,
