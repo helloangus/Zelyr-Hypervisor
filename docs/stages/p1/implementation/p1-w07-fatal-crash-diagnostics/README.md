@@ -19,7 +19,8 @@ no accepted design is superseded.)
 ## Purpose and use
 
 This is the implementation-level design for P1-W07. W07 makes every P1
-failure produce one bounded, field-complete, non-recursive report and makes
+terminal failure routed to it produce one bounded, field-complete,
+non-recursive report and makes
 the panic route's owner explicit. It deliberately does **not** recover from
 invariant violations, store crashes persistently, define Guest fault policy,
 add remote logging, or design a production observability pipeline.
