@@ -8,23 +8,8 @@
 use core::cell::UnsafeCell;
 use core::sync::atomic::{AtomicBool, Ordering};
 
-/// Semantic wrapper for boot-scope physical addresses (W02 design §2). No
-/// arithmetic is defined on the type in P1; raw-value access exists only at
-/// audited boundaries, none of which exist yet besides the constructor from
-/// the assembly handoff.
-#[derive(Clone, Copy)]
-pub(crate) struct PhysAddr(
-    // Unread in W02 by contract: raw-value consumption enters only with an
-    // audited boundary consumer (W03+ inventory, P2 DTB intake); the
-    // newtype exists now so no naked address integer is retained.
-    #[allow(dead_code)] u64,
-);
-
-impl PhysAddr {
-    pub(crate) const fn new(raw: u64) -> Self {
-        PhysAddr(raw)
-    }
-}
+// W08 extends the original newtype in the shared boot address module.
+pub(crate) use super::address::PhysAddr;
 
 /// Retained boot parameters per the W01 boot contract §4: `x0` is the DTB
 /// pointer (T2 guaranteed non-zero), `x1`–`x3` are retained uninterpreted
