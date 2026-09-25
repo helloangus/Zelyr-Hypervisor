@@ -148,7 +148,7 @@ completed.
 
 ### U-005 — EL2 baseline register reads
 
-- **status:** proposed
+- **status:** accepted
 - **title:** W04 closed-set architectural control reads
 - **boundary-category:** `arch-register`
 - **location:** `hypervisor/src/arch/aarch64/baseline/mod.rs` (`read_sysreg`)
@@ -163,18 +163,18 @@ completed.
 - **authorizing-design:** [W04 design](../stages/p1/implementation/p1-w04-el2-architectural-state-baseline/README.md)
   and its preflight synchronization amendment.
 - **owner:** P1-W04 architecture baseline.
-- **review-record:** independent soundness review required on the carrying PR
-  before merge; this proposed entry is not self-approval.
+- **review-record:** independent arch/systems soundness review by root agent,
+  2026-09-25: closed selector, guarded CNTHV and execution premises accepted.
 - **validation:** [W04 verification](../stages/p1/verification/p1-w04-el2-architectural-state-baseline-verification.md);
   host tests cover masks, not hardware effects. QEMU execution is deferred to
   W09/W10 and real-hardware validation to its owning stage.
-- **audit-status:** first-review complete; independent review pending.
+- **audit-status:** author and independent soundness review complete.
 - **permanence:** P1 boot boundary; re-audit on control-set, feature-guard,
   synchronization or execution-context changes.
 
 ### U-006 — EL2 baseline register writes and ISB
 
-- **status:** proposed
+- **status:** accepted
 - **title:** W04 closed-set architectural control writes and ISB
 - **boundary-category:** `arch-register`
 - **location:** `hypervisor/src/arch/aarch64/baseline/mod.rs` (`write_sysreg`)
@@ -189,12 +189,12 @@ completed.
 - **authorizing-design:** [W04 design](../stages/p1/implementation/p1-w04-el2-architectural-state-baseline/README.md)
   and its preflight synchronization amendment.
 - **owner:** P1-W04 architecture baseline.
-- **review-record:** independent soundness review required on the carrying PR
-  before merge; this proposed entry is not self-approval.
+- **review-record:** independent arch/systems soundness review by root agent,
+  2026-09-25: masks, guards, readback, per-write ISB and compiler effects accepted.
 - **validation:** [W04 verification](../stages/p1/verification/p1-w04-el2-architectural-state-baseline-verification.md);
   host tests cover masks, not hardware effects. QEMU execution is deferred to
   W09/W10 and real-hardware validation to its owning stage.
-- **audit-status:** first-review complete; independent review pending.
+- **audit-status:** author and independent soundness review complete.
 - **permanence:** P1 boot boundary; re-audit on control-set, feature-guard,
   synchronization or execution-context changes.
 

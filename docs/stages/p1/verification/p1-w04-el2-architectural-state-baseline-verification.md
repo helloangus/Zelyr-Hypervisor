@@ -17,7 +17,7 @@ Environment: pinned Rust 1.98.1, Linux host, AArch64 softfloat target, branch
 | W04-DV01 facts | Passed inspection: only W03 query seam, optional VHE not required; exact mapping in record |
 | W04-DV02 write specs | Passed source/Arm field review and five source-shared host tests |
 | W04-DV03 readback/guards | Passed host mask/mismatch tests plus terminal-route/optional-skip source review |
-| W04-DV04 boundary | Passed first-review inspection: two unsafe primitives, no unsafe declaration cell; second soundness review recorded by PR reviewer |
+| W04-DV04 boundary | Passed author and independent root-agent review, 2026-09-25: two unsafe primitives; closed selectors, W03 guards, W01 EL2/DAIF premises, masks/readback and per-write ISB accepted; no unsafe declaration cell |
 | W04-DV05 order | Passed source review: C1→C8, one HCR write, ISB after every write, no retry |
 | W04-DV06 100 boots | Not run: W09 integration and W10 regression own execution |
 | W04-DV07 consumers | Passed interface review: category/value/control-status queries, no hardware reread by consumers |
