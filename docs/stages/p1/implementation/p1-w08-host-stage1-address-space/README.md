@@ -49,6 +49,10 @@ loads only the linked supporting file needed for its assigned step:
 - [04-implementation-and-review.md](04-implementation-and-review.md) —
   ordered workflow, validation matrix, error/security/observability model,
   and handoff checklist.
+- [05-failure-seam-reconciliation.md](05-failure-seam-reconciliation.md) —
+  mandatory W08/W09 preflight correction: W08 returns a fallible mechanism
+  result and W09 alone owns terminal phase dispatch; read before transition
+  or adapter implementation.
 
 Before editing, the agent must also follow the Coding Guidelines preflight:
 repository [AGENTS.md](../../../../../AGENTS.md), [documentation
