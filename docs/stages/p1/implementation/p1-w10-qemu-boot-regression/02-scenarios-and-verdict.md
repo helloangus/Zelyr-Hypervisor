@@ -61,7 +61,9 @@ stated per scenario and summarized in §4.
 - Input/precondition: a boot that stops before the stable state (suggested
   techniques: a W11 scenario image that exits the lifecycle early, or an
   image built from a deliberately truncated boot path; the technique is
-  recorded).
+  recorded). The [W10 marker-control amendment](04-marker-control-amendment.md)
+  supplies the bounded, default-off harness control used for this execution;
+  it does not alter the production boot path.
 - Expected observable: boot starts; stable token absent; no forbidden class
   required either way.
 - Pass condition: outcome `FAIL-MARKER`; capture retained; driver exits
