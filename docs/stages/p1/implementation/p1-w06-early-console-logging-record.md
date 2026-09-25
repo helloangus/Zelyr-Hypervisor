@@ -7,8 +7,9 @@
 **Verification:** [W06 verification record](../verification/p1-w06-early-console-logging-verification.md).
 
 W02 supplies a boot-only panic writer, identity and terminal route. W03
-supplies capability lines. W05/W08/W09 exist as designs, so W06 provides
-their named mechanisms and leaves their execution to their owners.
+supplies capability lines. W05 now supplies its guarded vector mechanism on
+the rebased prerequisite branch; W08/W09 remain designs. W06 provides its
+named mechanisms and leaves their execution to their owners.
 
 The new `hypervisor/src/boot/console.rs` owns the fixed reference UART
 window, minimal UARTEN/TXE readback init, polled bytes, 128-byte bounded
