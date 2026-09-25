@@ -1,9 +1,9 @@
 # P1-W07 Implementation Reconciliation
 
-**Status:** Proposed detailed-design correction; no execution claim.  
-**Scope:** Failure-class, guard, and bounded-renderer preflight for P1-W07.  
-**Version:** v0.1.  
-**Owner/change context:** P1-W07 coding preflight, 2026-09-25.  
+**Status:** Proposed detailed-design correction; no execution claim.
+**Scope:** Failure-class, guard, and bounded-renderer preflight for P1-W07.
+**Version:** v0.1.
+**Owner/change context:** P1-W07 coding preflight, 2026-09-25.
 **Supersedes:** The conflicting statements identified below in this W07 design only.
 
 ## Failure classification
