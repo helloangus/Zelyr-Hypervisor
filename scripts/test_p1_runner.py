@@ -81,6 +81,22 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(result["status"], 5)
         self.assertEqual(sentinel.read_bytes(), b"original")
 
+    def test_equals_form_respects_evidence_root_on_usage_error(self):
+        directory = self.root / "usage"
+        result, actual = runner.run(["run", "--profile=unknown", "--evidence-dir=" + str(directory)])
+        self.assertEqual(result["status"], 1)
+        self.assertEqual(actual, directory)
+        self.assertTrue((directory / "outcome.json").exists())
+
+    def test_clean_exit_missing_marker_is_marker_control(self):
+        self.assertEqual(runner.verdict({"status": 4, "reason": "early-exit", "raw_exit": 0, "predicates": {}}), "FAIL-MARKER")
+
+    def test_driver_invalid_grammar_preserves_evidence(self):
+        directory = self.root / "driver"
+        status = runner.regression(["--cycles", "2", "--evidence", str(directory)])
+        self.assertEqual(status, 2)
+        self.assertEqual(json.loads((directory / "summary.txt").read_text())["outcome"], "ERROR-INVOCATION")
+
     def test_invalid_timeout_domain(self):
         for value in ("0", "-1", "nan", "inf", "garbage"):
             with self.subTest(value=value), self.assertRaises(runner.UsageError):

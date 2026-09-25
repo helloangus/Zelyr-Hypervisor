@@ -59,6 +59,15 @@ def fresh_evidence():
     return ROOT / "target/p1-evidence" / ("run-" + uuid.uuid4().hex)
 
 
+def selected_evidence(argv, option):
+    for index, argument in enumerate(argv):
+        if argument.startswith(option + "="):
+            return Path(argument.split("=", 1)[1]).resolve()
+        if argument == option and index + 1 < len(argv):
+            return Path(argv[index + 1]).resolve()
+    return fresh_evidence()
+
+
 def image_identity(path):
     digest = hashlib.sha256()
     with path.open("rb") as source:
@@ -109,13 +118,16 @@ def capture(command, directory, timeout, required, forbidden, observe=OBSERVE):
     """
     matcher = Matcher(required, forbidden)
     process = None
+    launching = False
     start = time.monotonic()
     marker_at = None
     reason = "launch"
     status = 2
     try:
         with (directory / "serial.log").open("xb") as serial, (directory / "emulator.log").open("xb") as diagnostic:
+            launching = True
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
+            launching = False
             with selectors.DefaultSelector() as selector:
                 selector.register(process.stdout, selectors.EVENT_READ, (serial, True))
                 selector.register(process.stderr, selectors.EVENT_READ, (diagnostic, False))
@@ -167,7 +179,7 @@ def capture(command, directory, timeout, required, forbidden, observe=OBSERVE):
                 elif status == 0 and matcher.limit:
                     status, reason = 4, "output-limit"
     except (FileNotFoundError, PermissionError) as error:
-        status, reason = (2, "launch: " + str(error)) if process is None else (5, str(error))
+        status, reason = (2, "launch: " + str(error)) if launching else (5, str(error))
     finally:
         if process is not None:
             try:
@@ -201,15 +213,13 @@ def profile(name, params):
 
 def run(argv):
     """P0 v0.1 grammar/status entry; returns status and evidence location."""
-    directory = fresh_evidence()
-    # Preserve usage-error evidence under a supplied root when unambiguous.
-    if argv.count("--evidence-dir") == 1:
-        index = argv.index("--evidence-dir")
-        if index + 1 < len(argv):
-            directory = Path(argv[index + 1]).resolve()
+    directory = selected_evidence(argv, "--evidence-dir")
     meta = {"contract_version": VERSION, "runner_version": VERSION, "argv": argv,
             "host": platform.platform(), "start": stamp(), "evidence_root": str(directory),
-            "success_condition": "P1-W10 marker protocol", "machine": "virt", "artifacts": []}
+            "success_condition": "P1-W10 marker protocol", "machine": "virt", "artifacts": [],
+            "emulator": {"program": "qemu-system-aarch64", "version": "unavailable"},
+            "runner_source": image_identity(Path(__file__)), "profile": "unparsed", "parameters": [],
+            "timeout_seconds": None}
     outcome = {"status": 5, "reason": "unfinished"}
     created = False
     try:
@@ -229,7 +239,7 @@ def run(argv):
         try:
             meta["artifacts"] = [image_identity(image)]
             version = subprocess.run([command[0], "--version"], capture_output=True, timeout=2, check=True)
-            meta["emulator"] = version.stdout.decode(errors="replace").splitlines()[0]
+            meta["emulator"]["version"] = version.stdout.decode(errors="replace").splitlines()[0]
         except (OSError, subprocess.SubprocessError) as error:
             outcome = {"status": 2, "reason": str(error)}
         else:
@@ -261,6 +271,8 @@ def verdict(outcome):
     if status == 3:
         return "FAIL-TIMEOUT"
     if outcome.get("reason") == "early-exit":
+        if outcome.get("raw_exit") == 0 and not predicates.get(STABLE.decode(), False):
+            return "FAIL-MARKER"
         return "FAIL-EXIT"
     if status != 0 or not all(predicates.get(token.decode(), False) for token in (STABLE,) + START):
         return "FAIL-MARKER"
@@ -268,14 +280,18 @@ def verdict(outcome):
 
 
 def regression(argv):
+    directory = selected_evidence(argv, "--evidence")
+    created = False
     parser = Parser()
     parser.add_argument("--cycles", type=int, choices=(1, 100), default=1)
     parser.add_argument("--timeout", type=duration, default=DEFAULT_TIMEOUT)
     parser.add_argument("--image", type=Path, default=DEFAULT_IMAGE)
-    parser.add_argument("--evidence", type=Path, default=fresh_evidence())
+    parser.add_argument("--evidence", type=Path, default=directory)
     try:
+        directory.mkdir(parents=True, exist_ok=False)
+        created = True
+        write_json(directory / "meta.txt", {"argv": argv, "start": stamp()})
         options = parser.parse_args(argv)
-        options.evidence.mkdir(parents=True, exist_ok=False)
         write_json(options.evidence / "meta.txt", {"argv": argv, "start": stamp(), "cycles": options.cycles,
                    "timeout": options.timeout, "retention": "complete captures for every attempted cycle"})
         outcomes = []
@@ -292,7 +308,12 @@ def regression(argv):
             if result != "PASS":
                 return 2 if result == "ERROR-INVOCATION" else 1
         return 0
-    except (UsageError, OSError) as error:
+    except (Exception, KeyboardInterrupt) as error:
+        if created:
+            try:
+                write_json(directory / "summary.txt", {"outcome": "ERROR-INVOCATION", "reason": str(error), "end": stamp()})
+            except OSError:
+                pass
         print(str(error), file=sys.stderr)
         return 2
 
