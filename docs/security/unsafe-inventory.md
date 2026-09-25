@@ -1,7 +1,7 @@
 # Zelyr Unsafe Inventory
 
 **Status:** Normative register.
-**Version:** v0.5 — adds W06 reference-console MMIO after W04/W05 boundaries.
+**Version:** v0.6 — accepts reviewed W07 fatal-entry register reads after W06 MMIO.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
 only by real, merged unsafe changes under the policy's review rules.
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
@@ -247,6 +247,23 @@ completed.
 - **validation:** target compilation and source review in [W06 verification](../stages/p1/verification/p1-w06-early-console-logging-verification.md); QEMU/post-MMU exercise belongs to W09–W11
 - **audit-status:** author and independent soundness review complete; integrated execution pending W09–W11
 - **permanence:** P1 reference transport only; re-audit at W08 mapping and P2 discovery replacement
+
+### U-011 — W07 fatal-context register reads
+
+- **status:** accepted
+- **title:** closed CurrentEL and handler-entry SP/LR capture
+- **boundary-category:** `arch-register`
+- **location:** `hypervisor/src/boot/fatal.rs` (`current_el`) and `hypervisor/src/boot/panic.rs` (`p1_panic`)
+- **necessity:** Rust has no safe primitive to capture these EL2 execution coordinates at the terminal entry.
+- **safety-preconditions:** W01 established AArch64 EL2 and a valid boot stack; W07 report guard is held before CurrentEL; the panic handler captures SP/LR before calling the report body.
+- **establishment:** fixed read-only asm instructions with explicit x9/x10 outputs for SP/LR, avoiding accidental overwrite of x30; no memory/stack writes or hidden clobbers; the values are labeled handler-entry approximations, not the panic call-site state.
+- **failure-class:** FC-INVARIANT terminal if execution premise fails; before W05 vectors the documented unowned-window limit remains.
+- **authorizing-design:** [W07 design](../stages/p1/implementation/p1-w07-fatal-crash-diagnostics/README.md) and its [reconciliation](../stages/p1/implementation/p1-w07-fatal-crash-diagnostics/00-implementation-reconciliation.md).
+- **owner:** P1-W07.
+- **review-record:** `/root/validation_audit`, 2026-09-25: independently reviewed explicit x9/x10 outputs, handler-entry provenance, side-effect-free CurrentEL read, and W05/W07 cross-path guard discipline; no soundness defect found. The review required explicit FC-INVARIANT comments and accurate clobber wording, now applied.
+- **validation:** [W07 verification](../stages/p1/verification/p1-w07-fatal-crash-diagnostics-verification.md); host formatter tests and target build/Clippy pass; EL2 fault execution pending.
+- **audit-status:** author and independent soundness review complete; integrated execution pending W08–W11.
+- **permanence:** P1 terminal report boundary; re-audit for compiler entry-layout, SMP or report-source changes.
 
 ## History
 

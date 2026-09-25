@@ -19,7 +19,8 @@ no accepted design is superseded.)
 ## Purpose and use
 
 This is the implementation-level design for P1-W07. W07 makes every P1
-failure produce one bounded, field-complete, non-recursive report and makes
+terminal failure routed to it produce one bounded, field-complete,
+non-recursive report and makes
 the panic route's owner explicit. It deliberately does **not** recover from
 invariant violations, store crashes persistently, define Guest fault policy,
 add remote logging, or design a production observability pipeline.
@@ -34,6 +35,9 @@ loads only the linked supporting file needed for its assigned step:
   lifecycle, the transport-preference model across the MMU transition, the
   concurrency model, and the assumed-contract table. Load this first for
   any step.
+- [00-implementation-reconciliation.md](00-implementation-reconciliation.md)
+  — mandatory preflight corrections to failure-class escalation, safe guard
+  storage, and bounded-line sizing; read before implementing any entry.
 - [02-code-contracts-report-model.md](02-code-contracts-report-model.md) —
   the report model: field list per kind, availability classes, fixed
   ordering, marker-class prefixes, and the sizing arithmetic.
@@ -85,9 +89,10 @@ design → Coding Guidelines. In particular:
   parallel designs consumed through recorded seams.
 - The P0 contracts are **assumed contracts**:
   [P0-W14](../../../p0/plans/p0-w14-panic-failure-classification.md)
-  (failure-class semantics: every P1 failure is a hypervisor-invariant
-  class; the guest-caused class is untouched in P1; this design's reports
-  never upgrade or downgrade a class), and
+  (failure-class semantics and the explicit escalation rule; a terminal
+  report is an FC-INVARIANT exit, but missing capabilities are first
+  FC-UNSUPPORTED and false platform premises first FC-PLATFORM; see the
+  [reconciliation](00-implementation-reconciliation.md)), and
   [P0-W12](../../../p0/plans/p0-w12-logging-diagnostic-baseline.md)
   (minimal crash-information principle and identity association). W07
   cites their semantics; it does not restate or re-own them.
@@ -193,8 +198,9 @@ No row requires designing recovery, storage, or a later-stage mechanism.
    held executes the silent bounded stop. The guard is the single
    fatal-path synchronization story, transferred from W02's panic-entry
    guard (decision 2) and coordinated with W05's entry-path guard through
-   the contracted call direction (W05 sets its guard; the fatal path is
-   reached only through W05's router or the panic entry, both guarded).
+   the contracted call direction (W05 sets its own entry guard before its
+   router, then every W07 entry acquires W07's distinct report guard;
+   see the [reconciliation](00-implementation-reconciliation.md)).
    Authority: W02 guard contract; W05 state machine R1; P1-V12.
 8. **No symbolization, no storage: addresses print as raw fixed-width hex;
    nothing is written anywhere but the selected transport.** Symbolization

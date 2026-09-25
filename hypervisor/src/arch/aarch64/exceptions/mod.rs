@@ -2,8 +2,10 @@
 mod model;
 use core::fmt::Write;
 use core::sync::atomic::{AtomicBool, AtomicU64, Ordering};
-use model::{ExceptionCategory, OriginClass, classify, far_valid, syndrome_class};
-pub(crate) use model::{ExceptionDisposition, ExceptionFrame, SyndromeClass};
+pub(crate) use model::{
+    ExceptionCategory, ExceptionDisposition, ExceptionFrame, OriginClass, SyndromeClass,
+};
+use model::{classify, far_valid, syndrome_class};
 
 // SAFETY: U-009. The sixteen branch-only slots enter a guard-first assembly
 // protocol, capture original GPRs before scratch use, then switch to the
@@ -186,7 +188,7 @@ unsafe extern "C" fn p1_exception_rust_entry(frame: *mut ExceptionFrame) -> ! {
     route_classified(frame)
 }
 
-/// W07 adds its ready/report branch here; W05 owns the pre-arm summary.
+/// W07 owns the post-arm report; W05 retains the pre-arm summary.
 pub(crate) fn route_classified(frame: &ExceptionFrame) -> ! {
     let origin = OriginClass::from_slot(frame.origin);
     let category = ExceptionCategory::from_slot(frame.category);
@@ -199,6 +201,10 @@ pub(crate) fn route_classified(frame: &ExceptionFrame) -> ! {
         Some(ExceptionCategory::SError) => SyndromeClass::SError,
         _ => SyndromeClass::Unknown,
     };
+    crate::boot::fatal::stop_if_reporting();
+    if crate::boot::fatal::fatal_path_ready() {
+        crate::boot::fatal::report_fatal_exception(frame, class, disposition);
+    }
     emit_pre_arm_summary(frame, class, disposition);
     loop {
         core::hint::spin_loop();

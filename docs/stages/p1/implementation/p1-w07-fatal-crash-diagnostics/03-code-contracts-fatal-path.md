@@ -66,8 +66,8 @@ Inputs / outputs: W05's completed frame, syndrome class, and
 Preconditions / postconditions: called only by W05's router after
   `fatal_path_ready()`; the caller holds the W05 entry-path guard. Never
   returns. Postcondition: report emitted or transport contained; stop.
-State and ownership change: none of its own (the W05 guard is already
-  held; this entry does not re-guard — one guard per event path, §6).
+State and ownership change: acquires W07's shared fatal guard after W05's
+  distinct architectural-entry guard; see the preflight reconciliation.
 Concurrency/allocation context: exception context; masks set; no
   allocation; bounded buffers.
 Errors and failure guarantee: bounded by construction; a fault during
@@ -160,10 +160,8 @@ Name and stability: FATAL_PATH_GUARD (one static flag inside the audited
   within P1.
 Purpose and caller: the single-entry discipline for the whole fatal path,
   transferred from W02's panic-entry guard (parent README decision 2).
-  Callers: the panic entry and the phase-failure entry (acquire);
-  W05's router holds its own entry-path guard before calling the
-  exception entry, so the exception entry checks-and-stops rather than
-  re-acquires.
+  Callers: all three W07 entries acquire it; the exception entry does so
+  after W05's distinct entry-path guard, containing a panic during report.
 Inputs / outputs: none; acquire returns false if already held.
 Preconditions / postconditions: on acquire-true, the caller must reach a
   terminal stop; the guard is never released (every path through it is
