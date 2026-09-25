@@ -1,0 +1,38 @@
+# P1-W07 fatal-report implementation record
+
+**Status:** In progress; W09 lifecycle seam and target build pending.
+**Scope:** P1 terminal report model, panic ownership transfer and exception route.
+**Version:** v0.1
+**Owner/change context:** P1-W07, 2026-09-25.
+**Supersedes:** W02's minimal panic body through its recorded extension seam.
+
+The [detailed design](p1-w07-fatal-crash-diagnostics/README.md) and
+[implementation reconciliation](p1-w07-fatal-crash-diagnostics/00-implementation-reconciliation.md)
+govern this branch. W07 has replaced the body of the binary's sole
+`#[panic_handler]`, retaining one registration and a non-resetting single-entry
+guard. The handler reads an approximate entry SP/LR pair using two explicit
+output registers; it does not claim to recover the original panic call site.
+The new fatal module offers panic, classified-exception and phase-failure
+entries, a readiness declaration, one transport choice per report, and a
+terminal stop. W05's router selects the W07 report only after readiness;
+its pre-arm summary remains W05-owned.
+
+All three entries acquire W07's report guard. W05's separate architectural
+guard prevents a second vector entry; W07's guard prevents a panic during an
+exception report from recursively emitting another report. The report uses
+fixed 128-byte UTF-8-safe lines with explicit truncation suffix and an end
+marker. Long panic messages occupy their own line so they cannot truncate
+location or SP/LR fields. Exception GPRs use one line each. The chosen
+transport is W06 when available, else W02's early writer, and never changes
+mid-report. The token classes are `ZELYR P1 PANIC` and `ZELYR P1 FATAL`;
+`ZELYR P1 REPORT END` marks terminal output.
+
+New unsafe U-011 comprises only closed `CurrentEL` and handler-entry SP/LR
+reads; safe atomics own guard/readiness. No new dependency, feature, external
+ABI or public API is intended; crate-local fatal/report seams are new. The
+W09-owned `InitPhase`, `LifecyclePosition`, `FailureReason` and `TRACKER`
+interfaces have been agreed but are not yet present on this branch. Consequently
+target compilation and complete W07 validation are blocked until the
+coherent W09 lifecycle foundation lands. No placeholder tracker or fabricated
+phase value is added here. W08 mapping and W11 fault execution remain separate
+owners. There are no recovery, storage, Guest or GIC additions.

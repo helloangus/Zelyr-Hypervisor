@@ -11,6 +11,8 @@ use core::arch::global_asm;
 
 pub(crate) mod console;
 pub(crate) mod context;
+pub(crate) mod fatal;
+pub(crate) mod fatal_line;
 pub(crate) mod identity;
 pub(crate) mod panic;
 pub(crate) mod writer;
