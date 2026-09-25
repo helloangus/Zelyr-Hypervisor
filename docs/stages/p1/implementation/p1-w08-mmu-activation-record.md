@@ -1,6 +1,6 @@
 # P1-W08 Stage-1 activation mechanism implementation record
 
-**Status:** Mechanism target-built; W09 invocation and MMU execution evidence pending.
+**Status:** Mechanism target-built in this checkpoint; a later W09 integration boot is recorded in [verification](../verification/p1-w08-mmu-activation-verification.md), with post-MMU fault evidence still pending.
 **Scope:** Fixed host Stage-1 tables, checked inventory, EL2 activation and postchecks.
 **Version:** v0.1
 **Owner/change context:** P1-W08 activation mechanism, 2026-09-25.

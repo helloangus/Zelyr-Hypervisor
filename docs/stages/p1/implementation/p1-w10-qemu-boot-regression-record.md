@@ -1,6 +1,6 @@
 # P1-W10 QEMU Boot Regression — Implementation Record
 
-**Status:** Runner foundation implemented; integrated runtime evidence pending W09.
+**Status:** Runner foundation implemented; one later W09 integrated boot is recorded in [verification](../verification/p1-w10-qemu-boot-regression-verification.md), with R2–R6 and 100-cycle evidence pending.
 
 **Date:** 2026-09-25
 

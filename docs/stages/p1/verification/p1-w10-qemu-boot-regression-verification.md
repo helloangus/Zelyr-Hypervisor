@@ -47,3 +47,13 @@ six newly added trailing-space lines; these were removed. The complete branch
 check `git diff --check origin/main` then passed, and the recorded unittest
 discovery command was rerun with all 16 tests passing. This supersedes the
 earlier incomplete whitespace-check statement.
+
+## Later W09 integration observation (2026-09-25)
+
+The foundation's outstanding-execution paragraph is its PR-time snapshot.
+The [W09 verification](p1-w09-initialization-sequencing-verification.md)
+records one run through this runner that reached the fixed Stable token and
+returned `PASS`, with build-tree serial and outcome files. This is an
+R1-equivalent integration observation, not the W10 acceptance suite. R2–R6,
+timeout calibration and 100 consecutive clean boots remain pending; P1-V16
+and P1-V17 are not closed by the single run.

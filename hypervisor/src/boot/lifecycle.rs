@@ -1,6 +1,12 @@
-//! P1-W09's pure boot-phase vocabulary and single-word tracker foundation.
-//! The sequencer and marker emission are deliberately not linked here yet.
+//! P1-W09 boot-phase tracker, ordered sequencer and terminal failure routing.
+#[cfg(target_arch = "aarch64")]
+use core::sync::atomic::AtomicBool;
 use core::sync::atomic::{AtomicUsize, Ordering};
+
+#[cfg(target_arch = "aarch64")]
+use super::{console, fatal};
+#[cfg(target_arch = "aarch64")]
+use crate::arch::aarch64::{baseline, capabilities, exceptions, stage1};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum InitPhase {
@@ -141,6 +147,8 @@ impl BootPhaseTracker {
     }
 }
 pub(crate) static TRACKER: BootPhaseTracker = BootPhaseTracker::new();
+#[cfg(target_arch = "aarch64")]
+static REPLAYED: AtomicBool = AtomicBool::new(false);
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) struct FailureReason(&'static str);
@@ -151,6 +159,155 @@ impl FailureReason {
     pub(crate) const fn message(self) -> &'static str {
         self.0
     }
+}
+
+#[cfg(target_arch = "aarch64")]
+fn emit_marker(phase: InitPhase, event: console::MarkerEvent) {
+    let line = console::format_marker(phase.label(), event);
+    console::transport_line(line.as_str());
+}
+
+/// All earlier events are derivable from the monotone tracker word. The
+/// channel exists only after the Console mechanism returns successfully.
+#[cfg(target_arch = "aarch64")]
+fn materialize_replay() {
+    if TRACKER.position() != LifecyclePosition::Entered(InitPhase::Console)
+        || !console::channel_available()
+        || REPLAYED.swap(true, Ordering::Relaxed)
+    {
+        fail_phase(
+            InitPhase::Console,
+            FailureReason::new("marker replay invariant"),
+        );
+    }
+    for phase in InitPhase::ALL.into_iter().take(5) {
+        emit_marker(phase, console::MarkerEvent::Enter);
+        emit_marker(phase, console::MarkerEvent::Complete);
+    }
+    emit_marker(InitPhase::Console, console::MarkerEvent::Enter);
+}
+
+#[cfg(target_arch = "aarch64")]
+fn transition_failure(phase: InitPhase, error: SequenceError) -> ! {
+    let _ = error.current; // The tracker remains authoritative for the report.
+    fail_phase(phase, FailureReason::new("lifecycle transition invariant"))
+}
+
+#[cfg(target_arch = "aarch64")]
+pub(crate) fn phase_enter(phase: InitPhase) {
+    if let Err(error) = TRACKER.advance_enter(phase) {
+        transition_failure(phase, error);
+    }
+    // Console.enter is materialized by replay after the channel exists.
+    if matches!(phase, InitPhase::FatalPath | InitPhase::Stage1) {
+        emit_marker(phase, console::MarkerEvent::Enter);
+    }
+}
+
+#[cfg(target_arch = "aarch64")]
+pub(crate) fn phase_complete(phase: InitPhase) {
+    if let Err(error) = TRACKER.advance_complete(phase) {
+        transition_failure(phase, error);
+    }
+    if matches!(
+        phase,
+        InitPhase::Console | InitPhase::FatalPath | InitPhase::Stage1
+    ) {
+        emit_marker(phase, console::MarkerEvent::Complete);
+    }
+}
+
+/// The W02 glue calls this only after the sequencer returns from Stage1.
+#[cfg(target_arch = "aarch64")]
+pub(crate) fn enter_stable() {
+    if let Err(error) = TRACKER.mark_stable() {
+        transition_failure(InitPhase::Stable, error);
+    }
+    console::transport_line("ZELYR P1 STABLE");
+}
+
+#[cfg(target_arch = "aarch64")]
+pub(crate) fn fail_phase(phase: InitPhase, reason: FailureReason) -> ! {
+    match phase {
+        InitPhase::Entry => panic!("entry rejection escaped W01 boundary: {}", reason.message()),
+        InitPhase::Runtime
+        | InitPhase::Capabilities
+        | InitPhase::El2Baseline
+        | InitPhase::Exceptions
+        | InitPhase::Console => panic!("phase={} reason={}", phase.label(), reason.message()),
+        InitPhase::FatalPath => {
+            if fatal::fatal_path_ready() {
+                fatal::report_fatal_phase(phase, reason)
+            } else {
+                fatal::readiness_failure()
+            }
+        }
+        InitPhase::Stage1 | InitPhase::Stable => fatal::report_fatal_phase(phase, reason),
+    }
+}
+
+#[cfg(target_arch = "aarch64")]
+fn capabilities_step() {
+    capabilities::build_capability_report();
+}
+#[cfg(target_arch = "aarch64")]
+fn el2_baseline_step() {
+    baseline::establish_el2_baseline();
+}
+#[cfg(target_arch = "aarch64")]
+fn exceptions_step() {
+    exceptions::install_el2_exception_entry();
+}
+#[cfg(target_arch = "aarch64")]
+fn console_step() {
+    if let Err(error) = console::bring_up_early_console() {
+        let reason = match error {
+            console::ConsoleError::EnableReadbackMismatch => "console enable readback mismatch",
+        };
+        fail_phase(InitPhase::Console, FailureReason::new(reason));
+    }
+    materialize_replay();
+    capabilities::render_report(&mut console::transport_line);
+}
+#[cfg(target_arch = "aarch64")]
+fn fatal_path_step() {
+    fatal::arm_fatal_path();
+}
+#[cfg(target_arch = "aarch64")]
+fn stage1_step() {
+    if let Err(error) = stage1::enable_host_stage1() {
+        fail_phase(
+            InitPhase::Stage1,
+            FailureReason::new(error.static_message()),
+        );
+    }
+}
+
+#[cfg(target_arch = "aarch64")]
+pub(crate) fn run_init_sequence() {
+    phase_enter(InitPhase::Capabilities);
+    capabilities_step();
+    phase_complete(InitPhase::Capabilities);
+
+    phase_enter(InitPhase::El2Baseline);
+    el2_baseline_step();
+    phase_complete(InitPhase::El2Baseline);
+
+    phase_enter(InitPhase::Exceptions);
+    exceptions_step();
+    phase_complete(InitPhase::Exceptions);
+
+    phase_enter(InitPhase::Console);
+    console_step();
+    phase_complete(InitPhase::Console);
+
+    phase_enter(InitPhase::FatalPath);
+    fatal_path_step();
+    phase_complete(InitPhase::FatalPath);
+
+    phase_enter(InitPhase::Stage1);
+    stage1_step();
+    phase_complete(InitPhase::Stage1);
 }
 
 #[cfg(test)]

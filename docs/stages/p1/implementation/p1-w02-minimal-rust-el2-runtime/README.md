@@ -1,5 +1,9 @@
 # P1-W02 Minimal Rust EL2 Runtime — Detailed Implementation Design
 
+At W09 integration, read the [controlled-idle unsafe-boundary correction](06-controlled-idle-reconciliation.md)
+before implementing or reviewing the `wfi` loop. It supersedes the old unsafe
+count, not the runtime order or idle behavior.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** The minimal Rust `no_std` EL2 runtime required by

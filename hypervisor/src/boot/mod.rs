@@ -19,9 +19,6 @@ pub(crate) mod context;
 pub(crate) mod fatal;
 pub(crate) mod fatal_line;
 pub(crate) mod identity;
-// W09 owns the phase writer and Stable transition. W07 links only the
-// snapshot reader; remove this narrow transitional allowance in full W09.
-#[allow(dead_code)]
 pub(crate) mod lifecycle;
 pub(crate) mod panic;
 pub(crate) mod writer;
@@ -156,16 +153,12 @@ p1_el2_entry:
 ///
 /// Entered only by the assembly transfer, which guarantees the W01 tier
 /// passed and establishment stages 1–3 are complete. Establishes stages 7–8
-/// and terminates through the recorded route for the unlinked W09 seam;
-/// the tracker records and sequencer call of stages 5–6 and 9–11 are the
-/// contracted deferred seam documented below.
+/// then records the W09 phases, executes their ordered mechanisms and idles.
 #[unsafe(no_mangle)]
 extern "C" fn el2_rust_entry(x0: u64, x1: u64, x2: u64, x3: u64) -> ! {
-    // Deferred seam (stages 5–6, contracted): W09's tracker records
-    // Entry.enter/Entry.complete belong here on the W01 transfer
-    // guarantee's authority; the call sites do not compile until W09's
-    // items exist and are materialized by W09's integration, per the W02
-    // design's decision 6 and workflow step 5. No stub is authorized.
+    lifecycle::phase_enter(lifecycle::InitPhase::Entry);
+    lifecycle::phase_complete(lifecycle::InitPhase::Entry);
+    lifecycle::phase_enter(lifecycle::InitPhase::Runtime);
 
     // Establishment stage 7: build and publish the boot context.
     context::publish_boot_context(x0, x1, x2, x3);
@@ -179,12 +172,14 @@ extern "C" fn el2_rust_entry(x0: u64, x1: u64, x2: u64, x3: u64) -> ! {
     }
     writer::assert_early_writer_linked();
 
-    // Deferred seam (stages 9–12, contracted): Runtime.complete, W09's
-    // run_init_sequence(), the stable record, and controlled_idle() belong
-    // here; they compile only when W09's items exist. Until that link is
-    // delivered by W09's integration, reaching this point is a terminal
-    // invariant failure of the lifecycle contract, routed through the panic
-    // route — not a stub sequencer, not direct-to-idle wiring, and not a
-    // placeholder phase (W02 design decision 6).
-    panic!("sequencer seam unlinked: P1-W09 owns run_init_sequence and the stable record");
+    lifecycle::phase_complete(lifecycle::InitPhase::Runtime);
+    lifecycle::run_init_sequence();
+    lifecycle::enter_stable();
+    controlled_idle()
+}
+
+fn controlled_idle() -> ! {
+    loop {
+        crate::arch::aarch64::idle::wait_for_interrupt();
+    }
 }
