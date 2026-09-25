@@ -1,8 +1,11 @@
 # P1-W10 QEMU Boot Regression — Implementation Record
 
-**Status:** Runner foundation implemented; integrated runtime evidence pending W09.  
-**Date:** 2026-09-25  
-**Design:** [W10 design](p1-w10-qemu-boot-regression/README.md).  
+**Status:** Runner foundation implemented; integrated runtime evidence pending W09.
+
+**Date:** 2026-09-25
+
+**Design:** [W10 design](p1-w10-qemu-boot-regression/README.md).
+
 **Evidence:** [Verification record](../verification/p1-w10-qemu-boot-regression-verification.md).
 
 The initial baseline is `4c1f554`. The merged foundation correction assigns

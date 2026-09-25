@@ -1,7 +1,8 @@
 # Zelyr QEMU Runner Entry Contract
 
 **Status:** Normative interface contract; P1-W10 supplies its first executable
-foundation (see §8); integrated boot validation remains pending.  
+foundation (see §8); integrated boot validation remains pending.
+
 **Scope:** The single automated-QEMU execution entry: single-entry rule,
 responsibility boundary, invocation grammar, reserved parameter classes,
 runtime behavior requirements, exit-status taxonomy, evidence content set,

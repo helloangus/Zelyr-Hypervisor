@@ -1,7 +1,9 @@
 # P1-W10 QEMU Boot Regression — Verification Record
 
-**Status:** Foundation mechanism checks passed; integrated QEMU evidence not run.  
-**Date:** 2026-09-25  
+**Status:** Foundation mechanism checks passed; integrated QEMU evidence not run.
+
+**Date:** 2026-09-25
+
 **Implementation:** [Record](../implementation/p1-w10-qemu-boot-regression-record.md).
 
 ## Foundation checks
@@ -39,4 +41,9 @@ objcopy 18.1.3. The image SHA-256 is
 the adjacent `target/p1-foundation/hypervisor-boot.json` preserves ELF/image
 identities and converter provenance. This is a conversion check, not boot
 evidence. `scripts/qemu-runner --version` reports runner/entry contract 0.1.
-The exact CI QG-DOCS checker and `git diff --check` also passed locally.
+The exact CI QG-DOCS checker passed locally. The initial working-tree-only
+whitespace check missed committed Markdown hard-break spaces. Review caught
+six newly added trailing-space lines; these were removed. The complete branch
+check `git diff --check origin/main` then passed, and the recorded unittest
+discovery command was rerun with all 16 tests passing. This supersedes the
+earlier incomplete whitespace-check statement.
