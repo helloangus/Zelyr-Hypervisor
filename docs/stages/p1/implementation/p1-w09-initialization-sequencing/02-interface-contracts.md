@@ -191,6 +191,12 @@ available: `materialize_replay()` then `phase_complete(Console)`. The
 availability signal itself is the W06 contract's; W09 does not probe hardware
 to guess availability.
 
+For `stage1_step`, the [W08/W09 failure-seam
+reconciliation](../p1-w08-host-stage1-address-space/05-failure-seam-reconciliation.md)
+fixes the build-time dependency cycle: W08 returns a `Stage1Error` on failure;
+this W09 adapter alone turns that error into the terminal `fail_phase(Stage1,
+...)` route. It never completes the phase after an error.
+
 ```text
 Name and stability: fn run_init_sequence(); internal.
 Purpose and caller: the ordered composition of phases Capabilities..Stage1;
