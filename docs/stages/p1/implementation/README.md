@@ -18,7 +18,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P1-W06 | [Early console and bring-up logging detailed implementation design](p1-w06-early-console-logging/README.md) and [implementation record](p1-w06-early-console-logging-record.md) | Mechanism implemented; W09/W10 execution pending |
 | P1-W07 | [Fatal crash diagnostics detailed implementation design](p1-w07-fatal-crash-diagnostics/README.md) | Proposed design; implementation not claimed |
 | P1-W08 | [Host Stage-1 address space detailed implementation design](p1-w08-host-stage1-address-space/README.md) | Proposed design; implementation not claimed |
-| P1-W09 | [Initialization sequencing detailed implementation design](p1-w09-initialization-sequencing/README.md) | Proposed design; implementation not claimed |
+| P1-W09 | [Initialization sequencing detailed implementation design](p1-w09-initialization-sequencing/README.md) and [lifecycle foundation record](p1-w09-lifecycle-foundation-record.md) | Pure type/tracker foundation only; sequencing and P1-V15 pending |
 | P1-W10 | [QEMU boot regression detailed implementation design](p1-w10-qemu-boot-regression/README.md) | Proposed design; implementation not claimed |
 | P1-W11 | [Negative and fault validation detailed implementation design](p1-w11-negative-fault-validation/README.md) | Proposed design; implementation not claimed |
 | P1-W12 | [P1 documentation and P2 handoff detailed implementation design](p1-w12-p1-documentation-handoff/README.md) | Proposed design; implementation not claimed |
