@@ -1,9 +1,9 @@
 # P1-W06 Current-State and Channel Reconciliation
 
-**Status:** Proposed detailed-design amendment; no validation claim.  
-**Scope:** P0 diagnostic taxonomy and the console publication boundary.  
-**Version:** v0.2  
-**Owner/change context:** P1-W06 current-state audit, 2026-09-25.  
+**Status:** Proposed detailed-design amendment; no validation claim.
+**Scope:** P0 diagnostic taxonomy and the console publication boundary.
+**Version:** v0.2
+**Owner/change context:** P1-W06 current-state audit, 2026-09-25.
 **Supersedes:** README decision 1's combined-channel wording and channel-contract §2's blanket availability precondition.
 
 W02 currently has a panic-only writer and no console phase. W03 has a

@@ -1,9 +1,9 @@
 # P1-W06 Early Console — Verification Record
 
-**Status:** Mechanism review and local gates; integrated execution pending.  
-**Date:** 2026-09-25 (Asia/Shanghai).  
-**Environment:** pinned Rust 1.98.1, AArch64 bare-metal target, branch `p1/w06-early-console`.  
-**Design:** [W06 detailed design](../implementation/p1-w06-early-console-logging/README.md).  
+**Status:** Mechanism review and local gates; integrated execution pending.
+**Date:** 2026-09-25 (Asia/Shanghai).
+**Environment:** pinned Rust 1.98.1, AArch64 bare-metal target, branch `p1/w06-early-console`.
+**Design:** [W06 detailed design](../implementation/p1-w06-early-console-logging/README.md).
 **Implementation:** [W06 record](../implementation/p1-w06-early-console-logging-record.md).
 
 | ID | Parent | Result and evidence | Proof boundary |

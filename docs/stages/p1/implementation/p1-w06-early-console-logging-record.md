@@ -1,9 +1,9 @@
 # P1-W06 Early Console — Implementation Record
 
-**Status:** Mechanism implemented on `p1/w06-early-console`; W09 integration and W10/W11 execution pending.  
-**Date:** 2026-09-25 (Asia/Shanghai).  
-**Plan:** [P1-W06](../plans/p1-w06-early-console-logging.md).  
-**Design:** [W06 detailed design](p1-w06-early-console-logging/README.md) and [reconciliation](p1-w06-early-console-logging/05-implementation-reconciliation.md).  
+**Status:** Mechanism implemented on `p1/w06-early-console`; W09 integration and W10/W11 execution pending.
+**Date:** 2026-09-25 (Asia/Shanghai).
+**Plan:** [P1-W06](../plans/p1-w06-early-console-logging.md).
+**Design:** [W06 detailed design](p1-w06-early-console-logging/README.md) and [reconciliation](p1-w06-early-console-logging/05-implementation-reconciliation.md).
 **Verification:** [W06 verification record](../verification/p1-w06-early-console-logging-verification.md).
 
 W02 supplies a boot-only panic writer, identity and terminal route. W03
