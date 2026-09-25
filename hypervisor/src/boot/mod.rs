@@ -9,6 +9,10 @@
 
 use core::arch::global_asm;
 
+// The W08 table/transition consumer is not linked in this foundation step.
+// Full W08 removes this transitional allowance when the typed helpers are used.
+#[allow(dead_code)]
+pub(crate) mod address;
 pub(crate) mod console;
 pub(crate) mod context;
 pub(crate) mod fatal;
