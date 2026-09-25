@@ -30,6 +30,14 @@ semantics using safe atomics. Its readiness flag may use a safe atomic too.
 Neither storage primitive needs an unsafe-inventory entry; only actual
 register/assembly boundaries do. The guard remains terminal and never resets.
 The W05 exception-entry guard is distinct and remains owned by W05.
+W05's guard only rejects a second architectural exception. It cannot reject
+a Rust panic raised while W07 renders the first exception. Therefore all
+three W07 entries, including `report_fatal_exception`, must acquire W07's
+shared fatal guard before formatting or output. A held guard reaches silent
+stop. This supersedes the parent design's "exception entry does not re-guard"
+wording: it is not a second acquisition of the *same* guard, but acquisition
+of W07's distinct guard after W05 has taken its own. W05 continues to own
+architectural re-entry and W07 owns report-path panic recursion.
 
 ## Formatter and implementation seams
 

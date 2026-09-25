@@ -198,8 +198,9 @@ No row requires designing recovery, storage, or a later-stage mechanism.
    held executes the silent bounded stop. The guard is the single
    fatal-path synchronization story, transferred from W02's panic-entry
    guard (decision 2) and coordinated with W05's entry-path guard through
-   the contracted call direction (W05 sets its guard; the fatal path is
-   reached only through W05's router or the panic entry, both guarded).
+   the contracted call direction (W05 sets its own entry guard before its
+   router, then every W07 entry acquires W07's distinct report guard;
+   see the [reconciliation](00-implementation-reconciliation.md)).
    Authority: W02 guard contract; W05 state machine R1; P1-V12.
 8. **No symbolization, no storage: addresses print as raw fixed-width hex;
    nothing is written anywhere but the selected transport.** Symbolization
