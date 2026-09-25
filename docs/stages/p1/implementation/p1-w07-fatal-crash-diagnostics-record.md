@@ -19,8 +19,11 @@ its pre-arm summary remains W05-owned.
 
 All three entries acquire W07's report guard. W05's separate architectural
 guard prevents a second vector entry; W07's guard prevents a panic during an
-exception report from recursively emitting another report. The report uses
-fixed 128-byte UTF-8-safe lines with explicit truncation suffix and an end
+exception report from recursively emitting another report. W05's router
+checks that guard before either its pre-arm summary or
+post-arm branch, so a vector fault interrupting a W07 report also stops
+silently. The report uses fixed 128-byte UTF-8-safe lines with an explicit
+truncation suffix and an end
 marker. Long panic messages occupy their own line so they cannot truncate
 location or SP/LR fields. Exception GPRs use one line each. The chosen
 transport is W06 when available, else W02's early writer, and never changes

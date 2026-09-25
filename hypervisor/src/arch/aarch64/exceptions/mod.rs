@@ -201,6 +201,7 @@ pub(crate) fn route_classified(frame: &ExceptionFrame) -> ! {
         Some(ExceptionCategory::SError) => SyndromeClass::SError,
         _ => SyndromeClass::Unknown,
     };
+    crate::boot::fatal::stop_if_reporting();
     if crate::boot::fatal::fatal_path_ready() {
         crate::boot::fatal::report_fatal_exception(frame, class, disposition);
     }

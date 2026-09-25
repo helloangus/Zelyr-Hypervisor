@@ -38,6 +38,12 @@ stop. This supersedes the parent design's "exception entry does not re-guard"
 wording: it is not a second acquisition of the *same* guard, but acquisition
 of W07's distinct guard after W05 has taken its own. W05 continues to own
 architectural re-entry and W07 owns report-path panic recursion.
+Conversely, if a vector fault interrupts a W07 report before readiness has
+armed, W05 must check W07's held guard before choosing its pre-arm summary;
+otherwise it would emit a second report. The W05 router's W07-consumer seam
+therefore calls `stop_if_reporting()` after capture and before either route.
+The readiness-failure boundary also claims W07's guard before its one early
+writer line; a writer fault cannot re-enter a second report.
 
 ## Formatter and implementation seams
 

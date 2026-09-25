@@ -196,8 +196,17 @@ pub(crate) fn arm_fatal_path() {
 pub(crate) fn fatal_path_ready() -> bool {
     FATAL_PATH_READY.load(Ordering::Acquire)
 }
+/// W05 calls this before its pre-arm summary as well as its post-arm route.
+/// A vector fault during any in-progress W07 report must stop silently.
+pub(crate) fn stop_if_reporting() {
+    if FATAL_PATH_GUARD.load(Ordering::Relaxed) {
+        bounded_stop();
+    }
+}
 pub(crate) fn readiness_failure() -> ! {
     // Do not invoke the renderer whose readiness is being established.
+    // Claim the same guard so a fault in the minimal writer stops silently.
+    acquire_guard();
     early_write_bytes(b"ZELYR P1 FATAL readiness fc=FC-INVARIANT inv=fatal_path_not_ready\r\n");
     bounded_stop()
 }
