@@ -141,6 +141,7 @@ fn write_register(offset: u64, value: u32) {
 pub(crate) struct BoundedLine {
     bytes: [u8; LINE_CAPACITY],
     len: usize,
+    truncated: bool,
 }
 
 impl BoundedLine {
@@ -148,6 +149,7 @@ impl BoundedLine {
         Self {
             bytes: [0; LINE_CAPACITY],
             len: 0,
+            truncated: false,
         }
     }
     fn as_bytes(&self) -> &[u8] {
@@ -155,18 +157,35 @@ impl BoundedLine {
     }
     #[allow(dead_code)] // W09 consumes marker text after it is linked.
     pub(crate) fn as_str(&self) -> &str {
-        core::str::from_utf8(self.as_bytes()).expect("bounded line copies valid UTF-8")
+        // Every write copies a UTF-8 prefix and an ASCII suffix. Keep the
+        // fatal/diagnostic transport nonpanicking even if this invariant is
+        // broken by a future writer.
+        match core::str::from_utf8(self.as_bytes()) {
+            Ok(line) => line,
+            Err(_) => "ZELYR P1 invalid-line",
+        }
     }
 }
 
 impl Write for BoundedLine {
     fn write_str(&mut self, text: &str) -> fmt::Result {
-        let mut count = (LINE_CAPACITY - self.len).min(text.len());
+        if self.truncated {
+            return Ok(());
+        }
+        // Reserve the suffix on every write so a later formatter fragment
+        // cannot turn a complete-looking line into a silent truncation.
+        let remaining = LINE_CAPACITY - TRUNCATED.len() - self.len;
+        let mut count = remaining.min(text.len());
         while !text.is_char_boundary(count) {
             count -= 1;
         }
         self.bytes[self.len..self.len + count].copy_from_slice(&text.as_bytes()[..count]);
         self.len += count;
+        if count < text.len() {
+            self.bytes[self.len..self.len + TRUNCATED.len()].copy_from_slice(TRUNCATED);
+            self.len += TRUNCATED.len();
+            self.truncated = true;
+        }
         Ok(())
     }
 }

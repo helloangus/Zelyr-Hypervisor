@@ -28,8 +28,10 @@ Device-nGnRE/RW/XN are the selected reference facts. UARTCR's current bits
 are preserved; if UARTEN/TXE are absent they are set and read back. A second
 bring-up panics as an invariant violation. The start line is the sole
 init-time writer before availability; later producers must be phase-gated.
-The line cap is 128 bytes; overlong producer lines keep at most 116 bytes at
-a UTF-8 boundary and add ` [truncated]` before CRLF. The marker spelling
+The line cap is 128 bytes; both formatted and producer lines reserve the
+12-byte suffix, keep at most 116 bytes at a UTF-8 boundary on overflow, and
+add ` [truncated]` before CRLF. Formatted lines have a nonpanicking UTF-8
+fallback; W09's closed phase labels fit the bound. The marker spelling
 is `ZELYR P1 PHASE <label> <enter|complete>`; W09 supplies labels and
 ordering, W10 fixes its own stable token before regression runs.
 
@@ -40,7 +42,7 @@ The output poll has no software timeout, so W10's runner supplies the
 external observation bound. P2 discovery owns replacing the fixed address.
 
 One new `unsafe` boundary, U-010, wraps closed volatile MMIO access with
-nearby SAFETY arguments; independent review is still required. No dependency,
+nearby SAFETY arguments; independent soundness review is complete. No dependency,
 feature, public external API, ABI, heap, lock, UART probe or second UART
 was added. There are no reachable TODO/FIXME placeholders. Evidence and
 unrun tests are stated in the separate verification record.

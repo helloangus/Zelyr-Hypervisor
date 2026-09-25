@@ -233,7 +233,7 @@ completed.
 
 ### U-010 — reference early-console volatile MMIO
 
-- **status:** accepted after W06 review
+- **status:** accepted
 - **title:** closed PL011 DR/FR/CR read/write boundary
 - **boundary-category:** `mmio-volatile`
 - **location:** `hypervisor/src/boot/console.rs`, `read_register` and `write_register`
@@ -243,9 +243,9 @@ completed.
 - **failure-class:** FC-PLATFORM for a false reference-device premise; W09 routes init readback failure and does not continue normally
 - **authorizing-design:** [W06 channel contracts](../stages/p1/implementation/p1-w06-early-console-logging/02-code-contracts-channel.md) and [reconciliation](../stages/p1/implementation/p1-w06-early-console-logging/05-implementation-reconciliation.md)
 - **owner:** P1-W06
-- **review-record:** independent arch/systems review required before W06 PR merge; see W06 verification record
+- **review-record:** `/root/integration_audit`, 2026-09-25: independently checked fixed base, closed aligned offsets, volatile read/write, UARTCR preservation and readback, single-CPU writer, and W08 Device-nGnRE premise; no soundness defect found; see W06 verification record
 - **validation:** target compilation and source review in [W06 verification](../stages/p1/verification/p1-w06-early-console-logging-verification.md); QEMU/post-MMU exercise belongs to W09–W11
-- **audit-status:** author reviewed; second soundness review pending
+- **audit-status:** author and independent soundness review complete; integrated execution pending W09–W11
 - **permanence:** P1 reference transport only; re-audit at W08 mapping and P2 discovery replacement
 
 ## History
