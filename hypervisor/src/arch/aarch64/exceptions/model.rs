@@ -191,7 +191,7 @@ pub const fn syndrome_class(esr: u64) -> SyndromeClass {
         0x33 => SyndromeClass::Debug(DebugKind::Step),
         0x35 => SyndromeClass::Debug(DebugKind::Watchpoint),
         0x3c => SyndromeClass::Debug(DebugKind::Brk),
-        0x11..=0x13 | 0x15..=0x17 | 0x20 | 0x24 | 0x30 | 0x32 | 0x34 | 0x38 | 0x3a => {
+        0x11..=0x13 | 0x20 | 0x24 | 0x30 | 0x32 | 0x34 | 0x38 | 0x3a => {
             SyndromeClass::GuestClassOnly
         }
         _ => SyndromeClass::Unknown,

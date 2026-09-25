@@ -29,7 +29,7 @@ core::arch::global_asm!(
 // only before installation or inside assembly under the entry protocol.
 unsafe extern "C" {
     static p1_el2_vector_table: u8;
-    static mut p1_exception_guard: u64;
+    static p1_exception_guard: core::cell::UnsafeCell<u64>;
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -37,6 +37,7 @@ pub(crate) enum VectorStatus {
     Unestablished,
     Established,
 }
+#[derive(Clone, Copy)]
 struct VectorBase(u64);
 static INSTALL_STARTED: AtomicBool = AtomicBool::new(false);
 static VECTOR_BASE: AtomicU64 = AtomicU64::new(0);
@@ -76,7 +77,12 @@ pub(crate) fn install_el2_exception_entry() {
     // live; no exception path yet accesses this assembly-owned guard.
     // A second install is rejected above. FC-INVARIANT if violated.
     unsafe {
-        core::ptr::write_volatile(core::ptr::addr_of_mut!(p1_exception_guard), 1);
+        core::ptr::write_volatile(
+            core::ptr::addr_of!(p1_exception_guard)
+                .cast_mut()
+                .cast::<u64>(),
+            1,
+        );
     }
     vbar_write(base);
     let observed = vbar_read();
@@ -203,7 +209,7 @@ fn emit_pre_arm_summary(
     disposition: ExceptionDisposition,
 ) {
     let mut line = SummaryBuffer {
-        bytes: [0; 256],
+        bytes: [0; 512],
         len: 0,
     };
     let category =
@@ -223,11 +229,20 @@ fn emit_pre_arm_summary(
         let _ = line.write_str("->");
     }
     // W09 replaces unavailable with its exception-safe tracker snapshot.
-    let _ = line.write_str(" ph=unavailable\r\n");
+    let identity = &crate::boot::identity::BUILD_IDENTITY;
+    let _ = write!(
+        line,
+        " ph=unavailable fc=FC-INVARIANT site=vector version={} arch={} profile={} rev={} dirty={}\r\n",
+        identity.project_version,
+        identity.target_architecture,
+        identity.build_profile,
+        identity.source_revision,
+        identity.dirty
+    );
     crate::boot::writer::early_write_bytes(&line.bytes[..line.len]);
 }
 struct SummaryBuffer {
-    bytes: [u8; 256],
+    bytes: [u8; 512],
     len: usize,
 }
 impl Write for SummaryBuffer {

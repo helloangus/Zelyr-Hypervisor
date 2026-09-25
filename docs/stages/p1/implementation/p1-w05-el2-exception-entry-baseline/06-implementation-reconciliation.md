@@ -28,6 +28,8 @@ for synchronous external abort FSC 0x10; watchpoints check FnV directly.
 Other categories do not inherit a stale synchronous ESR's FAR validity.
 HPFAR is always unavailable in P1. Only validity and the previously required
 DFSC grouping are decoded; no trap emulation is added.
+The original table's "LDP/STP trap group" is corrected to the documented
+AArch32 LDC/STC trap, EC 0x06; no invented LDP/STP exception encoding is used.
 
 ## Entry and stack contract
 
@@ -72,6 +74,10 @@ Pre-arm summary uses W02's writer; W07 readiness/report calls are added by
 W07. Before W09 exists phase availability is explicitly `unavailable`, never
 an invented current phase. W09 replaces this with its snapshot read.
 The W07-owned fatal prefix is coordinated before runtime evidence.
+It is `ZELYR P1 FATAL`. The pre-arm line also includes `fc=FC-INVARIANT`,
+`site=vector`, and W02 build identity fields to satisfy P0's fatal minimum;
+unavailable identity fields retain their honest unavailable tokens. The
+fixed 512-byte buffer covers the longest current line with ample slack.
 
 ## Scope, validation and review
 

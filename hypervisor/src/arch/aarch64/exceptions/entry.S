@@ -126,4 +126,3 @@ p1_exception_guard:
 p1_captured_frame:
     .zero {frame_size}
 .size p1_captured_frame, {frame_size}
-
