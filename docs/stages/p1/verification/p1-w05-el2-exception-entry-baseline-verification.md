@@ -17,7 +17,10 @@
 `cargo build --target aarch64-unknown-none-softfloat -p hypervisor` passed.
 `cargo test --workspace --exclude hypervisor` passed 15 host tests (including
 four W05 tests). `cargo clippy --target aarch64-unknown-none-softfloat -p
-hypervisor -- -D warnings` passed. `llvm-objdump -h` and `llvm-nm -n` confirmed
-the linked addresses above. Other local/online gates are recorded when run.
+hypervisor -- -D warnings`, `cargo fmt --all -- --check`,
+`cargo clippy --workspace --exclude hypervisor --all-targets -- -D warnings`,
+and `git diff --check main...HEAD` passed. `llvm-objdump -h` and `llvm-nm -n`
+confirmed the linked addresses above. QG-DOCS and online gates are recorded
+when run.
 No QEMU boot, intentional exception, post-arm report, MMU-transition or real
 hardware validation has run for W05. P1-V08/P1-V09 are not yet fully proven.
