@@ -1,5 +1,7 @@
 # P2 work-package plans
 
+Chinese readers can use the [Chinese edition](README.zh-CN.md).
+
 **Status:** Planning index. Individual plans are bounded work-package plans,
 not implementation-completion records.
 

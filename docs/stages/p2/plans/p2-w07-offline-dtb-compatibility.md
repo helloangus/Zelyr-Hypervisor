@@ -1,5 +1,7 @@
 # P2-W07 — Offline DTB compatibility checking
 
+Chinese readers can use the [Chinese edition](p2-w07-offline-dtb-compatibility.zh-CN.md).
+
 **Status:** Planned work package; implementation not claimed
 **Parent:** [P2 task book](../task-book-v0.1.md)
 **Prerequisites and consumers:** [P2 plan index](README.md)

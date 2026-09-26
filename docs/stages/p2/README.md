@@ -1,5 +1,7 @@
 # P2 — Platform Discovery & Host Memory Foundation
 
+Chinese readers can use the [Chinese edition](README.zh-CN.md).
+
 The normative P2 scope is [task-book-v0.1.md](task-book-v0.1.md). Start a
 specific package from the [work-package plan index](plans/README.md), which
 maps P2-W01 through P2-W10 to prerequisites and downstream consumers.

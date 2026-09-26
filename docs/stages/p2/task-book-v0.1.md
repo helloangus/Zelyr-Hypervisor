@@ -1,5 +1,7 @@
 # Zelyr Hypervisor — P2 Stage Task Book v0.1
 
+Chinese readers can use the [Chinese edition](task-book-v0.1.zh-CN.md).
+
 **Stage ID:** P2
 **Stage name:** Platform Discovery & Host Memory Foundation
 **Status:** Defined planning baseline; implementation and validation are not claimed

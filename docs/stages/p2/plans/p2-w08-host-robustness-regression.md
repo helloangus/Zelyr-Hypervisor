@@ -1,5 +1,7 @@
 # P2-W08 — Host robustness and negative regression
 
+Chinese readers can use the [Chinese edition](p2-w08-host-robustness-regression.zh-CN.md).
+
 **Status:** Planned work package; implementation not claimed
 **Parent:** [P2 task book](../task-book-v0.1.md)
 **Prerequisites and consumers:** [P2 plan index](README.md)
