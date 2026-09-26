@@ -1,5 +1,8 @@
 # P1 — AArch64 EL2 Minimum Bring-up
 
+Chinese editions: [current task book](task-book-v0.2.zh-CN.md) and
+[completion report](verification/p1-completion-report.zh-CN.md).
+
 **Status:** P1 stage entry; completion is claimed only in the linked L7 report.
 **Scope:** Navigation for P1 planning, implementation and verification.
 **Version:** v0.2.

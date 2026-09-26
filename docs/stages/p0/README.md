@@ -1,5 +1,8 @@
 # P0 — Repository, Specification & Toolchain Baseline
 
+Chinese editions: [task book](task-book-v0.1.zh-CN.md) and
+[completion report](verification/p0-completion-report.zh-CN.md).
+
 The normative P0 scope is [task-book-v0.1.md](task-book-v0.1.md). Start a
 specific package from the [work-package plan index](plans/README.md), which
 maps P0-W01 through P0-W22 to prerequisites and downstream consumers.

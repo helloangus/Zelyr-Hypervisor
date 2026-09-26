@@ -216,7 +216,7 @@ jobs:
                       # Directory READMEs are conditional-class indexes, not
                       # normative governance documents (documentation
                       # baseline §1); docs/README.md is covered separately.
-                      if fn.endswith('.md') and fn != 'README.md':
+                      if fn.endswith('.md') and fn != 'README.md' and not fn.endswith(('.zh-CN.md', '.en.md')):
                           normative.append(os.path.join(d, fn))
           unreachable = [n for n in normative if n not in seen]
           if unreachable:
@@ -240,3 +240,5 @@ jobs:
               sys.exit(1)
           print('QG-DOCS: links, reachability, headers OK')
           PYEOF
+          python3 -m unittest discover -s tests -p 'test_doc_translations.py'
+          python3 scripts/check-doc-translations.py --coverage

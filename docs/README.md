@@ -5,12 +5,20 @@ documentation layout).
 **Scope:** How to find and classify repository documentation; taxonomy and
 metadata detail live in the [documentation
 baseline](development/documentation-baseline.md).  
-**Version:** v0.1  
-**Owner/change context:** P0 engineering baseline; updated whenever the
+**Version:** v0.2
+**Owner/change context:** P0 engineering baseline; bilingual-documentation
+update; updated whenever the
 documentation layout changes.  
 **Supersedes:** None.
 
 ## Reading rules
+
+Chinese readers can start at the [Chinese documentation index](README.zh-CN.md).
+Existing English paths remain the default agent entry points. The
+[language-edition rules](development/documentation-baseline.md#7-language-editions-and-translation-authority)
+define translation status and authority; the
+[glossary](development/translation-glossary.md) guides terminology. ADR-000 is
+the Chinese-source exception; agents can read its [English translation](adr/adr-000-architecture-baseline-v0.1.en.md).
 
 Every agent and contributor must read this file and the repository-root
 [`AGENTS.md`](../AGENTS.md) before non-trivial work.  Then load the documents

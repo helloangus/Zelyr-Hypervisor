@@ -1,5 +1,7 @@
 # Zelyr Hypervisor — P1 Stage Task Book v0.2
 
+Chinese readers can use the [Chinese edition](task-book-v0.2.zh-CN.md).
+
 **Stage ID:** P1
 **Stage name:** AArch64 EL2 Minimum Bring-up
 **Status:** Current amended planning baseline; implementation and validation evidence remains in package records, not this book

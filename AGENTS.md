@@ -1,5 +1,8 @@
 # Zelyr agent instructions
 
+Chinese readers can use the [Chinese edition](AGENTS.zh-CN.md); this English
+file remains the agent instruction source.
+
 This repository has completed P1 within its declared reference-QEMU scope on
 the completed P0 engineering baseline. See the
 [P1 completion report](docs/stages/p1/verification/p1-completion-report.md)
@@ -13,6 +16,11 @@ current evidence. Keep VM, GIC, and guest functionality in their owning stages.
 
 Before any non-trivial task, read [`docs/README.md`](docs/README.md) and follow
 its routing table.  In particular:
+
+Read English source documents by default. The accepted ADR-000 has a Chinese
+authoritative source; its [English edition](docs/adr/adr-000-architecture-baseline-v0.1.en.md)
+is a translation for direct agent reading. Apply the [language-edition rules](docs/development/documentation-baseline.md#7-language-editions-and-translation-authority)
+when source and translation disagree.
 
 - Any design or architecture decision: read the ADR baseline and the applicable
   stage task book before proposing a change.

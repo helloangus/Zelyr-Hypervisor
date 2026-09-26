@@ -1,5 +1,7 @@
 # P0 Completion Report
 
+Chinese readers can use the [Chinese edition](p0-completion-report.zh-CN.md).
+
 **Status:** P0 stage completion claim — the only document authorized to make
 it (stage workflow L7).  
 **Date:** 2026-09-19 (Asia/Shanghai)  
