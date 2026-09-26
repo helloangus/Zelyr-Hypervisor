@@ -1,6 +1,10 @@
 # Zelyr agent instructions
 
-This repository is implementing P1 on the completed P0 engineering baseline.
+This repository has completed P1 within its declared reference-QEMU scope on
+the completed P0 engineering baseline. See the
+[P1 completion report](docs/stages/p1/verification/p1-completion-report.md)
+for its exact evidence and limits. P6-V29 still owns genuine asynchronous
+unexpected-vector execution; P1 completion does not imply that proof.
 See the [P0 completion report](docs/stages/p0/verification/p0-completion-report.md)
 and [P1 implementation index](docs/stages/p1/implementation/README.md) for
 current evidence. Keep VM, GIC, and guest functionality in their owning stages.
@@ -61,7 +65,7 @@ ADR-required issue; do not silently choose a new architecture.
 
 ## Current repository state
 
-The workspace contains the P1 hypervisor and host-test baseline. Other
+The workspace contains the completed P1 hypervisor and host-test baseline. Other
 directories may still be scaffolds. Do not infer API, workspace membership,
 target layout, or module trees from names; inspect the current workspace and
 the applicable detailed design.

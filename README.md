@@ -1,10 +1,12 @@
 # Zelyr Hypervisor
 
-Zelyr is an AArch64-first, Rust-first Type-1 Hypervisor P0 scaffold.  QEMU
-`virt` is the reference platform; Orange Pi 3B/RK3566 is the first
-real-hardware target.  The repository currently contains the P0 project
-scaffold and its normative baseline documents; it does not yet contain a
-runnable hypervisor.
+Zelyr is an AArch64-first, Rust-first Type-1 Hypervisor. QEMU `virt` is the
+reference platform; Orange Pi 3B/RK3566 is a later real-hardware target.
+The repository contains the completed P0 engineering baseline and the
+[P1 EL2 bring-up completion report](docs/stages/p1/verification/p1-completion-report.md).
+P1 boots a single Host CPU to stable Non-secure EL2 with Host Stage-1 mapping,
+console and bounded fault diagnostics; it does not yet run a Guest or provide
+GIC, dynamic platform discovery or allocation services.
 
 Start with [AGENTS.md](AGENTS.md) and the [documentation index](docs/README.md).
 Contributors and agents must read both before non-trivial work; reading this
@@ -14,22 +16,20 @@ README alone does not authorize code or architecture changes.
 
 ```text
 docs/        architecture, governance, stage work, and verification records
-crates/      future reusable Rust crates; boundaries await detailed designs
-hypervisor/  future binary composition root
-soc/         SoC-specific support
-boards/      board/BSP-specific composition and quirks
-guests/      validation guests
-control/     Control/Service Domain components
+crates/      host-test baseline and reserved reusable-crate space
+hypervisor/  P1 bare-metal AArch64 EL2 image
+soc/         reserved SoC-specific support
+boards/      reserved board/BSP composition and quirks
+guests/      reserved validation guests
+control/     reserved Control/Service Domain components
 scripts/     reproducible developer and CI entry points
 tests/       host, QEMU, and integration test support
 .github/     CI workflows
 ```
 
-The source directories are placeholders deliberately created in P0.  Their
-detailed contents await later approved designs.  Intentionally reserved empty
-directories contain a tracked `.gitkeep` marker, so a fresh clone does not
-require manual `mkdir` steps.  Adding code or Cargo manifests requires the
-applicable P0/P1 detailed design.
+Some directories remain P0 placeholders with `.gitkeep`; names do not imply
+implemented functionality. Code changes still require their owning stage's
+approved detailed design and the repository's coding guidance.
 
 ## License
 

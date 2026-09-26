@@ -1,16 +1,17 @@
 # P1 contract set
 
-**Status:** Proposed stage-local contract index; P1 completion is not claimed.\
+**Status:** Stage-local contract index; P1 completion decision is in the L7 report, not this index.\
 **Scope:** W12 assembly of P1 boundaries and P2 handoff, not implementation evidence.\
-**Version:** v0.1.\
-**Owner/change context:** P1-W12, 2026-09-25.\
-**Supersedes:** None.
+**Version:** v0.2.\
+**Owner/change context:** P1-W12 assembly and P1 L7 completion cross-link, 2026-09-26.\
+**Supersedes:** v0.1 index wording.
 
 These documents assemble the current W01–W11 boundaries. Each links to its
 owning design, implementation record or verification record. A verification
 link denotes an evidence location, not an automatic pass. The [evidence
-map](stage-gate-evidence-map.md) lists open gates and prevents this set from
-being read as a P1 completion report.
+map](stage-gate-evidence-map.md) preserves per-gate limits. Only the
+[L7 completion report](../verification/p1-completion-report.md) makes the P1
+stage decision; it explicitly leaves NC6/P6-V29 open.
 
 | Contract | Subject |
 |---|---|
