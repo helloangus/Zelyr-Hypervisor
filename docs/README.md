@@ -26,7 +26,7 @@ for the task using this table.
 
 | Work type | Required documents |
 |---|---|
-| Any architecture-affecting work | [ADR baseline](adr/adr-000-architecture-baseline-v0.1.md), [ADR lifecycle and process](adr/README.md), and the applicable stage task book |
+| Any architecture-affecting work | [ADR baseline (English reading edition)](adr/adr-000-architecture-baseline-v0.1.en.md), [authoritative Chinese ADR](adr/adr-000-architecture-baseline-v0.1.md), [ADR lifecycle and process](adr/README.md), and the applicable stage task book |
 | Stage planning / detailed design | ADR baseline, applicable task book, mandatory [concise Plan Agent guide](development/plan-agent-guidelines.md), then routed detailed-reference sections; layer responsibilities and admission rules in the [stage workflow](development/stage-workflow.md) |
 | Coding | ADR baseline, applicable task book, approved detailed design, mandatory [concise Coding guide](development/coding-guidelines.md), then routed detailed-reference sections |
 | Quality-gate questions (format, lint, warnings, tests, builds, docs checks) | [Quality gates](development/quality-gates.md) |
@@ -54,7 +54,7 @@ for the task using this table.
 ## Normative documents and precedence
 
 The current normative sources are the [Architecture baseline
-ADR](adr/adr-000-architecture-baseline-v0.1.md), applicable stage task books,
+ADR](adr/adr-000-architecture-baseline-v0.1.md) ([English reading edition](adr/adr-000-architecture-baseline-v0.1.en.md)), applicable stage task books,
 approved detailed designs and frozen contracts, plus the relevant concise agent
 guide and any detailed-reference sections it routes. Use the governing
 guideline's exact ordering:

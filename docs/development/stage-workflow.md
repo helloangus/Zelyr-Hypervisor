@@ -1,5 +1,7 @@
 # Zelyr Stage Workflow
 
+Chinese readers can use the [Chinese edition](stage-workflow.zh-CN.md).
+
 **Status:** Normative stage-process governance.  
 **Scope:** The seven-layer responsibility flow from architecture decision to
 stage completion, the per-layer fields (question, authority, escalation

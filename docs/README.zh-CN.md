@@ -2,11 +2,11 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `ef0eca4e52dd511cb9738a8073bbbe773f192f22`
+**Source blob:** `26f933cad34391085b60e07aa64f3af740039798`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 **状态：** 规范性文档治理，规定阅读路径、优先级和文档布局。
-**范围：** 说明如何查找、分类仓库文档；分类与元数据细节见[文档基线](development/documentation-baseline.md)。
+**范围：** 说明如何查找、分类仓库文档；分类与元数据细节见[文档基线](development/documentation-baseline.zh-CN.md)。
 **版本：** v0.2
 **所有者／变更背景：** P0 工程基线；双语文档更新；文档布局变化时更新。
 **替代：** 无。
@@ -16,14 +16,15 @@
 每位 agent 和贡献者在进行非简单工作前，都必须阅读[英文原文](README.md)及仓库根目录的
 [AGENTS.md](../AGENTS.md)，再根据下表读取本次任务对应的文档。中文读者可从本文开始，
 但发生措辞分歧时以英文原文为准；ADR-000 的中文原文除外。
+[术语表](development/translation-glossary.zh-CN.md)协助保持译法一致。
 
 | 工作类型 | 必读文档 |
 |---|---|
-| 涉及架构的工作 | [ADR 基线](adr/adr-000-architecture-baseline-v0.1.md)、[ADR 生命周期与流程](adr/README.md)、对应阶段任务书 |
-| 阶段规划／详细设计 | ADR 基线、对应任务书、必须阅读的[简明 Plan Agent 指南](development/plan-agent-guidelines.md)、其指定的详细参考章节，以及[阶段工作流程](development/stage-workflow.md)中的分层职责与准入规则 |
-| 编码 | ADR 基线、对应任务书、已批准的详细设计、必须阅读的[简明编码指南](development/coding-guidelines.md)，以及其指定的详细参考章节 |
+| 涉及架构的工作 | [ADR 基线英文阅读版](adr/adr-000-architecture-baseline-v0.1.en.md)、[具有权威性的中文 ADR](adr/adr-000-architecture-baseline-v0.1.md)、[ADR 生命周期与流程](adr/README.zh-CN.md)、对应阶段任务书 |
+| 阶段规划／详细设计 | ADR 基线、对应任务书、必须阅读的[简明 Plan Agent 指南](development/plan-agent-guidelines.zh-CN.md)、其指定的详细参考章节，以及[阶段工作流程](development/stage-workflow.zh-CN.md)中的分层职责与准入规则 |
+| 编码 | ADR 基线、对应任务书、已批准的详细设计、必须阅读的[简明编码指南](development/coding-guidelines.zh-CN.md)，以及其指定的详细参考章节 |
 | 质量门禁问题 | [质量门禁](development/quality-gates.md) |
-| 仓库贡献／集成 | [分支与 PR 集成流程](development/integration-workflow.md)、对应工作包计划及相关实施／验证记录 |
+| 仓库贡献／集成 | [分支与 PR 集成流程](development/integration-workflow.zh-CN.md)、对应工作包计划及相关实施／验证记录 |
 | 新贡献者入门 | [贡献者工作流程](development/contributor-workflow.md) |
 | CI、必需检查或分支保护 | [CI 基线](development/ci-baseline.md) |
 | 工具链安装、恢复或更新 | [工具链基线](development/toolchain-baseline.md)和根目录的 `rust-toolchain.toml` |
@@ -46,7 +47,7 @@
 
 ## 规范性文档与优先级
 
-当前规范性来源包括[架构基线 ADR](adr/adr-000-architecture-baseline-v0.1.md)、对应阶段任务书、
+当前规范性来源包括[架构基线 ADR](adr/adr-000-architecture-baseline-v0.1.md)（[英文阅读版](adr/adr-000-architecture-baseline-v0.1.en.md)）、对应阶段任务书、
 已批准的详细设计和冻结的契约，以及相关简明 agent 指南和其指定的详细参考章节。
 采用主管指南规定的顺序：
 

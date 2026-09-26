@@ -1,5 +1,7 @@
 # Zelyr Coding Guidelines — Concise Mandatory Guide
 
+Chinese readers can use the [Chinese edition](coding-guidelines.zh-CN.md).
+
 **Status:** Mandatory for every code-change task.  
 **Scope:** Rust implementation of an approved design. This is not permission
 to change architecture, ABI, state machines, ownership, locking, or layering.  

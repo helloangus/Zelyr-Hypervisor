@@ -1,5 +1,7 @@
 # ADRs — architecture decision records and lifecycle
 
+Chinese readers can use the [Chinese edition](README.zh-CN.md).
+
 **Status:** Normative ADR governance (states, transitions, thresholds,
 conflict procedure, history rules, numbering/index).  
 **Version:** v0.1  
@@ -129,7 +131,7 @@ edits.
 | ADR | Title | State |
 |---|---|---|
 | [ADR-000](adr-000-architecture-baseline-v0.1.md) ([English translation](adr-000-architecture-baseline-v0.1.en.md)) | Architecture baseline v0.1 | Accepted |
-| [ADR-061](adr-061-defer-p1-asynchronous-vector-validation-to-p6.md) | Defer executed EL2 asynchronous-vector validation from P1 to P6 | Accepted |
+| [ADR-061](adr-061-defer-p1-asynchronous-vector-validation-to-p6.md) ([Chinese translation](adr-061-defer-p1-asynchronous-vector-validation-to-p6.zh-CN.md)) | Defer executed EL2 asynchronous-vector validation from P1 to P6 | Accepted |
 
 New standalone ADRs append a row here when they reach Accepted; a Proposed
 ADR may carry an index row marked Proposed.

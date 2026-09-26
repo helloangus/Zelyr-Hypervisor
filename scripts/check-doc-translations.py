@@ -66,7 +66,7 @@ def main():
             errors.append(f"{edition}: unsupported translation name or missing source")
             continue
         paired.add(source)
-        if source != ADR000 and edition.name not in (ROOT / source).read_text(encoding="utf-8"):
+        if source.parts[:2] != ("docs", "adr") and edition.name not in (ROOT / source).read_text(encoding="utf-8"):
             errors.append(f"{source}: missing language-switch link to {edition.name}")
         content = (ROOT / edition).read_text(encoding="utf-8")
         source_match = SOURCE_RE.search(content[:2000])

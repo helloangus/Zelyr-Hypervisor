@@ -17,8 +17,8 @@ P6-V29 仍负责真正的异步意外向量执行；P1 完成不代表该证明�
 尤其是：
 
 - 涉及设计或架构决策时，提出变更前阅读 ADR 基线和适用的阶段任务书。
-- 进行详细设计时，阅读简明的 [Plan Agent 指南](docs/development/plan-agent-guidelines.md)。
-- 修改代码时，阅读简明的[编码指南](docs/development/coding-guidelines.md)及适用的详细设计。不得仅凭阶段任务书编写代码。
+- 进行详细设计时，阅读简明的 [Plan Agent 指南](docs/development/plan-agent-guidelines.zh-CN.md)。
+- 修改代码时，阅读简明的[编码指南](docs/development/coding-guidelines.zh-CN.md)及适用的详细设计。不得仅凭阶段任务书编写代码。
 
 agent 默认阅读英文源文档。已接受的 ADR-000 以中文原文为权威；其
 [英文版](docs/adr/adr-000-architecture-baseline-v0.1.en.md)是供 agent 直接阅读的译文。
@@ -46,7 +46,7 @@ agent 默认阅读英文源文档。已接受的 ADR-000 以中文原文为权�
 
 - 政策生效后的每项变更都在新分支开发。推送到 GitHub，创建目标为 `main` 的 PR，
   等待所有配置为必需的在线检查通过，并且只通过该 PR 合并。准备合并前阅读
-  [集成流程](docs/development/integration-workflow.md)；不得直接在 `main` 开发或推送。
+  [集成流程](docs/development/integration-workflow.zh-CN.md)；不得直接在 `main` 开发或推送。
 - 分开 P0、P1 和后续阶段的工作。不能仅因目录存在就提前实施后续阶段机制。
 - 保持 crate 分层：通用 Core 不得直接依赖具体 Board、SoC 或 QEMU 实现。
 - 将阶段任务书、详细设计、实施记录和验证报告分别置于 `docs/stages/<stage>/` 的相应位置。

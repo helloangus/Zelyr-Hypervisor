@@ -1,5 +1,7 @@
 # Development guidance
 
+Chinese readers can use the [Chinese edition](README.zh-CN.md).
+
 **Status class:** normative (per the
 [documentation baseline](documentation-baseline.md)).
 
