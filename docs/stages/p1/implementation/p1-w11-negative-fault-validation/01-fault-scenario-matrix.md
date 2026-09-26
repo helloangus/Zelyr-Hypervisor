@@ -118,6 +118,11 @@ is a recorded coordination issue, never a locally redefined field list.
 
 ### NC5 — Post-MMU translation/access fault
 
+The suggested volatile-read technique below is superseded by the
+[integrated trigger reconciliation](04-trigger-reconciliation.md): a single
+AArch64 load instruction targets the proven unmapped L2 entry without a Rust
+pointer dereference.
+
 - Phase/target: `stage1` completion or later.
 - Setup/trigger category: validation-only trigger performing a memory access
   to an address outside W08's mapped classes (suggested technique: a read of
@@ -136,6 +141,11 @@ is a recorded coordination issue, never a locally redefined field list.
   TLB/cache semantics, or that every unmapped access traps identically.
 
 ### NC6 — Unexpected vector at the stable state
+
+The [integrated trigger reconciliation](04-trigger-reconciliation.md)
+records NC6 as blocked: no genuine deterministic unexpected IRQ/FIQ/SError
+event source has been established in the masked, no-GIC P1 runtime. The
+suggested selection below is not an implemented or accepted proxy.
 
 - Phase/target: `stable`.
 - Setup/trigger category: validation-only trigger raising an exception
@@ -176,9 +186,10 @@ Errors and failure guarantee: divergence is the contract; the function must
 Security checks: the selection is build-time; there is no runtime "fault
   mode" switch, no guest/external input can select a scenario, and the
   default image contains no reachable trigger.
-Logic: per scenario — NC3 executes the undefined encoding; NC4 invokes the
+  Logic: per scenario — NC3 executes the undefined encoding; NC4 invokes the
   panic route with a static message; NC5 performs the out-of-map access
-  through a volatile read; NC6 raises the recorded unexpected category.
+  through the single instruction fixed by 04-trigger-reconciliation.md;
+  NC6 requires a genuine unexpected category and is currently blocked.
   Exact instructions are fixed at implementation per the accepted W05/W08
   contracts and recorded.
 Validation: W11-DV02 containment review; W10 regression on the default

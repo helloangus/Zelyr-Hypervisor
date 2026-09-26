@@ -1,8 +1,12 @@
 # P1-W10 QEMU Boot Regression — Verification Record
 
-**Status:** R1, R3–R6 and 100-cycle evidence recorded; R2's NC2 panic-detection control is provisional until W11 NC4 re-anchoring. P1-V16 is not finally closed by this interim R2 source.
+**Status:** R1, R3–R6 and 100-cycle evidence recorded; W11 NC4 re-anchored R2 on 2026-09-26. The original NC2 R2 control below remains historical.
 **Date:** 2026-09-25 (UTC timestamps below).
 **Implementation:** [W10 record](../implementation/p1-w10-qemu-boot-regression-record.md).
+
+The original 2026-09-25 table and its provisional R2 wording are preserved
+as execution history; the 2026-09-26 NC4 addendum at the end is the current
+R2/P1-V16 status.
 **Design amendment:** [R4 control](../implementation/p1-w10-qemu-boot-regression/04-marker-control-amendment.md).
 
 ## Environment, rules and evidence identity
@@ -156,3 +160,28 @@ test harness, Guest boot, multi-CPU run, real-board test, CI QEMU gate,
 hardware cache/TLB proof or W11 NC1–NC6 suite ran as part of W10. This
 change adds no target Rust `unsafe`, target ABI/public Rust API, or runtime
 dependency. R1/100 are reference-QEMU evidence for the named image only.
+
+## W11 NC4 R2 re-anchor (2026-09-26)
+
+The preceding R2 NC2 entry is the original provisional control, not the
+final panic-specific source. On W11's branch rebased to W10 main `5319995`,
+the same `scripts/p1-boot-regression` entry ran one cycle with the explicit
+NC4 intentional-panic image `target/p1-w11-final-nc4.img` (SHA-256
+`58caf44e10cda431db48a40f945832c94780f1ec85182541ed5e2e295fe12620`):
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 scripts/p1-boot-regression --cycles 1 --image target/p1-w11-final-nc4.img --evidence target/p1-w11-r2-nc4-post-w10
+```
+
+The driver exited 1 as expected for a negative control; its summary records
+`requested=1`, `counted=1`, `passed=0`, `FAIL-PANIC`. The cycle runner
+record has status 4, `reason=forbidden-marker`, and a matched panic token.
+Its image hash matches the W11 NC4 paired-run image; the W11
+[scenario verification](p1-w11-negative-fault-validation-verification.md)
+independently checks the exact static panic message, `fatal-path.complete`
+phase, W07 fields, single terminal marker, and both concordant NC4 runs.
+Raw evidence is retained under
+`/home/angus/dev/Zelyr-Hypervisor/.worktrees/w11full/target/p1-w11-r2-nc4-post-w10/`.
+This completes the previously provisional R2 panic-control anchor and
+supports P1-V16 on this local reference-QEMU baseline. It does not repeat
+the W10 100-cycle set or extend its image/environment claim.

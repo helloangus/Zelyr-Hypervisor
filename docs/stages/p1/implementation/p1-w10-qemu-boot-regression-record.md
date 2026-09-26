@@ -1,6 +1,6 @@
 # P1-W10 QEMU Boot Regression — Implementation Record
 
-**Status:** Runner, R1–R6 controls and 100-cycle execution recorded; R2 is a provisional NC2 panic-detection control pending W11 NC4 re-anchoring.
+**Status:** Runner, R1–R6 controls and 100-cycle execution recorded; W11 re-anchored R2 on NC4 on 2026-09-26 (addendum below).
 
 **Date:** 2026-09-25
 
@@ -96,3 +96,16 @@ within its unchanged v0.1 grammar and six-status taxonomy. W11 can consume
 scenario-specific verdict without W10 adding NC policy. The R2 control must
 be re-anchored to W11 NC4 after that image lands; W12 receives the reference
 environment and evidence paths. No P1 stage completion is claimed here.
+
+## W11 integration addendum (2026-09-26)
+
+W11 added a fixed `p1-no-el2` scenario profile to the **same** runner without
+changing the P0 v0.1 grammar or status taxonomy. Its sole QEMU machine delta
+from `p1-boot-smoke` is `virt,virtualization=off`; it uses a rejection-specific
+oracle and is not the normal boot profile. Its design and evidence live in
+the [W11 implementation record](p1-w11-negative-fault-validation-record.md)
+and [verification](../verification/p1-w11-negative-fault-validation-verification.md).
+The NC4 image also replaced the earlier provisional NC2 source for R2; see
+the [W10 verification addendum](../verification/p1-w10-qemu-boot-regression-verification.md).
+The accepted 100-cycle evidence belongs to the original named image and
+unchanged `p1-boot-smoke` command/oracle; W11 did not rerun or broaden it.

@@ -11,3 +11,12 @@
 
 mod arch;
 mod boot;
+#[cfg(any(
+    all(feature = "p1-w11-nc2", feature = "p1-w11-nc3"),
+    all(feature = "p1-w11-nc2", feature = "p1-w11-nc4"),
+    all(feature = "p1-w11-nc2", feature = "p1-w11-nc5"),
+    all(feature = "p1-w11-nc3", feature = "p1-w11-nc4"),
+    all(feature = "p1-w11-nc3", feature = "p1-w11-nc5"),
+    all(feature = "p1-w11-nc4", feature = "p1-w11-nc5"),
+))]
+compile_error!("P1-W11 validation scenarios are mutually exclusive");
