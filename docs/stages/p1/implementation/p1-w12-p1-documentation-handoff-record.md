@@ -1,6 +1,6 @@
 # P1-W12 contract and P2 handoff implementation record
 
-**Status:** W12 contract set authored and locally reviewed on rebased branch; PR integration pending, P1 completion not claimed.\
+**Status:** W12 contract set merged through PR #57 after local review and online checks; P1 completion not claimed.\
 **Scope:** Sources and editorial decisions for the eight P1 contract documents; no runtime evidence or P1 completion claim.\
 **Version:** v0.1.\
 **Owner/change context:** P1-W12, 2026-09-26.\
@@ -10,7 +10,8 @@
 
 This inventory was first assembled on the W12 branch based on `main` at
 `249e1b3`, then refreshed for W10/W11 and rebased without conflict onto
-`main` at `2f821e0`. The reviewed W12 commit is `e5d0e4f`; the final
+`main` at `2f821e0`. The W12 document commits are `e5d0e4f` and `93f44e8`,
+merged through PR #57 as `02c1d38`; the final
 read-only documentation checks are recorded in [W12
 verification](../verification/p1-w12-p1-documentation-handoff-verification.md).
 An implementation record fixes its package's delivered boundary; a verification
@@ -44,8 +45,8 @@ existing records, open execution gates, and the future completion-report
 location. P2 consumer names come from the [P2 task book](../../p2/task-book-v0.1.md)
 and [plan index](../../p2/plans/README.md); W12 freezes no P2 API.
 
-No conflicting accepted technical source has been resolved editorially in
-this draft. The material open finding is W11 NC6: the task-book unexpected
+No conflicting accepted technical source was resolved editorially in
+this assembly. The material open finding is W11 NC6: the task-book unexpected
 vector criterion has no accepted reproducible Stable-state injection within
 P1's no-GIC/IRQ boundary. It remains an explicit block on P1-V18 and P1
 completion. Both W10 and W11 merged results are reflected above. The NC6
