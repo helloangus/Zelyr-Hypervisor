@@ -1,7 +1,7 @@
 # P1-W03 — AArch64 capability inventory
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W02 and feeds W04, W09, W11 and P2.
 
 ## Goal

@@ -32,3 +32,10 @@ Stage-2 or VM. No table above fixes a P2 Rust type, parser, module, allocator
 algorithm, lock or inspection command. If a P1 gate remains open at P2 entry,
 the missing evidence is an upstream dependency, not permission to assume it
 passed or to reimplement P1 inside P2.
+
+Under [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md),
+P1 provides reviewed structural IRQ/FIQ/SError vector coverage, not executed
+asynchronous delivery. The original NC6 run remains unperformed and belongs
+to P6-W12/P6-V29 after Host GIC/IRQ readiness. P2 must not interpret an
+eventual P1 completion decision as proof of NC6 or add a GIC/IRQ mechanism to
+close it.

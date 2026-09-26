@@ -1,7 +1,7 @@
 # P1-W02 — Minimal Rust EL2 runtime
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W01 and feeds W03–W12.
 
 ## Goal

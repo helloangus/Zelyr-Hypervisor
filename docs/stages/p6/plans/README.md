@@ -8,7 +8,7 @@ not implementation-completion records.
 For a P6 package, read in this order:
 
 1. the [architecture baseline](../../../adr/adr-000-architecture-baseline-v0.1.md);
-2. the [P6 task book](../task-book-v0.1.md);
+2. the [P6 task book](../task-book-v0.2.md);
 3. this index and the selected P6-Wxx plan;
 4. actual P0–P5 handoff, implementation, and verification records;
 5. the mandatory agent guide for the activity: the Plan Guide for planning, or
@@ -35,7 +35,7 @@ under ../verification/.
 | [W09](p6-w09-maintenance-interrupt.md) | W08 | W10–W13, P8 |
 | [W10](p6-w10-interrupt-semantics.md) | W06, W09 | W11–W13, P7–P8 |
 | [W11](p6-w11-validation-guest-interrupt-suite.md) | W04, W06, W10; P4 Validation Guest contract | W13, P7–P8 regression users |
-| [W12](p6-w12-fault-isolation-robustness.md) | W03, W07, W09; P5 Guest-error boundary | W13, P7–P8 security review |
+| [W12](p6-w12-fault-isolation-robustness.md) | W02/W03 Host GIC/IRQ readiness, W07, W09; P5 Guest-error boundary; P1 NC6 transfer under ADR-061 | W13, P7–P8 security review; P6-V29 evidence |
 | [W13](p6-w13-telemetry-regression-handoff.md) | W01–W12 and their actual implementation/verification records | P7/P8 planning and stage review |
 
 The table is acyclic. W05 and W07 may progress after W03 when their detailed

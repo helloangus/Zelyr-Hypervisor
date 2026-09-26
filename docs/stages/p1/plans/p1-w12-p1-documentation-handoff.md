@@ -1,7 +1,7 @@
 # P1-W12 — P1 documentation and P2 handoff
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W01–W11 and feeds P1 completion review and P2.
 
 ## Goal

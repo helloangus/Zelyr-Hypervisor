@@ -1,7 +1,7 @@
 # P1-W04 — EL2 architectural-state baseline
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W03 and feeds W05, W08, W09.
 
 ## Goal

@@ -1,7 +1,7 @@
 # P6-W13 — telemetry, regression, and handoff
 
 **Status:** Planned work package; implementation not claimed
-**Parent:** [P6 task book](../task-book-v0.1.md)
+**Parent:** [P6 task book](../task-book-v0.2.md)
 **Prerequisites and consumers:** [P6 plan index](README.md)
 
 ## Goal
@@ -27,7 +27,7 @@ Implementing unplanned mechanisms, asserting stage closure without evidence, def
 
 ## Acceptance and closure
 
-P6-V23 through P6-V28 require determinate upstream regression, telemetry, latency, QEMU integration/repeat, documentation, and consumer-review evidence. Passing in QEMU does not prove real hardware, complete machine ABI, or scheduler correctness.
+P6-V23 through P6-V28 require determinate upstream regression, telemetry, latency, QEMU integration/repeat, documentation, and consumer-review evidence. W13's validation matrix and handoff must also carry W12's transferred P6-V29 NC6 result or explicit block; W13 cannot close P6 by silently omitting it. Passing in QEMU does not prove real hardware, complete machine ABI, or scheduler correctness.
 
 ## Handoff
 

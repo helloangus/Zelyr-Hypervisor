@@ -6,7 +6,7 @@ implementation and validation are not claimed.
 ## Reading order
 
 Read the [architecture baseline](../../../adr/adr-000-architecture-baseline-v0.1.md),
-the [P1 task book](../task-book-v0.1.md), this index and the selected plan, then
+the [P1 task book](../task-book-v0.2.md), this index and the selected plan, then
 the applicable P0 records and mandatory agent guide. Code changes additionally
 require the Coding Guide and an approved detailed design.
 
@@ -28,7 +28,7 @@ actual commands, environments, results and limitations belong under
 | [W08](p1-w08-host-stage1-address-space.md) | W04–W07 | W09–W12, P2 |
 | [W09](p1-w09-initialization-sequencing.md) | W01–W08 | W10–W12, P2 |
 | [W10](p1-w10-qemu-boot-regression.md) | W01–W09 | W11, W12, P2 |
-| [W11](p1-w11-negative-fault-validation.md) | W05–W10 | W12, P2 |
+| [W11](p1-w11-negative-fault-validation.md) | W05–W10 | W12, P2; deferred NC6 execution to P6-W12/P6-V29 |
 | [W12](p1-w12-p1-documentation-handoff.md) | W01–W11 | P1 completion review, P2 |
 
 W06/W07 can be prepared in parallel after W05; all other dependencies are

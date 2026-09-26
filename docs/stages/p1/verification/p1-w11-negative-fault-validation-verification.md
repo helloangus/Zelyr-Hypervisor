@@ -224,3 +224,15 @@ branch. The host source-shared test now uses a reasoned
 test harness, real-board run, Guest test, CI QEMU gate or hardware fault
 injection ran. S1–S6 support **P1-V19 locally** for this audited baseline.
 **P1-V18 remains blocked by NC6**, so W11 and P1 are not declared complete.
+
+## 2026-09-26 governance addendum — ADR-061
+
+The preceding status is the historical result under P1 task book v0.1 and is
+not rewritten as an NC6 pass. [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+changes the *current* acceptance boundary: [P1 task book v0.2](../task-book-v0.2.md)
+requires NC3–NC5 for revised P1-V18, while NC1/NC2 retain P1-V02/P1-V06
+traceability. Their paired evidence above may be reviewed against those revised
+conditions without rerunning an unchanged artifact solely because the gate
+changed. NC6's genuine asynchronous execution remains absent and is required
+by P6-W12/P6-V29 after Host GIC/IRQ readiness. This addendum is governance
+traceability only, not new runtime evidence or a P1 completion report.

@@ -1,7 +1,7 @@
 # P6-W08 — GIC virtualization interface
 
 **Status:** Planned work package; implementation not claimed
-**Parent:** [P6 task book](../task-book-v0.1.md)
+**Parent:** [P6 task book](../task-book-v0.2.md)
 **Prerequisites and consumers:** [P6 plan index](README.md)
 
 ## Goal

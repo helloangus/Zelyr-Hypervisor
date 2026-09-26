@@ -1,6 +1,6 @@
 # P6 — Timer, GICv3, and Virtual Interrupt v0
 
-The normative P6 scope is [task-book-v0.1.md](task-book-v0.1.md). Start a
+The normative P6 scope is [task-book-v0.2.md](task-book-v0.2.md). Start a
 specific package from the [work-package plan index](plans/README.md), which
 maps P6-W01 through P6-W13 to prerequisites and downstream consumers.
 

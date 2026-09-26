@@ -1,7 +1,7 @@
 # P1-W06 — Early console and bring-up logging
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W02/W05 and feeds W07–W12.
 
 ## Goal

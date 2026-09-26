@@ -1,6 +1,6 @@
 # P1 EL2 initialization contract
 
-**Status:** Proposed W09 assembly; reference repetition and NC2–NC5 fault-phase evidence recorded, NC6 blocked.\
+**Status:** Proposed W09 assembly; reference repetition and NC2–NC5 fault-phase evidence recorded, NC6 execution deferred to P6-V29 under ADR-061.\
 **Scope:** Boot-CPU phase order, markers and terminal failure routing; no general service lifecycle.\
 **Version:** v0.1.\
 **Owner/change context:** P1-W12 assembly of [W09's owning state machine](../implementation/p1-w09-initialization-sequencing/01-init-state-machine.md) and [record](../implementation/p1-w09-initialization-sequencing-record.md), 2026-09-25.\
@@ -40,4 +40,5 @@ hypervisor-owned vector route. This unowned pre-vector window is a declared
 locally observes a terminal post-MMU translation fault with
 `stage1.complete`, ESR and FAR. That establishes this reference-QEMU path,
 not arbitrary post-MMU fault coverage or real-hardware behavior; NC6 remains
-blocked separately.
+unexecuted separately and is required at P6-V29 under
+[ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md).

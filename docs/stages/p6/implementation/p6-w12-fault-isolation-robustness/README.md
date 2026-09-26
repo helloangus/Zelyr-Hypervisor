@@ -1,5 +1,13 @@
 # P6-W12 Fault Isolation and Robustness — Detailed Implementation Design
 
+**ADR-061 reconciliation required (2026-09-26):** This proposed design
+predates the [P6 task book v0.2](../../task-book-v0.2.md) and
+[revised W12 plan](../../plans/p6-w12-fault-isolation-robustness.md). It does
+not yet define the transferred NC6/P6-V29 genuine asynchronous event case.
+Before W12 coding or execution, revise the case matrix, workflow and proof
+boundary through the normal implementation-design review. No existing FI-A–D
+case silently satisfies P6-V29.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** The P6 failure boundary — authorization and ownership rejection of

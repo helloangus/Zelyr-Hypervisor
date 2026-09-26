@@ -1,5 +1,13 @@
 # P1-W11 Negative and Fault Validation — Detailed Implementation Design
 
+**ADR-061 acceptance amendment (2026-09-26):** This design records the
+historical NC1–NC6 matrix under P1 task book v0.1. Its NC6 → P1-V18
+execution trace is superseded by [ADR-061](../../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+and [P1 task book v0.2](../../task-book-v0.2.md): current P1-V18 covers
+NC3–NC5, while genuine NC6 execution belongs to P6-W12/P6-V29. Preserve
+the original design and verification record as history; do not use its NC6
+rows to claim P1 completion or to implement a P1 IRQ source.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** Reproducible evidence for the P1 failure paths required by

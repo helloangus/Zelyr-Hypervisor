@@ -62,3 +62,13 @@ document-set, source, link, coverage, governance and no-claim review outcomes
 belong in [W12 verification](../verification/p1-w12-p1-documentation-handoff-verification.md).
 That review can establish P1-V20/P1-V21 documentation conditions; it cannot
 establish the missing execution evidence for other stage gates.
+
+## 2026-09-26 governance addendum — ADR-061
+
+The source inventory and W12 review above describe the v0.1 acceptance
+baseline at PR #57. [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+and [P1 task book v0.2](../task-book-v0.2.md) subsequently revise P1-V18 to
+NC3–NC5 and transfer unexecuted NC6 to P6-W12/P6-V29. The current
+[evidence map](../contracts/stage-gate-evidence-map.md) and
+[limitations](../contracts/known-limitations.md) carry that change. This
+addendum does not create runtime evidence or declare P1 complete.

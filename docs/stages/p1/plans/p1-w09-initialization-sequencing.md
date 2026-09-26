@@ -1,7 +1,7 @@
 # P1-W09 — Initialization sequencing
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W01–W08 and feeds W10–W12 and P2.
 
 ## Goal
