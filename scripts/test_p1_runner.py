@@ -91,6 +91,29 @@ class RunnerTests(unittest.TestCase):
     def test_clean_exit_missing_marker_is_marker_control(self):
         self.assertEqual(runner.verdict({"status": 4, "reason": "early-exit", "raw_exit": 0, "predicates": {}}), "FAIL-MARKER")
 
+    def test_marker_control_profile_is_explicit_and_default_off(self):
+        normal, _, _, _ = runner.profile("p1-boot-smoke", ["boot-smoke=image"])
+        control, _, _, _ = runner.profile("p1-marker-control", ["boot-smoke=image"])
+        self.assertNotIn("-semihosting-config", normal)
+        self.assertEqual(control[:-2], normal)
+        self.assertEqual(control[-2:], ["-semihosting-config", "enable=on,target=native"])
+
+    def test_marker_control_rejects_repetition(self):
+        directory = self.root / "marker-repetition"
+        status = runner.regression(["--marker-control", "--cycles", "100", "--evidence", str(directory)])
+        self.assertEqual(status, 2)
+        self.assertEqual(json.loads((directory / "summary.txt").read_text())["outcome"], "ERROR-INVOCATION")
+
+    def test_marker_control_rejects_unreviewed_image_before_qemu(self):
+        image = self.root / "unreviewed.img"
+        image.write_bytes(b"not the reviewed control image")
+        directory = self.root / "unreviewed"
+        result, _ = runner.run(["run", "--profile", "p1-marker-control", "--param",
+                                "boot-smoke=" + str(image), "--evidence-dir", str(directory)])
+        self.assertEqual(result["status"], 1)
+        self.assertIn("identity", result["reason"])
+        self.assertFalse((directory / "emulator.log").exists())
+
     def test_driver_invalid_grammar_preserves_evidence(self):
         directory = self.root / "driver"
         status = runner.regression(["--cycles", "2", "--evidence", str(directory)])

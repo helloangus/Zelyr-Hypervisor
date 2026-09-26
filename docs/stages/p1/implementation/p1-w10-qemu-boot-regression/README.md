@@ -46,6 +46,8 @@ loads only the linked supporting file needed for its assigned step:
   and evidence set.
 - [03-implementation-and-review.md](03-implementation-and-review.md) — ordered
   workflow, validation matrix, observability model, and handoff checklist.
+- [04-marker-control-amendment.md](04-marker-control-amendment.md) — bounded
+  R4 control image and default-off semihosting profile; load for R4 execution.
 
 Before editing, follow the Coding Guidelines preflight: repository
 [AGENTS.md](../../../../../AGENTS.md), [documentation

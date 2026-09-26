@@ -18,13 +18,14 @@ import uuid
 VERSION = "0.1"
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_IMAGE = ROOT / "target/p1/hypervisor-boot.img"
-DEFAULT_TIMEOUT = 10.0
+DEFAULT_TIMEOUT = 8.0
 OBSERVE = 0.2
 CAPTURE_LIMIT = 1024 * 1024
 LINE_LIMIT = 4096
 STABLE = b"ZELYR P1 STABLE"
 START = (b"ZELYR P1 PHASE entry", b"ZELYR P1 PHASE runtime")
 FORBIDDEN = (b"ZELYR P1 PANIC", b"ZELYR P1 FATAL", b"ZELYR P1 BOOT REJECT")
+MARKER_CONTROL_SHA256 = "399114e99cddcdf6686e2b04d8632dbc0409be3628aa22098a07caf3a6bd685b"
 RESERVED = {"boot-smoke", "smp", "memory", "gic", "smmu", "guest-image", "regression"}
 
 
@@ -196,7 +197,7 @@ def capture(command, directory, timeout, required, forbidden, observe=OBSERVE):
 
 
 def profile(name, params):
-    if name != "p1-boot-smoke":
+    if name not in ("p1-boot-smoke", "p1-marker-control"):
         raise UsageError("unknown profile: " + name)
     values = {}
     for parameter in params:
@@ -208,6 +209,8 @@ def profile(name, params):
     command = ["qemu-system-aarch64", "-machine", "virt,virtualization=on", "-cpu", "cortex-a57",
                "-smp", "1", "-m", "128M", "-display", "none", "-monitor", "none",
                "-serial", "stdio", "-kernel", str(image)]
+    if name == "p1-marker-control":
+        command += ["-semihosting-config", "enable=on,target=native"]
     return command, image, (STABLE,) + START, FORBIDDEN
 
 
@@ -238,6 +241,8 @@ def run(argv):
                     command=command, required=[x.decode() for x in required], forbidden=[x.decode() for x in forbidden])
         try:
             meta["artifacts"] = [image_identity(image)]
+            if options.profile == "p1-marker-control" and meta["artifacts"][0]["sha256"] != MARKER_CONTROL_SHA256:
+                raise UsageError("marker-control image identity does not match the reviewed W10 fixture")
             version = subprocess.run([command[0], "--version"], capture_output=True, timeout=2, check=True)
             meta["emulator"]["version"] = version.stdout.decode(errors="replace").splitlines()[0]
         except (OSError, subprocess.SubprocessError) as error:
@@ -287,16 +292,21 @@ def regression(argv):
     parser.add_argument("--timeout", type=duration, default=DEFAULT_TIMEOUT)
     parser.add_argument("--image", type=Path, default=DEFAULT_IMAGE)
     parser.add_argument("--evidence", type=Path, default=directory)
+    parser.add_argument("--marker-control", action="store_true")
     try:
         directory.mkdir(parents=True, exist_ok=False)
         created = True
         write_json(directory / "meta.txt", {"argv": argv, "start": stamp()})
         options = parser.parse_args(argv)
+        if options.marker_control and options.cycles != 1:
+            raise UsageError("marker control is only valid for one cycle")
         write_json(options.evidence / "meta.txt", {"argv": argv, "start": stamp(), "cycles": options.cycles,
-                   "timeout": options.timeout, "retention": "complete captures for every attempted cycle"})
+                   "timeout": options.timeout, "retention": "complete captures for every attempted cycle",
+                   "profile": "p1-marker-control" if options.marker_control else "p1-boot-smoke"})
         outcomes = []
         for cycle in range(1, options.cycles + 1):
-            outcome, directory = run(["run", "--profile", "p1-boot-smoke", "--param",
+            outcome, directory = run(["run", "--profile",
+                    "p1-marker-control" if options.marker_control else "p1-boot-smoke", "--param",
                     "boot-smoke=" + str(options.image), "--timeout", str(options.timeout),
                     "--evidence-dir", str(options.evidence / f"cycle-{cycle:03}")])
             result = verdict(outcome)
