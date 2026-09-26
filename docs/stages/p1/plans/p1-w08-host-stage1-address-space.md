@@ -1,7 +1,7 @@
 # P1-W08 — Host Stage-1 address space
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W04–W07 and feeds W09–W12 and P2.
 
 ## Goal

@@ -1,11 +1,11 @@
-# Rust Type-1 Hypervisor — P6 Stage Task Book v0.1
+# Rust Type-1 Hypervisor — P6 Stage Task Book v0.2
 
 **Stage ID:** P6
 **Stage name:** Timer, GICv3, and Virtual Interrupt v0
-**Status:** Superseded by [P6 task book v0.2](task-book-v0.2.md); retained as the historical planning baseline
-**Owner/change context:** P6 asynchronous-event foundation, reorganized from the root-level source task book
-**Supersedes:** the root-level P6 source task book
-**Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)
+**Status:** Current amended planning baseline; implementation and validation are not claimed
+**Owner/change context:** P6 acceptance of deferred P1 NC6 execution under ADR-061, 2026-09-26
+**Supersedes:** [P6 task book v0.1](task-book-v0.1.md)
+**Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)
 **Upstream stages:** P0–P5
 **Primary downstream stages:** P7 scheduler/preemption; P8 virtual platform and Linux bring-up
 
@@ -24,6 +24,13 @@ discovery, per-pCPU initialization, SGI/SPI routing, Host and Guest timer
 behavior, pending and List-Register pressure, maintenance processing, Guest
 masking and priority behavior, multi-vCPU isolation, hostile inputs, telemetry,
 regression, and factual handoff.
+
+[ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+also assigns P6 the first *executed* unexpected EL2 asynchronous-vector
+test. P1 supplies a structural 16-slot vector and diagnostic contract, not
+executed IRQ/FIQ/SError delivery evidence. P6-W12 closes this transferred
+NC6 obligation only after Host GIC/IRQ readiness; P6-V29 is a required
+stage gate, not optional regression or a retroactive P1 test pass.
 
 ### Required
 
@@ -45,6 +52,9 @@ regression, and factual handoff.
   exists;
 - constrain invalid Guest interrupt requests, unknown/spurious Host IRQs,
   impossible state, and storm smoke cases to diagnosable safe outcomes;
+- execute the transferred P1 NC6 obligation with a genuine unexpected EL2
+  asynchronous event after Host GIC/IRQ readiness, with bounded diagnostics
+  and reproducible raw evidence; a synchronous proxy does not qualify;
 - produce planned telemetry, QEMU integration/regression, implementation
   records, validation evidence, performance baseline, and P7/P8 handoff only
   after actual work has occurred.
@@ -100,7 +110,7 @@ any predecessor has completed.
 |---|---|---|---|
 | P6-ENTRY-01, P6-ENTRY-02, P6-ENTRY-06 | P4 | Stage-2 isolation, Guest EL1 entry/exit/re-entry, Validation Guest, controlled exit/fault diagnostics | Guest timer/IRQ delivery without redefining Guest execution |
 | P6-ENTRY-03, P6-ENTRY-04 | P3 | online pCPU lifecycle, CPU-local state, synchronization rules, cross-pCPU notification, TLB transport, SMP telemetry | independent local GIC/timer state and safe cross-pCPU coordination |
-| P6-ENTRY-05 | P1 | stable Non-secure EL2 exception vectors, IRQ entry diagnostic path, CPU feature inventory, timer-access baseline | EL2 exception receipt and architectural capability investigation |
+| P6-ENTRY-05 | P1 | stable Non-secure EL2 exception vectors and reviewed structural IRQ/FIQ/SError entry/diagnostic contract, CPU feature inventory, timer-access baseline; NC6 remains unexecuted under ADR-061 | EL2 exception receipt and architectural capability investigation; P6-W12 must supply the deferred dynamic proof |
 | supporting entry baseline | P0 | toolchain/QEMU entry, testing, unsafe, diagnostics, trace, dependency and integration governance | reproducible review, evidence, and controlled low-level work |
 | supporting platform input | P2 | validated PlatformInfo GIC/timer/CPU facts, MMIO ranges, capability states, reservation and ownership constraints | safe discovery and platform-capability input |
 | P6-ENTRY-07 | P5 | versioned HVC/error behavior, handle/capability checks, guest-safe access and regression boundary | authorized test/control paths and Guest-error isolation |
@@ -131,7 +141,7 @@ modules, APIs, structures, register sequences, algorithms, or results.
 | P6-W09 | Maintenance events release completed presentation state and allow later pending vIRQs to progress. | P6-V16, P6-V17 |
 | P6-W10 | Basic masking, priority, timer-plus-vIRQ, and pending semantics are defined and exercised. | P6-V13–P6-V15 |
 | P6-W11 | The maintained Validation Guest provides the declared timer, vIRQ, exception-vector, multi-vCPU-conditional, and Host-SGI scenarios. | P6-V09–P6-V19 |
-| P6-W12 | Invalid requests, spurious/unknown IRQs, impossible state, and storm smoke cases are isolated and diagnosable. | P6-V20–P6-V22 |
+| P6-W12 | Invalid requests, spurious/unknown IRQs, impossible state, storm smoke and transferred P1 NC6 unexpected-vector execution are isolated and diagnosable. | P6-V20–P6-V22, P6-V29 |
 | P6-W13 | Telemetry, latency baseline, P0–P5 regression, factual documentation, evidence, and P7/P8 handoff are collected. | P6-V23, P6-V24–P6-V28 |
 
 Every package has exactly one plan in [plans/](plans/README.md). Completion
@@ -184,7 +194,7 @@ their compatible results. The directed graph is acyclic.
 | P6-I: maintenance completion and further presentation | W09 | P6-V16, P6-V17 |
 | P6-J: masking, priority, pending, and concurrent timer/vIRQ semantics | W10 | P6-V13–P6-V15 |
 | P6-K: Validation Guest interrupt scenarios and conditional multi-vCPU exercise | W11 | P6-V09–P6-V19 |
-| P6-L: isolation, invalid request, spurious, impossible-state, and storm behavior | W12 | P6-V20–P6-V22 |
+| P6-L: isolation, invalid request, spurious, impossible-state, storm behavior and transferred NC6 | W12 | P6-V20–P6-V22, P6-V29 |
 | P6-M: telemetry, latency baseline, regression, documentation, and downstream contract | W13 | P6-V23–P6-V28 |
 
 ## 6. Stage validation matrix
@@ -222,6 +232,7 @@ claim that an implementation exists or a command has run.
 | P6-V26 | QEMU virt integration and repeat evidence | positive, negative, recovery, and repeat scenarios give determinate outcomes in the declared QEMU environment. |
 | P6-V27 | P6 documentation review | implemented facts, semantics, known limitations, validation matrix, and performance baseline are located in the prescribed layers. |
 | P6-V28 | P7/P8 consumer review | downstream planners can identify proven P6 behavior, exclusions, evidence, and unresolved issues without inferring a scheduler or machine ABI. |
+| P6-V29 | Deferred P1 NC6 unexpected EL2 vector evidence | after P6-W02/W03 Host GIC/physical-IRQ readiness, a genuine validation-only asynchronous IRQ/FIQ/SError reaches an EL2 vector in a declared non-expected context on at least two runs; origin/category, phase and relevant frame are diagnosed, the declared terminal/containment route is bounded, and complete raw captures agree. A synchronous trap, direct vector branch or fabricated marker is not evidence. If the declared QEMU environment cannot produce the event, this gate remains blocked pending an approved alternate environment or later architecture decision. |
 
 ## 7. Documentation, exit criteria, and handoff
 
@@ -233,10 +244,10 @@ artifacts. They are not present completion claims.
 | P6-DOC-01 — GICv3 Bring-up Record | used GIC version, QEMU configuration, Distributor/Redistributor discovery, CPU-interface and virtualization capability facts |
 | P6-DOC-02 — Interrupt Semantics v0 | implemented Host IRQ/vIRQ lifecycle, pending/active/completed meanings, masking, priority, and maintenance behavior |
 | P6-DOC-03 — Generic Timer Semantics v0 | Host monotonic/per-pCPU timer, vCPU Guest timer, and implemented pause/exit/re-entry behavior |
-| P6-DOC-04 — Validation Matrix | P6-V01–P6-V28 evidence with environment, result, and limitation records |
+| P6-DOC-04 — Validation Matrix | P6-V01–P6-V29 evidence with environment, result, and limitation records, including transferred NC6 provenance |
 | P6-DOC-05 — P6 Performance Baseline | timer/vIRQ latency, IRQ throughput smoke, maintenance frequency, and Guest IRQ-path exit data |
 
-P6 may close only with real evidence for P6-V01 through P6-V28 and all of the
+P6 may close only with real evidence for P6-V01 through P6-V29 and all of the
 following:
 
 1. Host GIC initialization is stable on QEMU virt, with independent local
@@ -247,7 +258,8 @@ following:
    across Guest exits, masking, deferred delivery, List-Register pressure, and
    maintenance processing without loss or cross-vCPU delivery.
 4. Invalid Guest requests, unknown/spurious IRQs, and declared storm cases do
-   not compromise Host or other-VM state.
+   not compromise Host or other-VM state; transferred NC6 has a genuine,
+   repeated EL2 asynchronous-vector diagnostic and bounded outcome.
 5. Required telemetry, latency baseline, upstream regression, QEMU evidence,
    factual documents, unsafe-inventory delta, and limitations are recorded.
 

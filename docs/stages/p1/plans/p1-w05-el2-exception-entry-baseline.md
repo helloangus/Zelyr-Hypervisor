@@ -1,7 +1,7 @@
 # P1-W05 — EL2 exception entry baseline
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); requires W02 and W04 and feeds W06, W07 and W11.
 
 ## Goal
@@ -26,14 +26,15 @@ notification, Guest exception handling and a complete IRQ subsystem.
 2. Define minimum diagnostic context and classification outcomes.
 3. Integrate valid-entry behavior with W04's architectural baseline.
 4. Review recursive-entry and unhandled-vector failure boundaries.
-5. Define intentional synchronous and unexpected-vector acceptance evidence.
+5. Define intentional synchronous execution evidence and static/source-and-host coverage evidence for every vector slot. Hand the unexecuted asynchronous NC6 case to P6-W12 under ADR-061.
 6. Hand off the exception contract to console, crash and fault validation.
 
 ## Acceptance and closure
 
-P1-V08 and P1-V09: every category has a valid EL2 entry path, and intentional
-or unexpected synchronous faults expose syndrome/location before their defined
-outcome without unbounded recursive failure.
+P1-V08 and P1-V09: every category has a reviewed EL2 entry path and bounded
+classification contract; intentional synchronous faults expose syndrome/location
+before their defined outcome without unbounded recursive failure. P1-V08 does
+not claim executed asynchronous delivery; that proof is P6-V29.
 
 ## Handoff
 

@@ -120,3 +120,12 @@ NC6's real unexpected-vector evidence remains unavailable at this point;
 [P1-V18 is blocked](../contracts/stage-gate-evidence-map.md). Even a passed
 W12 documentation review cannot close that gate or authorize a P1 completion
 report. No W12 record declares P1 completion.
+
+## 2026-09-26 governance addendum — ADR-061
+
+This record's earlier W12-DV results and NC6/P1-V18 block are historical
+findings under the then-current v0.1 task book. [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+now assigns NC6 execution to P6-V29 and [P1 task book v0.2](../task-book-v0.2.md)
+revises P1-V18 to NC3–NC5. No W12 check has been reclassified as an NC6 run;
+the revised documentation consistency is reviewed in PR #59, and P1
+completion remains a separate decision.

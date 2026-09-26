@@ -1,5 +1,13 @@
 # P1-W05 EL2 Exception Entry Baseline — Detailed Implementation Design
 
+**ADR-061 acceptance amendment (2026-09-26):** The 16-slot installation and
+classification contracts remain P1-owned. References below to NC6 execution
+by W11 reflect the historical task book v0.1, not the current stage gate.
+[P1 task book v0.2](../../task-book-v0.2.md) retains structural P1-V08;
+[ADR-061](../../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+places genuine asynchronous execution at P6-W12/P6-V29. No P1 GIC/IRQ
+implementation is implied.
+
 Read the [preflight amendment](00-preflight-amendment.md) first. It supersedes
 the explicitly named portions of this proposed design; remaining contracts
 and separate implementation/verification evidence requirements still apply.

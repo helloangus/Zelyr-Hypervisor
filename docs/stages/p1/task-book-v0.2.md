@@ -1,11 +1,11 @@
-# Zelyr Hypervisor — P1 Stage Task Book v0.1
+# Zelyr Hypervisor — P1 Stage Task Book v0.2
 
 **Stage ID:** P1
 **Stage name:** AArch64 EL2 Minimum Bring-up
-**Status:** Superseded by [P1 task book v0.2](task-book-v0.2.md); retained as the historical acceptance baseline
-**Owner/change context:** P1 planning set established from the existing stage task book
-**Supersedes:** the prior unpartitioned P1 task description in this path
-**Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)
+**Status:** Current amended planning baseline; implementation and validation evidence remains in package records, not this book
+**Owner/change context:** P1 NC6 acceptance transfer to P6, 2026-09-26
+**Supersedes:** [P1 task book v0.1](task-book-v0.1.md)
+**Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)
 
 ## 1. Purpose and boundary
 
@@ -14,6 +14,13 @@ Rust execution environment on QEMU `virt`. Its outcome is a stable EL2 boot-CPU
 runtime with known architectural state, exception diagnostics and a controlled
 EL2 Stage-1 address space. P1 does not run a Guest and does not provide general
 platform, memory, SMP, interrupt-controller or VM services.
+
+[ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+separates structural IRQ/FIQ/SError vector readiness in P1 from executed
+asynchronous delivery validation in P6. P1 does not claim that a real
+unexpected asynchronous event was delivered or diagnosed. P6-W12 owns the
+deferred NC6 execution gate after P6 Host GIC/IRQ readiness; this is a
+dependency disclosure, not a passing P1 test.
 
 The stage is governed by the ADR → task book → frozen contracts → established
 contracts → package-local choice authority order. The ADR constraints include
@@ -75,7 +82,7 @@ and any QEMU-name or board-name branch in generic Core.
 | [P1-W08](plans/p1-w08-host-stage1-address-space.md) | Host Stage-1 mapping and MMU transition contract | P1-V13, P1-V14 |
 | [P1-W09](plans/p1-w09-initialization-sequencing.md) | Ordered initialization lifecycle and failure contract | P1-V15 |
 | [P1-W10](plans/p1-w10-qemu-boot-regression.md) | Automated verdict and 100-cycle regression plan | P1-V16, P1-V17 |
-| [P1-W11](plans/p1-w11-negative-fault-validation.md) | Negative and intentional fault validation coverage | P1-V18, P1-V19 |
+| [P1-W11](plans/p1-w11-negative-fault-validation.md) | NC1–NC5 negative and intentional fault validation; NC6 transfer recorded | P1-V18, P1-V19 |
 | [P1-W12](plans/p1-w12-p1-documentation-handoff.md) | P1 contracts, limitations and P2 handoff | P1-V20, P1-V21 |
 
 Each package has exactly one plan in [plans/](plans/README.md). Implementation
@@ -104,11 +111,11 @@ initialized runtime, exception and MMU contracts. The graph is acyclic.
 | T02 runtime | P1-V03, P1-V04 | runtime state, boot context, panic route and identity are established before stable idle without accidental register assumptions. |
 | T03 capabilities | P1-V05, P1-V06 | required capability absence is fail-fast; supported, optional and future facts remain distinguishable. |
 | T04 EL2 baseline | P1-V07 | required EL2 state is explicitly owned by Hypervisor and consistent across clean boots. |
-| T05 exceptions | P1-V08, P1-V09 | synchronous/IRQ/FIQ/SError paths are valid and diagnostic, with a defined recoverable/fatal outcome. |
+| T05 exceptions | P1-V08, P1-V09 | all 16 synchronous/IRQ/FIQ/SError vector slots have reviewed entry, capture and classification contracts; executed asynchronous delivery is deferred to P6-V29. |
 | T06–T07 diagnostics | P1-V10–P1-V12 | markers, panic, syndrome, fault location and core context remain observable before and after MMU transition. |
 | T08–T09 MMU/lifecycle | P1-V13–P1-V15 | required mapping classes have explicit attributes and post-MMU startup follows declared prerequisites and failures. |
 | T10 regression | P1-V16, P1-V17 | automated verdict exists and 100 clean boots reach the same stable marker without panic. |
-| T11 negative validation | P1-V18, P1-V19 | unsupported entry, synchronous fault, panic, post-MMU fault and unexpected vector are bounded and reproducible. |
+| T11 negative validation | P1-V02, P1-V06, P1-V18, P1-V19 | NC1–NC5 provide bounded, reproducible evidence for unsupported entry, required-capability rejection, synchronous fault, panic and post-MMU fault; NC6 executed unexpected-vector evidence belongs to P6-V29. |
 | T12 documentation | P1-V20, P1-V21 | contracts, limitations, evidence locations and P2 assumptions are reviewable and scope-safe. |
 
 ## 6. Stage validation matrix
@@ -122,8 +129,8 @@ initialized runtime, exception and MMU contracts. The graph is acyclic.
 | P1-V05 | Capability report evidence | EL, CPU, affinity, PA/VA/translation/granule/timer/virtualization facts are classified and reported. |
 | P1-V06 | Capability negative review | required absence fails explicitly; optional absence does not become an unrelated panic. |
 | P1-V07 | EL2 baseline review | routing, traps, FP/SIMD, debug/performance, timer, EL1/EL0 preparation and translation controls are explicitly established. |
-| P1-V08 | Vector coverage evidence | synchronous, IRQ, FIQ and SError have valid EL2 entry and origin/context classification. |
-| P1-V09 | Synchronous exception evidence | intentional/unexpected paths expose syndrome and location, then follow the defined outcome. |
+| P1-V08 | Structural vector coverage evidence | source and host review show all 16 synchronous, IRQ, FIQ and SError EL2 slots have valid entry, bounded frame and origin/context classification contracts; this does not prove an asynchronous event was delivered. |
+| P1-V09 | Synchronous exception evidence | intentional and otherwise unhandled synchronous paths expose syndrome and location, then follow the defined outcome. |
 | P1-V10 | Console/marker evidence | diagnostics work from entry through stable state and identify the failed phase. |
 | P1-V11 | Crash-report review/test | fatal output includes build, CPU/EL, PC/return, syndrome, fault address, phase and useful register context. |
 | P1-V12 | Non-recursion evidence | panic, early failure and faults do not silently recurse into an unobservable crash. |
@@ -132,7 +139,7 @@ initialized runtime, exception and MMU contracts. The graph is acyclic.
 | P1-V15 | Lifecycle review | stages have visible prerequisites, order and failure results; hidden dependencies are not accepted. |
 | P1-V16 | Automated-verdict evidence | QEMU test independently determines pass/fail with bounded markers, timeout/exit behavior and preserved failure evidence. |
 | P1-V17 | Repetition evidence | 100 consecutive clean boots reach the same stable marker with no random startup failure. |
-| P1-V18 | Fault-injection evidence | panic, synchronous, post-MMU translation/access fault and unexpected vector produce required diagnostics. |
+| P1-V18 | P1-owned fault-injection evidence | NC3 synchronous, NC4 panic and NC5 post-MMU translation/access fault each produce required diagnostics in reproducible paired executions. NC1/NC2 remain separately traced to P1-V02/P1-V06. NC6 is transferred to P6-V29 by ADR-061 and is neither passed nor waived here. |
 | P1-V19 | Scope/security review | input/range checks, no unintended RWX, unsafe inventory and P2–P4 boundary are reviewable. |
 | P1-V20 | Documentation review | boot, initialization, address-space, diagnostics, reference-environment and limitations contracts are consistent. |
 | P1-V21 | Governance review | one plan per package, objective conditions, resolving links, acyclic dependencies and no completion claims. |
@@ -146,13 +153,15 @@ P1 may be marked complete only when P1-V01 through P1-V21 have evidence and:
 3. Vectors, console, panic and fatal diagnostics remain useful before and after Host Stage-1 MMU enablement.
 4. Required code/data/stack/vector/MMIO mapping classes have explicit attributes without a permanent identity-map promise.
 5. Automated verdict and 100-cycle clean-boot evidence exist.
-6. Negative/fault evidence covers unsupported entry, synchronous fault, panic, post-MMU fault and unexpected vector.
+6. Negative/fault evidence covers unsupported entry, required-capability rejection, synchronous fault, panic and post-MMU fault. P1 has structural asynchronous-vector coverage only; executed unexpected-vector validation is a required P6-V29 gate.
 7. P1 contracts, limitations, unsafe/API/dependency reporting and P2 handoff are reviewable, while Guest/SMP/GIC/discovery/allocator mechanisms remain outside the stage.
 
 P2 may rely on a stable boot CPU, Non-secure EL2, Rust runtime, early console,
 diagnosable exception path, capability knowledge, known EL2 state and Host
 Stage-1 runtime. P2 still owns DTB-to-PlatformInfo discovery, physical-memory
 discovery and dynamic allocation.
+Neither P2 nor P6 may infer executed IRQ/FIQ/SError delivery from P1 completion;
+P6 must close P6-V29 before claiming that behavior.
 
 ## 8. Completion review
 

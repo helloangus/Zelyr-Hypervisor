@@ -1,7 +1,7 @@
 # P1-W01 — Reference boot contract
 
 Status: Planned work package; implementation not claimed  
-Parent: [P1 task book](../task-book-v0.1.md)  
+Parent: [P1 task book](../task-book-v0.2.md)
 Prerequisites and consumers: [P1 plan index](README.md); consumes P0 build/QEMU entry and feeds W02, W03, W09, W10.
 
 ## Goal

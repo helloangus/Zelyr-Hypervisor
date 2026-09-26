@@ -93,7 +93,7 @@ conflict found (or change proposed)
   -> record the label and the cited decision ID(s) in the affected work's
      tracking surface; stop the affected work if blocked
   -> draft a Proposed ADR from docs/templates/adr-template.md
-       - number: next unused after the highest registered ID (ADR-061 next)
+       - number: next unused after the highest registered ID
        - Supersedes: named decision(s), if any
        - context must cite the accepted text it interacts with
   -> review: decision + rationale + reviewer/owner + carrying PR recorded
@@ -129,7 +129,7 @@ edits.
 | ADR | Title | State |
 |---|---|---|
 | [ADR-000](adr-000-architecture-baseline-v0.1.md) | Architecture baseline v0.1 | Accepted |
-| [ADR-061](adr-061-defer-p1-asynchronous-vector-validation-to-p6.md) | Defer executed EL2 asynchronous-vector validation from P1 to P6 | Proposed |
+| [ADR-061](adr-061-defer-p1-asynchronous-vector-validation-to-p6.md) | Defer executed EL2 asynchronous-vector validation from P1 to P6 | Accepted |
 
 New standalone ADRs append a row here when they reach Accepted; a Proposed
 ADR may carry an index row marked Proposed.
@@ -149,7 +149,7 @@ ADR may carry an index row marked Proposed.
   blocked). `ADR Required` would apply instead if, for example, a P1 task
   needed the change to proceed — then the task stops and records the blocking
   issue.
-- *Correct path (§4):* draft a Proposed ADR numbered ADR-061 superseding
+- *Correct path (§4):* draft a Proposed ADR with the next unused number superseding
   ADR-052/ADR-043, with the performance rationale, alternatives (platform
   capability query, BSP/Quirk placement), and context citing the accepted
   text; route through review; on acceptance, update the index row and the two

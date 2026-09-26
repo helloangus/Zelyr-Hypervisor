@@ -1,6 +1,6 @@
 # P1 exception and diagnostic contract
 
-**Status:** Proposed assembly of W05/W07/W09 boundaries; NC1–NC5 paired evidence recorded, NC6 blocked.\
+**Status:** Proposed assembly of W05/W07/W09 boundaries; NC1–NC5 paired evidence recorded, NC6 execution transferred to P6-V29.\
 **Scope:** EL2 vector classification and bounded terminal reports; no IRQ/GIC service or recovery policy.\
 **Version:** v0.1.\
 **Owner/change context:** P1-W12 assembly of [W05](../implementation/p1-w05-el2-exception-entry-baseline-record.md), [W07](../implementation/p1-w07-fatal-crash-diagnostics-record.md) and [W09](../implementation/p1-w09-initialization-sequencing-record.md), 2026-09-25.\
@@ -34,6 +34,7 @@ terminal report; NC3 observes a synchronous undefined-instruction report,
 NC4 a panic report, and NC5 a post-MMU translation-fault report with
 syndrome, FAR and phase. For NC2–NC5 the verdict checks applicable report
 identity/context fields and exactly one end marker. NC6 has
-no accepted genuine unexpected IRQ/FIQ/SError injection, so the complete
-fault matrix and P1-V18 remain blocked. Pre-vector exceptions remain outside
+no accepted genuine unexpected IRQ/FIQ/SError injection. The historical W11
+record correctly marks the original P1-V18 blocked; [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)
+revises P1-V18 to NC3–NC5 and transfers NC6 execution to P6-V29. Pre-vector exceptions remain outside
 the owned diagnostic window, as recorded in [limitations](known-limitations.md).
