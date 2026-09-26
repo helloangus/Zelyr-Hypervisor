@@ -1,5 +1,7 @@
 # P2-W10 — P3/P4 handoff contract
 
+Chinese readers can use the [Chinese edition](p2-w10-p3-p4-handoff-contract.zh-CN.md).
+
 **Status:** Planned work package; implementation not claimed
 **Parent:** [P2 task book](../task-book-v0.1.md)
 **Prerequisites and consumers:** [P2 plan index](README.md)
