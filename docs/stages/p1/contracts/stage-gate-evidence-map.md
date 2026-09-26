@@ -35,8 +35,8 @@ proof or a substitute for NC6.
 | P1-V17 | [W10](../verification/p1-w10-qemu-boot-regression-verification.md) | **Supported for the recorded image/environment:** accepted `r100-accepted` run returned 100/100 sequential PASS, exactly one Stable and no forbidden class per cycle; local raw evidence must remain available. |
 | P1-V18 | [W11](../verification/p1-w11-negative-fault-validation-verification.md) | **Blocked:** NC1–NC5 paired cases passed locally, but NC6 genuine unexpected IRQ/FIQ/SError vector has no approved deterministic event source or accepted execution. No synchronous proxy counts. |
 | P1-V19 | [W11](../verification/p1-w11-negative-fault-validation-verification.md), [unsafe inventory](../../../security/unsafe-inventory.md) | **Supported locally:** S1–S6 source/linked-image review passed on W10-integrated baseline, including U-016/U-017 static review and default trigger containment; not hardware security proof. |
-| P1-V20 | [W12 review](../verification/p1-w12-p1-documentation-handoff-verification.md) | W12 document-consistency review location; underlying runtime gates remain separate. |
-| P1-V21 | [W12 review](../verification/p1-w12-p1-documentation-handoff-verification.md) | W12 governance review location; map completion is not stage completion. |
+| P1-V20 | [W12 review](../verification/p1-w12-p1-documentation-handoff-verification.md) | **Supported locally:** eight-document consistency/content/P2-consumability review passed; PR #57 checks passed. Underlying runtime gates remain separate. |
+| P1-V21 | [W12 review](../verification/p1-w12-p1-documentation-handoff-verification.md) | **Supported locally:** plan/graph/link, evidence-map and no-claim review passed; PR #57 checks passed. Map completion is not stage completion. |
 
 ## Seven exit conditions
 
@@ -48,7 +48,7 @@ proof or a substitute for NC6.
 | 4. Mapping classes and no permanent identity promise | V13, V14, V19 | **Locally supported with scope limit:** W08 classes, W11 S2 no-W+X review and paired NC5; no permanent identity ABI or real-hardware cache/TLB claim. |
 | 5. Automated verdict and 100 clean boots | V16, V17 | **Locally supported:** R1–R6 including NC4 R2 and the accepted one-image 100/100 reference run; raw evidence is local, not a durable CI artifact. |
 | 6. Unsupported entry, sync fault, panic, post-MMU fault, unexpected vector | V02, V09, V11, V12, V18 | **Blocked:** NC1–NC5 pairs are recorded, but NC6 genuine unexpected-vector evidence is absent. |
-| 7. Contracts, limitations, reporting and P2 handoff | V19–V21 | **Locally supported:** W11 S1–S6 and W12 contract/governance review recorded; online PR checks and stage-wide decision remain separate, with V18 blocked. |
+| 7. Contracts, limitations, reporting and P2 handoff | V19–V21 | **Locally supported:** W11 S1–S6 and W12 V20/V21 documentation review passed within their stated limits; PR #57 checks passed. NC6/V18 still blocks stage completion. |
 
 ## Completion review questions and decision rule
 

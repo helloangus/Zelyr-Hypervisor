@@ -1,13 +1,13 @@
 # P1-W12 contract and P2 handoff verification record
 
-**Status:** W12-DV01–DV06 passed local documentation review on rebased W12 branch; online PR checks pending, P1 completion not claimed.\
+**Status:** W12-DV01–DV06 passed local documentation review and PR #57 online checks; P1 completion not claimed.\
 **Scope:** W12 document-set review against P1-V20/P1-V21, not runtime or fault evidence.\
 **Version:** v0.1.\
 **Owner/change context:** P1-W12, 2026-09-26.\
 **Supersedes:** None.\
 **Implementation:** [W12 source inventory](../implementation/p1-w12-p1-documentation-handoff-record.md).
 
-| Review | Result on W12 commit `e5d0e4f` rebased onto `main` `2f821e0` | Proof boundary |
+| Review | Result on W12 branch rebased onto `main` `2f821e0`, merged as PR #57 | Proof boundary |
 |---|---|---|
 | W12-DV01 / P1-V20, consistency | Passed local source review: eight [contract documents](../contracts/README.md) agree with W01–W11 owning boundaries and W10/W11 merged acceptance addenda; NC6 remains unmet, not editorially resolved. | Editorial consistency only, never runtime correctness. |
 | W12-DV02 / P1-V20, required-content coverage | Passed local coverage review: eight documents each cover the named group in the [W12 design](../implementation/p1-w12-p1-documentation-handoff/01-contracts-and-review.md#1-authoritative-document-groups), including limitations and conditional P2 handoff. | Completeness of assembly, not acceptance of an upstream mechanism. |
@@ -109,9 +109,12 @@ print(f'files={len(files)} links={links} anchors={anchors} plans={len(plans)} ga
 PY
 ```
 
-No Cargo, QEMU, hardware, fault or CI execution was run for W12. PR checks
-and the final online integration decision remain with the coordinator; they
-do not change the NC6 blocker or authorize a P1 completion report.
+No local Cargo, QEMU, hardware or fault execution was run for W12. PR #57's
+required online QG-BUILD-TARGET, QG-DOCS, QG-FMT, QG-LINT, QG-TEST-HOST and
+QG-WARN checks, plus GitGuardian Security Checks, all passed before its
+merge into `main` as `02c1d38`. Those CI checks do not constitute a W12 QEMU
+or hardware run. The PR integration decision does not change the NC6 blocker
+or authorize a P1 completion report.
 
 NC6's real unexpected-vector evidence remains unavailable at this point;
 [P1-V18 is blocked](../contracts/stage-gate-evidence-map.md). Even a passed
