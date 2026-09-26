@@ -1,5 +1,7 @@
 # P1 — AArch64 EL2 Minimum Bring-up
 
+Chinese readers can use the [Chinese edition](README.zh-CN.md).
+
 Chinese editions: [current task book](task-book-v0.2.zh-CN.md) and
 [completion report](verification/p1-completion-report.zh-CN.md).
 

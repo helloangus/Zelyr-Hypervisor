@@ -22,13 +22,13 @@ def blob_id(data):
 
 
 class TranslationGateTest(unittest.TestCase):
-    def run_fixture(self, source_name, source_text, edition_status, mutate_source=False):
+    def run_fixture(self, source_name, source_text, edition_status, mutate_source=False, reciprocal=True):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = Path(source_name)
             edition = source.with_name(source.stem + ".zh-CN.md")
             (root / source).parent.mkdir(parents=True)
-            original = (source_text + f"[Chinese edition]({edition.name})\n").encode()
+            original = (source_text + (f"[Chinese edition]({edition.name})\n" if reciprocal else "")).encode()
             (root / source).write_bytes(original + (b"changed\n" if mutate_source else b""))
             (root / edition).write_text(
                 f"**Translation status:** {edition_status}\n"
@@ -77,6 +77,10 @@ class TranslationGateTest(unittest.TestCase):
             "Outdated",
             True,
         )
+        self.assertEqual(code, 0)
+
+    def test_accepted_adr_does_not_need_reciprocal_edit(self):
+        code, _ = self.run_fixture("docs/adr/adr-061.md", "**State:** Accepted.\n", "Current", reciprocal=False)
         self.assertEqual(code, 0)
 
 

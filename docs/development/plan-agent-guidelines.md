@@ -1,5 +1,7 @@
 # Zelyr Plan Agent Guidelines — Concise Mandatory Guide
 
+Chinese readers can use the [Chinese edition](plan-agent-guidelines.zh-CN.md).
+
 **Status:** Mandatory for every Plan Agent task.  
 **Scope:** Turn an approved stage task book into an implementable design; do
 not write production code or redefine project architecture.  

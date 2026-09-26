@@ -1,5 +1,7 @@
 # Documentation translation glossary
 
+Chinese readers can use the [Chinese edition](translation-glossary.zh-CN.md).
+
 **Status:** Informative translation aid.
 **Scope:** Preferred Chinese renderings of common repository document terms; identifiers and contracts remain in their source documents.
 **Version:** v0.1

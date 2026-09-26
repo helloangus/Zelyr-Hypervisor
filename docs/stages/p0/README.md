@@ -1,5 +1,7 @@
 # P0 — Repository, Specification & Toolchain Baseline
 
+Chinese readers can use the [Chinese edition](README.zh-CN.md).
+
 Chinese editions: [task book](task-book-v0.1.zh-CN.md) and
 [completion report](verification/p0-completion-report.zh-CN.md).
 

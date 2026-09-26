@@ -1,5 +1,7 @@
 # Zelyr Branch and Pull-Request Integration Workflow
 
+Chinese readers can use the [Chinese edition](integration-workflow.zh-CN.md).
+
 **Status:** Normative project policy; GitHub enforcement is planned in P0-W20.
 **Scope:** All development changes made after adoption of this policy.
 **Version:** v0.1  
