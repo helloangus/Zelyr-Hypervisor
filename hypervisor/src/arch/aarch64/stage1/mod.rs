@@ -1,5 +1,7 @@
 //! P1-W08's single-shot EL2 Stage-1 transition mechanism.
 //! W09 owns invocation and terminal routing of the returned Stage1Error.
+pub(crate) mod dtb;
+pub mod dtb_model;
 mod model;
 mod regs;
 

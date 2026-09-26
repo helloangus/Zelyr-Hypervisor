@@ -20,6 +20,7 @@ pub(crate) mod fatal;
 pub(crate) mod fatal_line;
 pub(crate) mod identity;
 pub(crate) mod lifecycle;
+pub(crate) mod p2;
 pub(crate) mod panic;
 pub(crate) mod writer;
 
@@ -175,11 +176,5 @@ extern "C" fn el2_rust_entry(x0: u64, x1: u64, x2: u64, x3: u64) -> ! {
     lifecycle::phase_complete(lifecycle::InitPhase::Runtime);
     lifecycle::run_init_sequence();
     lifecycle::enter_stable();
-    controlled_idle()
-}
-
-fn controlled_idle() -> ! {
-    loop {
-        crate::arch::aarch64::idle::wait_for_interrupt();
-    }
+    p2::run(address::PhysAddr::new(x0))
 }

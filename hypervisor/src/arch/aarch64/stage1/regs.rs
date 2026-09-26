@@ -1,8 +1,10 @@
 //! Closed EL2 Stage-1 register/instruction boundary (inventory U-012).
+//! P2-W01 reuses only read/barrier/TLBI wrappers for its bounded aperture.
 
 pub(super) fn dsb_sy() {
-    // SAFETY: U-012. W09 invokes W08 once on the masked EL2 boot CPU;
-    // DSB SY orders completed table writes before translation use. A
+    // SAFETY: U-012. W08 activation or P2-W01 aperture publication runs
+    // on the masked EL2 boot CPU. DSB SY completes table writes before
+    // translation use; no other CPU can access the new aperture. A
     // violated execution premise is terminal FC-INVARIANT.
     unsafe { core::arch::asm!("dsb sy", options(nostack, preserves_flags)) }
 }
@@ -13,8 +15,9 @@ pub(super) fn isb() {
 }
 pub(super) fn tlbi_alle2() {
     // SAFETY: U-012. The masked boot CPU owns EL2 translations; invalidating
-    // all EL2 stage-1 entries before the one-time enable is closed and
-    // ordered by adjacent DSB/ISB. FC-INVARIANT if the premise fails.
+    // all EL2 stage-1 entries before the one-time enable, or after
+    // P2-W01 invalid-to-valid aperture publication, is closed and ordered
+    // by adjacent DSB/ISB. P2 never replaces a valid descriptor; SMP is absent. FC-INVARIANT if the premise fails.
     unsafe { core::arch::asm!("tlbi alle2", options(nostack, preserves_flags)) }
 }
 pub(super) fn ic_iallu() {

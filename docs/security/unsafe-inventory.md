@@ -265,22 +265,22 @@ completed.
 - **audit-status:** author and independent soundness review complete; integrated execution pending W08–W11.
 - **permanence:** P1 terminal report boundary; re-audit for compiler entry-layout, SMP or report-source changes.
 
-### U-012 — W08 EL2 Stage-1 register and instruction boundary
+### U-012 — EL2 Stage-1 register and instruction boundary
 
 - **status:** accepted
-- **title:** closed MAIR/TTBR0/TCR/SCTLR access and activation barriers
+- **title:** closed MAIR/TTBR0/TCR/SCTLR access, activation and P2 aperture barriers
 - **boundary-category:** `arch-register`
-- **location:** `hypervisor/src/arch/aarch64/stage1/regs.rs`, all small register and instruction wrappers
-- **necessity:** safe Rust cannot encode EL2 `msr`, `mrs`, `dsb`, `isb`, `tlbi alle2` or `ic iallu`.
-- **safety-preconditions:** W01-established EL2 and one DAIF-masked boot CPU; W03 required 4 KiB/PA facts, W04 baseline, W05 vectors, W06 console and W07 fatal route complete; W08 verified five-page tables and fixed control values before the one-time enable.
-- **establishment:** W09 will be the sole caller of the single-shot W08 entry; W08 checks the declared predecessors, verifies and copies the full tables, uses explicit asm operands without `nomem` on control writes/barriers, and follows the W08 preflight `DSB SY`/TLBI/I-cache/ISB order. A second entry is rejected.
-- **failure-class:** FC-INVARIANT terminal via W09 Stage1 failure route or W05/W07 vector path if an architectural fault occurs mid-transition.
-- **authorizing-design:** [W08 design](../stages/p1/implementation/p1-w08-host-stage1-address-space/README.md), [preflight](../stages/p1/implementation/p1-w08-host-stage1-address-space/00-preflight-amendment.md) and [activation reconciliation](../stages/p1/implementation/p1-w08-host-stage1-address-space/06-activation-reconciliation.md).
-- **owner:** P1-W08.
-- **review-record:** `/root/w08_soundness`, 2026-09-25: independently reviewed closed asm scope, barrier/control order, MAIR/TCR/XN and AP encoding against Arm-maintained reference definitions; identified missing EL2 AP[1] RES1 bit, then re-reviewed and accepted the corrected six-class encoding and U-012 boundary.
-- **validation:** [W08 activation verification](../stages/p1/verification/p1-w08-mmu-activation-verification.md); target build/Clippy and six host W08 tests pass; actual MMU execution belongs to W09/W10/W11 integration.
-- **audit-status:** author and independent soundness review complete; integrated execution pending.
-- **permanence:** P1 fixed reference Stage-1 transition; re-audit for register policy, P2 remapping or SMP.
+- **location:** `hypervisor/src/arch/aarch64/stage1/regs.rs`, small register and instruction wrappers
+- **necessity:** safe Rust cannot encode EL2 system-register accesses or architectural barriers/TLBI.
+- **safety-preconditions:** established EL2, one DAIF-masked boot CPU, no APs; W08's original prerequisites govern activation. P2-W01 additionally requires successful P1 Stage-1 activation and only publishes invalid-to-valid entries in its reserved aperture.
+- **establishment:** W08 retains its one-shot transition and predecessor/table checks. P2's claimed-once owner validates physical/image spans, initializes child tables before L1 publication, and uses DSB SY / TLBI ALLE2 / DSB SY / ISB before new translations. No valid descriptor is replaced, no control register policy changes, and no SMP shootdown is claimed. The asm barriers retain compiler-visible memory effects.
+- **failure-class:** FC-INVARIANT terminal through the P1 fatal path or P2 rejection path; architectural faults use W05/W07.
+- **authorizing-design:** [W08 activation reconciliation](../stages/p1/implementation/p1-w08-host-stage1-address-space/06-activation-reconciliation.md) and [P2-W01 baseline amendment](../stages/p2/implementation/p2-w01-boot-platform-description-intake/00-current-baseline-amendment.md).
+- **owner:** P1-W08 activation; P2-W01 bounded aperture publication.
+- **review-record:** `/root/w08_soundness`, 2026-09-25, accepted the corrected EL2 AP/MAIR/TCR boundary. `/root/p2_soundness_review`, 2026-09-26, independently accepted the widened single-CPU invalid-to-valid publication and DSB/TLBI/DSB/ISB sequence; no hardware-general claim.
+- **validation:** [W08 activation verification](../stages/p1/verification/p1-w08-mmu-activation-verification.md) and [P2-W01 verification](../stages/p2/verification/p2-w01-boot-platform-description-intake-verification.md); local host/model gates and canonical/GICv3 QEMU boot evidence recorded.
+- **audit-status:** author and independent soundness review complete for these two paths.
+- **permanence:** fixed P1 activation plus bounded P2 boot aperture; valid-entry replacement, another firmware contract or SMP requires re-audit.
 
 ### U-013 — W08 linker-bound address inventory
 
@@ -366,6 +366,23 @@ completed.
 - **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two post-W10 scenario-verdict QEMU runs observed ESR.EC `0x25`, FAR `0x5000_0000`, and a terminal W05/W07 report on the local branch; hardware behavior is not claimed
 - **audit-status:** author and independent soundness review complete; W10-integrated paired QEMU execution and W11 S1–S6 source/linked-image review recorded, with NC6/P1-V18 still blocked
 - **permanence:** validation-image only; absent from the default image
+
+### U-018 — P2 bounded boot DTB byte view
+
+- **status:** accepted
+- **title:** immutable DTB slice from the P2 read-only aperture
+- **boundary-category:** `memory-mgmt`
+- **location:** `hypervisor/src/arch/aarch64/stage1/dtb.rs`, `DtbWindow::bytes`
+- **necessity:** firmware-populated memory is not a Rust-owned object; safe Rust cannot construct the initial borrowed byte slice.
+- **safety-preconditions:** canonical loader initializes immutable RAM; no DMA or other CPU writes it; one boot CPU with DAIF masked; trusted minimum-RAM envelope, full page-rounded span exclusion from the image, established RO/XN Normal WB mapping; no remap/unmap until restart.
+- **establishment:** `BootReadEnvelope` can be constructed only in the reference boot adapter. The architecture owner checks the header range before its first slice, validates header-declared size, checks the full extent before extending invalid leaves, and orders descriptor publication through U-012. Fields and constructors of the mapping owner are private; each slice borrows the owner. All arithmetic is bounded by the 8 MiB cap and the fixed aperture.
+- **failure-class:** malformed placement/header yields a typed P2 diagnostic before the affected access; a false loader/architectural premise is terminal FC-PLATFORM or FC-INVARIANT.
+- **authorizing-design:** [P2-W01 current-baseline amendment](../stages/p2/implementation/p2-w01-boot-platform-description-intake/00-current-baseline-amendment.md).
+- **owner:** P2-W01.
+- **review-record:** `/root/p2_soundness_review`, 2026-09-26, independently accepted rounded coverage/image checks, immutable owner borrow, static table lifetime and monotone invalid-to-valid mapping under the stated loader/single-CPU assumptions. The first review attempt hit a service usage limit; the successful retry supplied this review.
+- **validation:** [P2-W01 verification](../stages/p2/verification/p2-w01-boot-platform-description-intake-verification.md): host bounds/permissions tests, mutation sweep, three successful QEMU boot chains and explicit out-of-envelope rejection; physical hardware and alternate firmware not run.
+- **audit-status:** author and independent soundness review complete; reference-QEMU execution recorded.
+- **permanence:** boot-only borrowed input until restart; copying, releasing or exposing it to writers requires a new lifecycle design.
 
 ## History
 
