@@ -1,7 +1,7 @@
 # Zelyr Unsafe Inventory
 
 **Status:** Normative register.
-**Version:** v0.8 — adds the independently reviewed P1-W09/W02 stable-idle instruction boundary.
+**Version:** v0.9 — adds the independently reviewed default-off W11 NC3/NC5 fault instruction boundaries.
 **Owner/change context:** P0-W10 unsafe Rust governance; entries are created
 only by real, merged unsafe changes under the policy's review rules.
 **Supersedes:** the empty v0.1 register (zero first-party `unsafe`).
@@ -332,6 +332,40 @@ completed.
 - **validation:** [W09 verification](../stages/p1/verification/p1-w09-initialization-sequencing-verification.md); target build/Clippy and one W10-runner canonical QEMU Stable boot pass; real-hardware power state, wake and EL3 trap behavior are not proven.
 - **audit-status:** author and independent soundness review complete; hardware behavior remains out of scope.
 - **permanence:** P1 boot CPU idle; firmware WFI trapping and power-state behavior remain reference-environment limitations; re-audit for interrupt delivery, SMP or scheduler idle.
+
+### U-016 — W11 NC3 intentionally undefined instruction
+
+- **status:** accepted
+- **title:** one permanently undefined AArch64 instruction in the selected NC3 validation image
+- **boundary-category:** `asm-glue`
+- **location:** `hypervisor/src/arch/aarch64/validation_fault.rs`, `fault_scenario(Nc3)`
+- **necessity:** safe Rust cannot emit a fixed architecturally undefined encoding to exercise the real W05 exception entry
+- **safety-preconditions:** W01 EL2 boot CPU, W05 vectors and W07 fatal path established; DAIF remains masked; only the NC3 image contains the call
+- **establishment:** W09's call is after `FatalPath.complete`; the architecture module is feature-gated and emits exactly `.inst 0` with no operands or stack effects; a static panic is the unexpected-return fallback
+- **failure-class:** FC-INVARIANT if the execution/exception premise is false; terminal W05/W07 exception path or fallback panic
+- **authorizing-design:** [W11 trigger reconciliation](../stages/p1/implementation/p1-w11-negative-fault-validation/04-trigger-reconciliation.md)
+- **owner:** P1-W11
+- **review-record:** `/root/w11_unsafe_review`, 2026-09-25: independently accepted the minimal `.inst 0` boundary, exact W09 post-arm insertion, and Rust-to-W05 exception-entry glue classification. ESR.EC 0 and W05's `cls=unknown` require raw-syndrome checking in executed evidence; static soundness review is not fault-execution proof.
+- **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two scenario-verdict QEMU runs observed ESR.EC `0x00` and a terminal W05/W07 report on the local unmerged branch; hardware behavior is not claimed
+- **audit-status:** author and independent soundness review complete; local paired QEMU execution complete, final integrated S1–S6 review pending
+- **permanence:** validation-image only; absent from the default image
+
+### U-017 — W11 NC5 post-MMU unmapped-address probe
+
+- **status:** accepted
+- **title:** one AArch64 load targeting an intentionally unmapped Stage-1 L2 entry
+- **boundary-category:** `memory-mgmt`
+- **location:** `hypervisor/src/arch/aarch64/validation_fault.rs`, `fault_scenario(Nc5)`
+- **necessity:** the Rust volatile-read contract and emitted instruction cannot be unconditionally established for this deliberately unmapped address and W05 terminal-handler route; one fixed assembly load tests hardware translation without constructing a Rust reference
+- **safety-preconditions:** W08 Stage-1 enabled successfully; W05 vectors and W07 fatal path established; `0x5000_0000` remains absent from W08's verified image/console L2 entries; only NC5 image contains the call
+- **establishment:** W09's call is after `Stage1.complete`; W08's fixed three-level table verifies invalid holes; assembly uses one typed-VA-derived address operand and no `nomem` option; unexpected return reaches a static fallback panic
+- **failure-class:** FC-INVARIANT if the mapping/exception premise is false; terminal W05/W07 exception path or fallback panic
+- **authorizing-design:** [W11 trigger reconciliation](../stages/p1/implementation/p1-w11-negative-fault-validation/04-trigger-reconciliation.md)
+- **owner:** P1-W11
+- **review-record:** `/root/w11_unsafe_review`, 2026-09-25: independently accepted the single-load assembly boundary, no `nomem`/`readonly`/`pure` claim, W08 invalid-hole premise and W09 post-MMU insertion. This is static soundness review, not P1-V18 runtime evidence.
+- **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two scenario-verdict QEMU runs observed ESR.EC `0x25`, FAR `0x5000_0000`, and a terminal W05/W07 report on the local unmerged branch; hardware behavior is not claimed
+- **audit-status:** author and independent soundness review complete; local paired QEMU execution complete, final integrated S1–S6 review pending
+- **permanence:** validation-image only; absent from the default image
 
 ## History
 

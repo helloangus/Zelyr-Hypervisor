@@ -13,3 +13,6 @@ build = "build.rs"
 [features]
 default = []
 p1-w11-nc2 = []
+p1-w11-nc3 = []
+p1-w11-nc4 = []
+p1-w11-nc5 = []

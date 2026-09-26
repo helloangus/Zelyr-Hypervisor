@@ -33,6 +33,8 @@ loads only the linked supporting file needed for its assigned step:
   inventory, and the P2–P4 stage boundary.
 - [03-implementation-and-review.md](03-implementation-and-review.md) — ordered
   workflow, validation matrix, observability model, and handoff checklist.
+- [04-trigger-reconciliation.md](04-trigger-reconciliation.md) — integrated
+  W09 trigger placements, NC5 unsafe-language correction, and NC6 blocker.
 
 Before editing, follow the Coding Guidelines preflight: repository
 [AGENTS.md](../../../../../AGENTS.md), [documentation

@@ -1,6 +1,6 @@
 # P1-W11 negative/fault validation verification record
 
-**Status:** Foundation validation only; P1-V18 and P1-V19 open.
+**Status:** Local NC2–NC5 paired execution passed; NC1/NC6 and final P1-V18/P1-V19 remain open.
 **Date:** 2026-09-25 (Asia/Shanghai).
 **Scope:** [W11 implementation record](../implementation/p1-w11-negative-fault-validation-record.md)
 over `main` baseline `4fd5700` plus this W11 branch's diff.
@@ -75,3 +75,84 @@ records one selected NC2 image run through the clean-boot runner: it returned
 the unchanged W03 required-fact route; the clean-boot runner's failure is not
 a W11 scenario-specific pass. A second NC2 run, paired comparison and the
 NC1/NC3–NC6 fault scenarios remain unperformed; P1-V18/P1-V19 stay open.
+
+## Integrated W11 execution, branch `p1/w11-fault-execution` (2026-09-25)
+
+The sections above are the historical NC2-foundation snapshot. This section
+records the later unmerged W11 branch over main commit `249e1b3`, with a
+working-tree diff; it must be rerun after W10's runner changes and before
+closure. Host: Linux x86_64, QEMU AArch64 8.2.2, pinned Rust toolchain.
+The W11 verdict layer called the one W10 `scripts/qemu-runner` entry twice
+per NC2–NC5 image (8 bounded QEMU runs total), each with timeout 8 seconds.
+Runner status 4 means its *clean-boot* oracle detected the intentional
+target failure; W11's independent exact-field checks returned status 0 for
+each pair. Four runner artifacts per run and W11 `summary.json` are retained
+under the build-tree paths below; they are local, not committed artifacts.
+The final v4 verdict additionally checked W07's build identity, CPU/EL,
+PC/SPSR and all 31 GPRs plus SP for exception reports, panic location and
+handler-entry SP/LR for panic reports, the syndrome/FAR validity fields, and
+the local image bytes' SHA-256 against both runner invocation records, and
+rejected any P1 marker after the single report-end marker. V4 was rerun on
+2026-09-26 after that stricter terminal check; the original v3 captures remain
+local exploratory history.
+
+| Scenario | Image SHA-256 | Run 1 / Run 2 | Exact observed class and route | Local evidence root |
+|---|---|---|---|---|
+| NC2 injected required fact | `8791edf9d2040fbdea826c77d257a915e0e0d4f137f87bdcf329165b7d2ab5e7` | passed / passed | `kind=P`, `ph=capabilities.enter`, `cap-reject fact=granule-4k`, one END, no Stable | `target/p1-w11-nc2-paired-v4/` |
+| NC3 undefined instruction | `78f094be85fdfb40499573815069e59a89f6176369340cf9346b78a9710129dd` | passed / passed | `kind=E`, sync/fatal-syndrome, ESR `0x02000000` (EC 0), W05 `cls=unknown`, FAR unavailable, `ph=fatal-path.complete`, one END | `target/p1-w11-nc3-paired-v4/` |
+| NC4 intentional panic | `58caf44e10cda431db48a40f945832c94780f1ec85182541ed5e2e295fe12620` | passed / passed | `kind=P`, exact static message, `ph=fatal-path.complete`, one END | `target/p1-w11-nc4-paired-v4/` |
+| NC5 post-MMU translation | `62349bf7195e3a0db6dc05ba1f25fc1cd9d21104ff4d4f967c8587bbf1774ad0` | passed / passed | `kind=E`, sync/fatal-syndrome, ESR `0x96000006` (EC 0x25), `cls=data-abort-translation`, FAR `0x50000000`, `ph=stage1.complete`, one END | `target/p1-w11-nc5-paired-v4/` |
+
+Each pair used the same image SHA-256, runner status/exit 4, one report-end
+marker and no following phase/Stable marker. NC2 is only controlled sampled
+fact substitution, **not** a CPU-hardware-absence observation. For NC5,
+W08's verified three-level map gives image L1 index 1/L2 index 0 while the
+fault VA has L1 index 1/L2 index 128 (invalid); the console lies in L1
+index 0. The observed FAR and translation syndrome support that exact
+unmapped target. These observations do not prove real-hardware behavior.
+
+The default feature build's linked ELF had no `validation_fault` or
+`fault_scenario` symbol and no NC3/NC4/NC5 trigger string (`llvm-nm` and
+`strings` filtered checks returned no match). Its derived image SHA-256 was
+`f9895fa0e365631160fa6b38edf5583b8de77b1609187995c672ad44ce79e152`;
+one W10 clean-boot cycle returned `PASS`, retained at
+`target/p1-w11-default-smoke/`. This is interim S6 containment evidence
+on this branch, not the final integrated S1–S6 review or a 100-cycle claim.
+The NC3/NC4/NC5 feature combinations are rejected by `compile_error!`;
+one NC3+NC5 build was checked to fail with that exact diagnostic.
+
+An **exploratory manual** 5-second QEMU boot with the same default image and
+`virt,virtualization=off` printed `ZELYR P1 BOOT REJECT reason=EL` and
+timed out in W01's bounded stop. This is not W10-runner evidence: its current
+profile fixes virtualization on. Formal NC1 paired evidence is blocked until
+the same runner gains an approved EL2-disabled profile. NC6 is blocked by
+the lack of a genuine deterministic unexpected IRQ/FIQ/SError trigger in
+P1's masked no-GIC scope. A manual QEMU monitor `nmi` probe on `virt` returned
+`machine does not provide NMIs` (diagnostic reported by the integration
+reviewer), consistent with [QEMU's machine-specific NMI monitor
+contract](https://www.qemu.org/docs/master/system/monitor/); this does not
+prove every alternative event source impossible. NC6 is not replaced by a
+synchronous instruction or a direct branch into vector code.
+
+## Integrated quality and scope/security status
+
+`cargo fmt --all -- --check`, host Clippy with `-D warnings`, 34 host-test
+executions, target default/NC3/NC4/NC5 builds and Clippy with `-D warnings`,
+three pure W11 verdict-parser tests, and `git diff --check` passed after the
+changes; NC2 feature compilation had passed earlier and the NC2 image above
+was built on this branch. The first format check found only import ordering;
+`cargo fmt --all` corrected it before the passing check. The first NC3/NC4
+Clippy check found dead W08 code in a build that terminates before Stage1;
+the module is now excluded only from those scenario builds and the checks
+pass. The W11 script is a target-specific verdict layer, not another QEMU
+entry or a W10 runner modification.
+
+S1–S6 final review is **not run** on the final integrated baseline. Interim
+checks: S2 host model tests assert no W+X; S3 U-016/U-017 received independent
+static review; S4/S5 W11 diff adds no Guest/SMP/GIC/recovery or permission
+relaxation; S6 default ELF has no linked trigger symbol/string and one normal
+boot passed. S1 full input/range audit, S2 final linked map audit, S3 full
+tree-to-inventory bidirectional audit, S4/S5 final-tree audit, and S6 after
+W10 merge must be recorded per item before P1-V19 can pass. P1-V18 remains
+open because NC1 formal runs and NC6 genuine unexpected-event evidence are
+missing. No QEMU hardware fault or real-board test was run.

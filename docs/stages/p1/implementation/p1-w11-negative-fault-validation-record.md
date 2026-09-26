@@ -1,9 +1,8 @@
 # P1-W11 negative/fault validation implementation record
 
-**Status:** NC2 validation-image foundation only; W11 execution and closure
-not claimed.
-**Scope:** Default-off, build-selected NC2 capability-sample injection and
-current-state reconciliation for [P1-W11](../plans/p1-w11-negative-fault-validation.md).
+**Status:** NC2–NC5 mechanisms and local paired runs; W11 closure not claimed.
+**Scope:** Default-off NC2–NC5 selections and current-state reconciliation
+for [P1-W11](../plans/p1-w11-negative-fault-validation.md).
 **Version:** v0.1.
 **Owner/change context:** P1-W11 implementation, 2026-09-25.
 **Supersedes:** None.
@@ -78,3 +77,39 @@ Changed runtime/build files: `hypervisor/Cargo.toml`, W03
 external ABI, or production public API was added. No unresolved architecture
 or ADR conflict was found. W09/W10 availability is an integration
 prerequisite, not permission to invent substitute interfaces.
+
+## Integrated W09 trigger mechanism (2026-09-25)
+
+The preceding foundation snapshot and table are historical. On the current
+W09-enabled baseline, NC3 and NC4 attach after `FatalPath.complete`; NC5
+attaches after `Stage1.complete`. The [trigger design correction](p1-w11-negative-fault-validation/04-trigger-reconciliation.md)
+fixes the exact instructions and the NC5 Rust-volatile concern. The closed
+validation features `p1-w11-nc3`, `p1-w11-nc4`, `p1-w11-nc5` are default-off
+and mutually exclusive with each other and NC2. Their only runtime entry is
+`fault_scenario(ScenarioId) -> !` in the AArch64 validation module, absent
+from the default build; no runtime fault-mode state exists. NC3 emits
+`.inst 0`, NC4 uses a static panic, and NC5 emits one `ldr` from typed VA
+`0x5000_0000`. That VA shares L1 index 1 with W08's image but uses invalid
+L2 index 128 rather than the image's L2 index 0. The selections do not
+change normal boot controls. NC3/NC4 builds omit the unused W08 module from
+compilation because their trigger terminates before Stage1.
+
+The W11 `scripts/p1-w11-verify` verdict layer invokes only the W10
+`scripts/qemu-runner` entry, twice per scenario. It retains the runner's
+invocation, outcome and serial artifacts and adds exact scenario checks and
+paired image identity in `summary.json`. It does not own QEMU command flags,
+capture, timeout, or the W10 clean-boot oracle. It presently supports
+NC2–NC5. NC1 needs the single runner's EL2-disabled profile, which is not
+yet integrated; manual diagnostics cannot close it. NC6 remains blocked:
+no genuine deterministic unexpected IRQ/FIQ/SError source is approved in
+P1's masked, no-GIC runtime. A synchronous BRK/undefined instruction or
+branch to a vector slot is not an NC6 proxy.
+
+The only new unsafe segments are U-016 (NC3 Rust-to-exception instruction
+glue) and U-017 (NC5 translation probe). Both have independent static
+soundness approval in the [unsafe inventory](../../../security/unsafe-inventory.md)
+and require executed evidence separately. No external ABI, production
+public API, dependency, allocator, Guest, SMP, GIC, recovery or runtime
+configuration mechanism was added. The earlier “no new unsafe” statement
+applies only to the NC2 foundation; this section supersedes it for the
+combined branch. W11 closure, P1-V18 and final P1-V19 remain open.

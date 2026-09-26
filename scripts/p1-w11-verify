@@ -1,0 +1,150 @@
+#!/usr/bin/env python3
+"""W11 scenario verdict over two calls to the single W10 QEMU runner entry.
+
+This file owns only target-specific evidence interpretation. It does not
+construct a QEMU command or implement capture/timeout behavior.
+"""
+import argparse
+import hashlib
+import json
+from pathlib import Path
+import re
+import subprocess
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+RUNNER = ROOT / "scripts/qemu-runner"
+END = "ZELYR P1 REPORT END"
+
+
+def lines_after_terminal(lines):
+    positions = [index for index, line in enumerate(lines) if line == END]
+    if len(positions) != 1:
+        return False
+    return not any(line.startswith("ZELYR P1 ")
+                   for line in lines[positions[0] + 1:])
+
+
+def field(lines, prefix):
+    matches = [line for line in lines if line.startswith(prefix)]
+    return matches[0] if len(matches) == 1 else None
+
+
+def classify(scenario, serial, outcome):
+    lines = serial.decode("utf-8", errors="replace").splitlines()
+    faults = [line for line in lines if line.startswith("ZELYR P1 FATAL")]
+    panics = [line for line in lines if line.startswith("ZELYR P1 PANIC")]
+    checks = {
+        "runner_target_failure": outcome.get("status") == 4
+        and outcome.get("reason") == "forbidden-marker",
+        "single_terminal_report": lines_after_terminal(lines),
+        "no_stable": "ZELYR P1 STABLE" not in lines,
+        "build_identity": bool(re.fullmatch(
+            r"build=version=\S+ arch=aarch64 profile=\S+ rev=\S+ dirty=\S+",
+            field(lines, "build=") or "")),
+        "cpu_el": field(lines, "cpu=") == "cpu=EL2 el_ok=true",
+    }
+    expected_phase = "capabilities.enter" if scenario == "nc2" else (
+        "stage1.complete" if scenario == "nc5" else "fatal-path.complete")
+    checks["phase"] = field(lines, "ph=") == "ph=" + expected_phase
+
+    if scenario == "nc2":
+        checks["kind"] = panics == ["ZELYR P1 PANIC kind=P"] and not faults
+        checks["required_fact"] = any("cap-reject fact=granule-4k" in line for line in lines)
+    elif scenario == "nc4":
+        checks["kind"] = panics == ["ZELYR P1 PANIC kind=P"] and not faults
+        checks["message"] = field(lines, "msg=") == "msg=P1-W11 NC4 intentional panic"
+    else:
+        checks["kind"] = faults == ["ZELYR P1 FATAL kind=E"] and not panics
+        checks["origin_category"] = field(lines, "org=") == (
+            "org=current-el-spx cat=sync disp=fatal-syndrome")
+        syndrome = field(lines, "esr=")
+        match = re.fullmatch(r"esr=([0-9a-f]{16}) cls=([^ ]+) il=true", syndrome or "")
+        checks["syndrome_format"] = match is not None
+        checks["pc_return"] = bool(re.fullmatch(
+            r"pc=[0-9a-f]{16} spsr=[0-9a-f]{16}", field(lines, "pc=") or ""))
+        checks["register_context"] = (
+            all(bool(re.fullmatch(rf"x{index:02}=[0-9a-f]{{16}}",
+                                  field(lines, f"x{index:02}=") or ""))
+                for index in range(31))
+            and bool(re.fullmatch(r"sp=[0-9a-f]{16}", field(lines, "sp=") or "")))
+        checks["hpfar_validity"] = field(lines, "hpfar=") == "hpfar=na"
+        checks["message_na"] = field(lines, "msg=") == "msg=na"
+        if scenario == "nc3":
+            checks["undefined_ec"] = bool(match and int(match[1], 16) >> 26 == 0)
+            checks["class"] = bool(match and match[2] == "unknown")
+            checks["far"] = field(lines, "far=") == "far=na"
+        else:
+            checks["data_abort_ec"] = bool(match and int(match[1], 16) >> 26 == 0x25)
+            checks["class"] = bool(match and match[2] == "data-abort-translation")
+            checks["far"] = field(lines, "far=") == "far=0000000050000000"
+    if scenario in ("nc2", "nc4"):
+        checks["panic_location"] = bool(re.fullmatch(
+            r"loc=\S+:\d+:\d+", field(lines, "loc=") or ""))
+        checks["panic_register_context"] = bool(re.fullmatch(
+            r"sp0=[0-9a-f]{16} lr0=[0-9a-f]{16} capture=handler-entry",
+            field(lines, "sp0=") or ""))
+        checks["panic_syndrome_contract"] = (
+            field(lines, "syndrome=") == "syndrome=na fault=na gprs=na")
+    return checks
+
+
+def main(argv):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--scenario", choices=("nc2", "nc3", "nc4", "nc5"), required=True)
+    parser.add_argument("--image", type=Path, required=True)
+    parser.add_argument("--evidence", type=Path, required=True)
+    parser.add_argument("--timeout", type=int, default=8)
+    options = parser.parse_args(argv)
+    if options.timeout <= 0 or not options.image.is_file():
+        parser.error("timeout must be positive and image must exist")
+    root = options.evidence.resolve()
+    root.mkdir(parents=True, exist_ok=False)
+    local_image_sha256 = hashlib.sha256(options.image.read_bytes()).hexdigest()
+    runs = []
+    for number in (1, 2):
+        directory = root / f"run-{number}"
+        command = [sys.executable, str(RUNNER), "run", "--profile", "p1-boot-smoke",
+                   "--param", "boot-smoke=" + str(options.image.resolve()),
+                   "--timeout", str(options.timeout), "--evidence-dir", str(directory)]
+        try:
+            result = subprocess.run(command, capture_output=True, text=True, check=False,
+                                    timeout=options.timeout + 10)
+        except subprocess.TimeoutExpired as error:
+            runs.append({"run": number, "runner_exit": None,
+                         "error": f"runner process exceeded wrapper bound: {error}",
+                         "checks": {"runner_completed": False}, "image_sha256": None})
+            break
+        try:
+            outcome = json.loads((directory / "outcome.json").read_text())
+            invocation = json.loads((directory / "invocation.json").read_text())
+            serial = (directory / "serial.log").read_bytes()
+            checks = classify(options.scenario, serial, outcome)
+            checks["runner_exit_matches_record"] = result.returncode == outcome.get("status")
+            identity = invocation["artifacts"][0]["sha256"]
+            checks["image_matches_invocation"] = (
+                invocation["artifacts"][0]["path"] == str(options.image.resolve()))
+            checks["image_digest_matches_local"] = identity == local_image_sha256
+        except (OSError, ValueError, KeyError, IndexError) as error:
+            checks, identity = {"evidence_readable": False}, None
+            runs.append({"run": number, "runner_exit": result.returncode,
+                         "runner_stdout": result.stdout, "runner_stderr": result.stderr,
+                         "error": str(error), "checks": checks, "image_sha256": identity})
+            break
+        runs.append({"run": number, "runner_exit": result.returncode,
+                     "runner_stdout": result.stdout, "runner_stderr": result.stderr,
+                     "checks": checks, "image_sha256": identity,
+                     "outcome_status": outcome.get("status"),
+                     "evidence": str(directory)})
+    passed = len(runs) == 2 and all(all(run["checks"].values()) for run in runs)
+    passed = passed and runs[0]["image_sha256"] == runs[1]["image_sha256"]
+    passed = passed and hashlib.sha256(options.image.read_bytes()).hexdigest() == local_image_sha256
+    summary = {"scenario": options.scenario, "passed": passed, "runs": runs,
+               "proof_boundary": "W11 paired QEMU scenario verdict; no hardware or NC6 claim"}
+    (root / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
+    print(json.dumps({"scenario": options.scenario, "passed": passed, "evidence": str(root)}))
+    return 0 if passed else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:]))

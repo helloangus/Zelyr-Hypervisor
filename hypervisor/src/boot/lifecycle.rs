@@ -5,8 +5,13 @@ use core::sync::atomic::{AtomicUsize, Ordering};
 
 #[cfg(target_arch = "aarch64")]
 use super::{console, fatal};
+#[cfg(all(
+    target_arch = "aarch64",
+    not(any(feature = "p1-w11-nc3", feature = "p1-w11-nc4"))
+))]
+use crate::arch::aarch64::stage1;
 #[cfg(target_arch = "aarch64")]
-use crate::arch::aarch64::{baseline, capabilities, exceptions, stage1};
+use crate::arch::aarch64::{baseline, capabilities, exceptions};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub(crate) enum InitPhase {
@@ -273,7 +278,10 @@ fn console_step() {
 fn fatal_path_step() {
     fatal::arm_fatal_path();
 }
-#[cfg(target_arch = "aarch64")]
+#[cfg(all(
+    target_arch = "aarch64",
+    not(any(feature = "p1-w11-nc3", feature = "p1-w11-nc4"))
+))]
 fn stage1_step() {
     if let Err(error) = stage1::enable_host_stage1() {
         fail_phase(
@@ -304,10 +312,25 @@ pub(crate) fn run_init_sequence() {
     phase_enter(InitPhase::FatalPath);
     fatal_path_step();
     phase_complete(InitPhase::FatalPath);
+    #[cfg(feature = "p1-w11-nc3")]
+    crate::arch::aarch64::validation_fault::fault_scenario(
+        crate::arch::aarch64::validation_fault::ScenarioId::Nc3,
+    );
+    #[cfg(feature = "p1-w11-nc4")]
+    crate::arch::aarch64::validation_fault::fault_scenario(
+        crate::arch::aarch64::validation_fault::ScenarioId::Nc4,
+    );
 
-    phase_enter(InitPhase::Stage1);
-    stage1_step();
-    phase_complete(InitPhase::Stage1);
+    #[cfg(not(any(feature = "p1-w11-nc3", feature = "p1-w11-nc4")))]
+    {
+        phase_enter(InitPhase::Stage1);
+        stage1_step();
+        phase_complete(InitPhase::Stage1);
+        #[cfg(feature = "p1-w11-nc5")]
+        crate::arch::aarch64::validation_fault::fault_scenario(
+            crate::arch::aarch64::validation_fault::ScenarioId::Nc5,
+        );
+    }
 }
 
 #[cfg(test)]
