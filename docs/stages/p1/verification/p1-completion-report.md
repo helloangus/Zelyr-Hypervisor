@@ -35,12 +35,12 @@ images rebuilt here have the **same SHA-256 values** as W11's integrated
 verification, so no code-delta inference is needed. Host: Linux WSL2
 `6.18.33.2-microsoft-standard-WSL2` x86_64; QEMU AArch64 8.2.2; pinned
 Rust 1.98.1; one `virt` boot CPU, 128 MiB and the documented W10 profiles.
-The official `scripts/qemu-runner` entry owns every QEMU launch. Local raw
-capture root, retained in this worktree's ignored build tree:
-`target/p1-completion-evidence/` (absolute worktree:
-`/home/angus/dev/Zelyr-Hypervisor/.worktrees/p1completion/`). These files
-are **not** durable CI artifacts; preserve this worktree or archive them
-before cleanup.
+The official `scripts/qemu-runner` entry owns every QEMU launch. The original
+raw capture root was the ignored build-tree path
+`.worktrees/p1completion/target/p1-completion-evidence/`. Its contents are
+now preserved in the [local evidence archive](p1-local-evidence-archive.md),
+with the original member paths intact. The archive is **not** a durable CI
+artifact or remote backup.
 
 | Run | Image SHA-256 | Result and retained evidence |
 |---|---|---|
@@ -129,7 +129,7 @@ discovery, allocator and board-runtime mechanisms did not enter P1.
 | Genuine unexpected asynchronous EL2 vector (historical NC6) has no executed proof | P6-W12 / P6-V29 under ADR-061 | Not a P1-v0.2 gate; **blocks P6-V29 until real evidence**, and P1 completion cannot be cited as a pass. |
 | DTB content, physical RAM/reservations, dynamic allocation | P2, via [P2 handoff](../contracts/p2-handoff.md) | Not implemented or verified by P1. |
 | Real hardware, alternate firmware/CPU, hardware-fault and recursive-fault stress | Later platform/robustness validation | Not part of this reference-QEMU completion claim. |
-| Raw QEMU captures are local ignored build artifacts | Maintainer of this worktree | Keep `target/p1-completion-evidence/` accessible or archive before worktree removal; CI required checks alone do not recreate them. |
+| Raw QEMU captures are local ignored build artifacts | Local evidence custodian | [Archive](p1-local-evidence-archive.md) preserves the original captures outside removed worktrees; maintain an off-host copy if durability is required. CI required checks alone do not recreate them. |
 
 P2's consumable package is this report, [task book v0.2](../task-book-v0.2.md),
 the [eight P1 contracts](../contracts/README.md), the

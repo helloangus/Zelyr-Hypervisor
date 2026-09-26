@@ -185,3 +185,14 @@ Raw evidence is retained under
 This completes the previously provisional R2 panic-control anchor and
 supports P1-V16 on this local reference-QEMU baseline. It does not repeat
 the W10 100-cycle set or extend its image/environment claim.
+
+## 2026-09-26 evidence custody addendum
+
+The absolute `.worktrees/w10full/target/` and
+`.worktrees/w11full/target/` paths above identify the original execution
+locations, not paths guaranteed to exist after worktree cleanup. Their
+complete `target/` contents, including `r100-accepted`, R1–R6 controls and
+NC4 R2 capture, are preserved with the same member paths in the
+[local evidence archive](p1-local-evidence-archive.md). The earlier outcomes
+and their reference-QEMU proof limits are unchanged; the archive is not a
+new execution or a remote backup.

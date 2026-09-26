@@ -2,9 +2,9 @@
 
 **Status:** Proposed assembly; R1–R6 and 100-cycle reference evidence recorded.\
 **Scope:** Canonical runner conventions and evidence acceptance, not CI policy or performance.\
-**Version:** v0.1.\
-**Owner/change context:** P1-W12 assembly of [W01 selection](../implementation/p1-w01-reference-boot-contract-record.md), [W10 runner record](../implementation/p1-w10-qemu-boot-regression-record.md) and [runner design](../implementation/p1-w10-qemu-boot-regression/01-automation-contract.md), 2026-09-25.\
-**Supersedes:** None.
+**Version:** v0.2.\
+**Owner/change context:** P1-W12 assembly of [W01 selection](../implementation/p1-w01-reference-boot-contract-record.md), [W10 runner record](../implementation/p1-w10-qemu-boot-regression-record.md) and [runner design](../implementation/p1-w10-qemu-boot-regression/01-automation-contract.md), with artifact-custody update, 2026-09-26.\
+**Supersedes:** v0.1 wording on raw-evidence location.
 
 The [boot contract](aarch64-boot-contract.md) fixes `virt,virtualization=on`,
 `cortex-a57`, one CPU, 128 MiB, serial-only output and the derived ARM64
@@ -40,6 +40,7 @@ This supplies the final R2 anchor for local P1-V16 review. The accepted
 `r100-accepted` batch is
 100/100 consecutive `PASS` on one recorded image/environment, with exactly
 one Stable and no forbidden class per cycle; local raw evidence is retained
-under the W10 worktree, not in a durable CI store. This supports P1-V17 for
+in the [artifact archive](../verification/p1-local-evidence-archive.md), not
+in a durable CI store or remote backup. This supports P1-V17 for
 that image; the NC4 re-anchor does not repeat or generalize that 100-cycle
 run.

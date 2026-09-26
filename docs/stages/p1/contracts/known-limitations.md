@@ -2,9 +2,9 @@
 
 **Status:** Proposed current-state assembly; limitations are not closure claims.\
 **Scope:** P1 assumptions, exclusions and current evidence gaps; no promised mitigation design.\
-**Version:** v0.1.\
-**Owner/change context:** P1-W12 consolidation of W01–W11 records, 2026-09-25.\
-**Supersedes:** None.
+**Version:** v0.2.\
+**Owner/change context:** P1-W12 consolidation of W01–W11 records and local artifact-custody update, 2026-09-26.\
+**Supersedes:** v0.1 wording on raw-evidence location.
 
 | Limitation or open item | Owning source and consequence |
 |---|---|
@@ -15,7 +15,7 @@
 | Identity VA=PA is temporary; no remap or permanent Host-VA ABI exists. | [W08 mapping](host-address-space.md). [W11 NC5](../verification/p1-w11-negative-fault-validation-verification.md) locally exercises one post-MMU translation fault; it is not a general address-space or hardware proof. |
 | WFI idle assumes the reference firmware does not trap the instruction; real firmware policy has not been validated. | [W09 record](../implementation/p1-w09-initialization-sequencing-record.md). |
 | W03 required-capability NC2 has a validation-image sample substitution, not a real CPU lacking 4 KiB support. | [W11 foundation](../implementation/p1-w11-negative-fault-validation-record.md); environment-only NC2 unavailable on recorded QEMU 8.2.2. |
-| W10 R1–R6 are recorded, with NC4 replacing the historical provisional NC2 R2 control; the accepted 100/100 reference run is one image on one host. Raw evidence remains in local W10/W11 worktrees, not a durable CI artifact. | [W10 verification and NC4 addendum](../verification/p1-w10-qemu-boot-regression-verification.md), [W11 verification](../verification/p1-w11-negative-fault-validation-verification.md). These locally support P1-V16 and P1-V17 within their stated evidence bounds, not real hardware or all P1 gates. |
+| W10 R1–R6 are recorded, with NC4 replacing the historical provisional NC2 R2 control; the accepted 100/100 reference run is one image on one host. Raw evidence is in a [local archive](../verification/p1-local-evidence-archive.md), not a durable CI artifact or remote backup. | [W10 verification and NC4 addendum](../verification/p1-w10-qemu-boot-regression-verification.md), [W11 verification](../verification/p1-w11-negative-fault-validation-verification.md). These locally support P1-V16 and P1-V17 within their stated evidence bounds, not real hardware or all P1 gates. |
 | W11 NC1–NC5 have paired reference-QEMU evidence and S1–S6 passed local source/linked-image review; neither is a real-board or hardware-fault validation. NC2 is a controlled sample substitution, not absent CPU hardware capability. | [W11 integrated review](../verification/p1-w11-negative-fault-validation-verification.md). NC6 alone remains unexecuted in the specified genuine unexpected-vector class. |
 | NC6 real unexpected asynchronous vector injection has no accepted executed proof. | [W11 scenario matrix](../implementation/p1-w11-negative-fault-validation/01-fault-scenario-matrix.md) and [verification](../verification/p1-w11-negative-fault-validation-verification.md) record the historical P1 block. [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md) transfers this still-open execution obligation to P6-W12/P6-V29; P1-V18 is revised, not retroactively passed. |
 | P1 has no allocator/discovery/GIC/SMP/Guest, Stage-2 or VM mechanism. | [P1 task book](../task-book-v0.2.md#2-scope-classification); these are stage exclusions, not defects to patch inside W12. |

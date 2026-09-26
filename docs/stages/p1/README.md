@@ -11,5 +11,7 @@ The normative P1 scope is [task-book v0.2](task-book-v0.2.md). The
 21 gates and seven exits against package evidence within the declared
 reference-QEMU scope. Start any further package-specific work from its
 [plan](plans/README.md) and [implementation record](implementation/README.md).
+The [local evidence archive record](verification/p1-local-evidence-archive.md)
+locates raw QEMU/build artifacts after auxiliary worktree cleanup.
 P2+ platform, memory, SMP, GIC, Stage-2 and Guest mechanisms remain outside
 P1. Historical NC6 execution is still open at P6-V29 under ADR-061.
