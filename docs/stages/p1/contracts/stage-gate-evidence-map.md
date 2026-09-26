@@ -1,13 +1,15 @@
 # P1 stage-gate evidence map and completion checklist
 
-**Status:** Proposed evidence-location map; revised P1 completion review remains pending.\
+**Status:** Evidence-location map; L7 P1 completion decision is in the linked report.\
 **Scope:** P1-V01–V21 and seven exit conditions, not a completion report.\
-**Version:** v0.2.\
-**Owner/change context:** P1-W12 review of the [amended task book](../task-book-v0.2.md) under [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md), 2026-09-26.\
-**Supersedes:** v0.1 of this evidence map.
+**Version:** v0.3.\
+**Owner/change context:** P1-W12 review of the [amended task book](../task-book-v0.2.md) under [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md), plus P1 L7 review, 2026-09-26.\
+**Supersedes:** v0.2 of this evidence map.
 
 The [task-book success conditions](../task-book-v0.2.md#6-stage-validation-matrix)
-remain authoritative. “Partial” below denotes only what the linked record
+remain authoritative. The [P1 completion report](../verification/p1-completion-report.md)
+owns the final decision and fresh integrated rerun. “Partial” below denotes
+only what the linked package record
 actually reports. W10 and W11 are included from merged `main` at `2f821e0`.
 W11's earlier foundation and exploratory sections are dated snapshots; its
 W10-integrated acceptance review and W10's NC4 addendum own the current
@@ -53,14 +55,10 @@ remain unchanged; the revised P1 gate excludes NC6 execution, now P6-V29.
 
 ## Completion review questions and decision rule
 
-Before any P1 completion report, the reviewer records in a future
-`../verification/p1-completion-report.md` which entry assumptions were
-eliminated, which reference assumptions remain, whether every fatal route
-retains phase/location/syndrome as applicable, whether the Host Stage-1
-identity window is treated only as temporary, and whether Guest/SMP/GIC/
-discovery/allocator/board-runtime mechanisms stayed outside P1. Each answer
-must cite the final integrated package evidence. That completion-report path
-is a **future location**, not an existing artifact or authority to claim
-success. All revised V01–V21 and all seven exit conditions require evidence.
-ADR-061 removes NC6 from P1-V18 but does not itself constitute a P1 completion
-decision. P6-V29 remains open until genuine asynchronous evidence is accepted.
+The [L7 completion report](../verification/p1-completion-report.md) records
+the entry assumptions eliminated and retained, fatal-path field limits,
+temporary identity-map boundary, stage exclusions, fresh reference-QEMU
+evidence and per-ID/exit decisions. Package rows above remain the narrower
+evidence-location audit, including their original partial-status wording.
+ADR-061 removes NC6 from P1-V18 but never constitutes an NC6 pass;
+P6-V29 remains open until genuine asynchronous evidence is accepted.

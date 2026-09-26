@@ -1,15 +1,16 @@
 # P1 to P2 handoff
 
-**Status:** Proposed conditional handoff; P1 stage exit and P2 readiness are not claimed.\
+**Status:** P1-to-P2 handoff contract; P1 completion is bounded by the L7 report, and P2 readiness is not claimed.\
 **Scope:** Named P2 consumers of P1 contracts; no P2 API, module or algorithm freeze.\
-**Version:** v0.1.\
-**Owner/change context:** P1-W12, following [P2 task-book inputs](../../p2/task-book-v0.1.md#2-inputs-constraints-and-state) and [plan index](../../p2/plans/README.md), 2026-09-25.\
-**Supersedes:** None.
+**Version:** v0.2.\
+**Owner/change context:** P1-W12 and P1 L7 completion review, following [P2 task-book inputs](../../p2/task-book-v0.1.md#2-inputs-constraints-and-state) and [plan index](../../p2/plans/README.md), 2026-09-26.\
+**Supersedes:** v0.1 handoff wording.
 
 P2 may consume the bounded environment described by [boot](aarch64-boot-contract.md),
 [initialization](el2-initialization-contract.md), [Host Stage-1](host-address-space.md)
 and [diagnostics](exception-diagnostics-contract.md), subject to the
-[evidence map's open gates](stage-gate-evidence-map.md). The image physical
+[P1 completion report's limits](../verification/p1-completion-report.md) and
+[evidence map](stage-gate-evidence-map.md). The image physical
 range and retained, unexamined DTB pointer are inputs, not a validated
 platform description. Capability facts describe the current boot CPU; they
 are not a DTB-to-PlatformInfo implementation.
@@ -29,13 +30,14 @@ P2 owns DTB validation and discovery, normalized PlatformInfo, physical-memory
 map, page/small allocation and their tests. P1 offers no permanent
 identity-map promise, allocator, GIC/IRQ service, secondary CPU, Guest,
 Stage-2 or VM. No table above fixes a P2 Rust type, parser, module, allocator
-algorithm, lock or inspection command. If a P1 gate remains open at P2 entry,
-the missing evidence is an upstream dependency, not permission to assume it
-passed or to reimplement P1 inside P2.
+algorithm, lock or inspection command. If new evidence invalidates a P1 gate
+at P2 entry, that is an upstream dependency defect, not permission to assume
+a pass or reimplement P1 inside P2. P1 completion itself is not a P2
+implementation/readiness claim.
 
 Under [ADR-061](../../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md),
 P1 provides reviewed structural IRQ/FIQ/SError vector coverage, not executed
 asynchronous delivery. The original NC6 run remains unperformed and belongs
 to P6-W12/P6-V29 after Host GIC/IRQ readiness. P2 must not interpret an
-eventual P1 completion decision as proof of NC6 or add a GIC/IRQ mechanism to
+P1 completion as proof of NC6 or add a GIC/IRQ mechanism to
 close it.
