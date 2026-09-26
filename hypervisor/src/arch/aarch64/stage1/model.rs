@@ -117,6 +117,7 @@ impl Stage1Error {
             },
             Stage1Step::Program => "program:translation-register-readback",
             Stage1Step::PostVerify => match self.detail {
+                "startup flag clobbered" => "postverify:startup-flag-clobbered",
                 "SCTLR M/C/I readback" => "postverify:SCTLR-MCI-readback",
                 "rodata sentinel" => "postverify:rodata-sentinel",
                 "data sentinel" => "postverify:data-sentinel",

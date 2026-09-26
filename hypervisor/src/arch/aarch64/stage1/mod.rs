@@ -159,7 +159,9 @@ pub(crate) fn enable_host_stage1() -> Result<(), Stage1Error> {
         return Err(fail(Stage1Step::Build, "tables outside data"));
     }
 
-    let mut prepared = Tables::new();
+    // Const evaluation avoids nested 4 KiB-aligned constructor temporaries
+    // overflowing the 64 KiB boot stack in unoptimized builds.
+    let mut prepared = const { Tables::new() };
     prepared.build(&regions, table_base)?;
     prepared.verify(&regions, table_base)?;
     for page in 0..5 {
@@ -206,6 +208,9 @@ pub(crate) fn enable_host_stage1() -> Result<(), Stage1Error> {
 }
 
 fn post_mmu_checks() -> Result<(), Stage1Error> {
+    if !STARTED.load(Ordering::Relaxed) {
+        return Err(fail(Stage1Step::PostVerify, "startup flag clobbered"));
+    }
     if regs::sctlr_read() & SCTLR_MCI != SCTLR_MCI {
         return Err(fail(Stage1Step::PostVerify, "SCTLR M/C/I readback"));
     }

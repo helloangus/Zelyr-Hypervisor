@@ -25,3 +25,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 
 Actual command logs and pass/fail evidence belong in `../verification/`, not in
 this index or a detailed design.
+
+The [W08 constant-initialization correction](../verification/p1-w08-const-initialization-verification.md)
+records the debug-build stack issue discovered during P2 integration and its
+bounded correction and validation.
