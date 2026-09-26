@@ -1,9 +1,10 @@
 # P1-W11 negative/fault validation verification record
 
-**Status:** Local NC2–NC5 paired execution passed; NC1/NC6 and final P1-V18/P1-V19 remain open.
-**Date:** 2026-09-25 (Asia/Shanghai).
+**Status:** NC1–NC5 paired execution and S1–S6 review passed locally after W10 integration; NC6 blocks P1-V18 and stage completion. Earlier sections are dated snapshots.
+**Date:** 2026-09-26 (Asia/Shanghai; earlier snapshots dated below).
 **Scope:** [W11 implementation record](../implementation/p1-w11-negative-fault-validation-record.md)
-over `main` baseline `4fd5700` plus this W11 branch's diff.
+on the W10-integrated `5319995` baseline; earlier `4fd5700`/`249e1b3`
+sections are dated historical snapshots.
 **Version:** v0.1.
 **Owner/change context:** P1-W11 validation-image foundation.
 **Supersedes:** None.
@@ -156,3 +157,70 @@ tree-to-inventory bidirectional audit, S4/S5 final-tree audit, and S6 after
 W10 merge must be recorded per item before P1-V19 can pass. P1-V18 remains
 open because NC1 formal runs and NC6 genuine unexpected-event evidence are
 missing. No QEMU hardware fault or real-board test was run.
+
+## W10-integrated acceptance review (2026-09-26)
+
+This section supersedes the preceding **historical** NC1/S1–S6 pending
+statements. Source baseline: W10 merge `5319995`, W11 local branch rebased at
+`88ec142` plus the NC1-profile/documentation diff in this branch. Build and
+scenario artifacts are under this worktree's `target/`, not committed or a
+durable CI store. Host: Linux x86_64, QEMU AArch64 8.2.2; five target images
+were freshly built after the rebase with the pinned Rust toolchain. The
+default image SHA-256 is
+`f9895fa0e365631160fa6b38edf5583b8de77b1609187995c672ad44ce79e152`.
+NC1 used those identical bytes under the fixed `p1-no-el2` profile; NC2–NC5
+used `p1-boot-smoke`. Every run used the one `scripts/qemu-runner` entry,
+8-second timeout, complete serial/emulator captures, invocation and outcome
+records, and a W11 pair summary.
+
+| Scenario | Image SHA-256 | Pair result and diagnostic | Retained evidence |
+|---|---|---|---|
+| NC1 EL2 unavailable | default hash above | 2/2 passed; exact `BOOT REJECT reason=EL`, no Runtime/Stable/fault marker, runner 0 under rejection-specific oracle | `target/p1-w11-nc1-post-w10/` |
+| NC2 injected required fact | `8791edf9d2040fbdea826c77d257a915e0e0d4f137f87bdcf329165b7d2ab5e7` | 2/2 passed; `cap-reject fact=granule-4k`, `ph=capabilities.enter`, terminal panic | `target/p1-w11-nc2-post-w10/` |
+| NC3 undefined instruction | `78f094be85fdfb40499573815069e59a89f6176369340cf9346b78a9710129dd` | 2/2 passed; sync fatal, ESR.EC 0, `ph=fatal-path.complete`, terminal report | `target/p1-w11-nc3-post-w10/` |
+| NC4 intentional panic | `58caf44e10cda431db48a40f945832c94780f1ec85182541ed5e2e295fe12620` | 2/2 passed; exact static message, `ph=fatal-path.complete`, terminal report | `target/p1-w11-nc4-post-w10/` |
+| NC5 post-MMU translation | `62349bf7195e3a0db6dc05ba1f25fc1cd9d21104ff4d4f967c8587bbf1774ad0` | 2/2 passed; data-abort translation, ESR.EC `0x25`, FAR `0x5000_0000`, `ph=stage1.complete`, terminal report | `target/p1-w11-nc5-post-w10/` |
+| NC6 genuine unexpected vector | none | **Blocked**; no approved deterministic IRQ/FIQ/SError event source with P1's DAIF mask and no GIC/IRQ scope | none |
+
+Each NC1–NC5 `summary.json` reports `passed=true`, checks the runner exit
+against its outcome record and the local image bytes against both invocation
+hashes. NC2–NC5 additionally check W07's build identity, CPU/EL, phase,
+syndrome and validity, panic location/entry SP/LR or exception PC/SPSR/all
+31 GPRs/SP, one report-end marker, and no later P1 marker. NC1's W01
+pre-runtime rejection has no W07 report fields or END marker by design;
+instead its full serial has exactly one EL rejection line and no other P1
+line. NC2's substituted sample is **not** real CPU feature absence. No run
+proves real-board, other CPU-model, or hardware fault behavior.
+
+The real NC4 image separately ran through the W10 regression driver as
+R2: `target/p1-w11-r2-nc4-post-w10/` recorded `requested=1`, `counted=1`,
+`FAIL-PANIC`, runner status 4/`forbidden-marker` and expected driver exit 1.
+This replaces W10's provisional NC2 panic-control anchor for P1-V16.
+W10's accepted 100-cycle set remains the evidence for its own named normal
+image; the default boot profile's QEMU command and marker oracle are
+unchanged by the NC1 addition, so that set was not rerun or generalized to
+this image.
+
+### S1–S6 scope/security review (W11-DV05 → P1-V19)
+
+Review baseline is the W10-integrated branch/source and freshly linked
+default ELF identified above. Outcomes are **source/linked-image review**,
+not hardware testing; any material source change requires re-review.
+
+| Item | Outcome | Evidence and boundary |
+|---|---|---|
+| S1 input/range | Passed, scope-qualified | `hypervisor/src/boot/mod.rs` checks CurrentEL before nonzero `x0`; `context.rs` converts `x0` only to an opaque `PhysAddr` and retains `x1`–`x3` uninterpreted. A source-wide consumer search found no P1 DTB dereference, address arithmetic, range use, or later `BootContext::dtb`/`reserved` consumer; `context.rs` itself only rechecks presence. W03 `capabilities/mod.rs`/`facts.rs` decode bounded register fields and apply Required policy before publication/consumption. Thus no P1 range/alignment-sensitive operation uses the unvalidated DTB pointer. W01 deliberately does **not** validate DTB alignment/content/range or memory adequacy; these remain P2/residual assumptions, not claims established by this review. |
+| S2 no unintended RWX | Passed | `stage1/model.rs` has six closed mapping classes: Code/Vectors RX, RoData RO+XN, Data/Stack RW+XN, Console Device RW+XN, with AP[1] RES1; `Tables::verify` checks descriptor/inventory closure and invalid holes. Host `mappings_never_combine_write_and_execute` passed. Linked default ELF sections `.text.boot`, `.p1_vectors`, `.text` were AX; `.rodata` A; `.data`, `.bss`, `.p1_boot_stack` WA; none W+X. This is P1's static image map, not future dynamic mappings. |
+| S3 unsafe inventory | Passed | Read-only `rg` walk of `hypervisor/src` unsafe blocks/functions and `docs/security/unsafe-inventory.md` found existing U-001–U-015 boundaries unchanged by W11; the two new isolated asm blocks are source-commented U-016/U-017, inventoried in the same change, and independently statically accepted by `/root/w11_unsafe_review`. No new `static mut`, `transmute`, Core unsafe, or uncategorized W11 segment. Inventory IDs are not required to be contiguous. |
+| S4 stage boundary | Passed | Diff from `main` touches only W11 validation feature gates, W09 call hooks, AArch64 fault instruction module, source-shared host test, the existing runner's fixed NC1 profile and verdict/tests/docs. No Guest, SMP/PSCI, GIC/IRQ, allocator, DTB discovery, virtio, Control Domain, board-name branch or production recovery mechanism was added. |
+| S5 fault-path controls | Passed | W11's `fault_scenario` calls are after `FatalPath.complete` or `Stage1.complete`; they emit one fixed instruction or static panic and never return normally. W09 `fail_phase` remains terminal; W11 changes no PTE permission, DAIF, trap register, fatal guard or recovery route. NC5's observed terminal report followed an unmapped load, not a control relaxation. |
+| S6 default containment | Passed | Default-off feature gates in `Cargo.toml`, `main.rs`, `arch/aarch64/mod.rs` and `lifecycle.rs`; default linked ELF `llvm-nm` had no `validation_fault`/`fault_scenario` symbol and `strings` had no NC3–NC5 trigger string. `target/p1-w11-default-post-w10/` ran one ordinary regression cycle `PASS` with the default image; scenario feature combinations are compile-time rejected. This is one normal boot plus source/link inspection, not another 100-cycle claim. |
+
+`cargo fmt --all -- --check`, 34 host Rust test executions, host Clippy
+`-D warnings`, 24 Python script tests, five target builds and five target
+Clippy selections (`default`, NC2–NC5), and `git diff --check` passed on this
+branch. The host source-shared test now uses a reasoned
+`#[expect(unexpected_cfgs)]` rather than an unrestricted allow. No target unit
+test harness, real-board run, Guest test, CI QEMU gate or hardware fault
+injection ran. S1–S6 support **P1-V19 locally** for this audited baseline.
+**P1-V18 remains blocked by NC6**, so W11 and P1 are not declared complete.

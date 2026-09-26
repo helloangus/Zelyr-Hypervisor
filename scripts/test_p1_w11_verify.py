@@ -12,6 +12,16 @@ SourceFileLoader(verifier.__name__, str(SCRIPT)).exec_module(verifier)
 
 
 class ScenarioVerdictTests(unittest.TestCase):
+    def test_nc1_requires_single_exact_el_rejection_without_runtime(self):
+        outcome = {"status": 0, "reason": "observed"}
+        serial = b"ZELYR P1 BOOT REJECT reason=EL\r\n"
+        self.assertTrue(all(verifier.classify("nc1", serial, outcome).values()))
+        duplicate = serial + serial
+        self.assertFalse(verifier.classify("nc1", duplicate, outcome)["single_el_rejection"])
+        continued = serial + b"ZELYR P1 PHASE runtime.enter\n"
+        self.assertFalse(verifier.classify("nc1", continued, outcome)["no_runtime_or_fault_report"])
+        self.assertFalse(verifier.classify("nc1", serial, {"status": 3})["runner_rejection_observed"])
+
     def test_nc3_requires_raw_undefined_ec_not_unknown_label_alone(self):
         serial = b"\n".join((
             b"ZELYR P1 FATAL kind=E",

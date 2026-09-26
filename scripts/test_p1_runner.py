@@ -98,6 +98,17 @@ class RunnerTests(unittest.TestCase):
         self.assertEqual(control[:-2], normal)
         self.assertEqual(control[-2:], ["-semihosting-config", "enable=on,target=native"])
 
+    def test_no_el2_profile_changes_only_machine_and_oracle(self):
+        normal, image, _, _ = runner.profile("p1-boot-smoke", ["boot-smoke=image"])
+        no_el2, selected, required, forbidden = runner.profile(
+            "p1-no-el2", ["boot-smoke=image"])
+        self.assertEqual(selected, image)
+        self.assertEqual(normal[:2] + normal[3:], no_el2[:2] + no_el2[3:])
+        self.assertEqual(no_el2[2], "virt,virtualization=off")
+        self.assertEqual(required, (runner.NO_EL2_REJECT,))
+        self.assertIn(runner.STABLE, forbidden)
+        self.assertNotIn("-semihosting-config", no_el2)
+
     def test_marker_control_rejects_repetition(self):
         directory = self.root / "marker-repetition"
         status = runner.regression(["--marker-control", "--cycles", "100", "--evidence", str(directory)])

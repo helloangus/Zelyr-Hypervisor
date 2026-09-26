@@ -346,8 +346,8 @@ completed.
 - **authorizing-design:** [W11 trigger reconciliation](../stages/p1/implementation/p1-w11-negative-fault-validation/04-trigger-reconciliation.md)
 - **owner:** P1-W11
 - **review-record:** `/root/w11_unsafe_review`, 2026-09-25: independently accepted the minimal `.inst 0` boundary, exact W09 post-arm insertion, and Rust-to-W05 exception-entry glue classification. ESR.EC 0 and W05's `cls=unknown` require raw-syndrome checking in executed evidence; static soundness review is not fault-execution proof.
-- **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two scenario-verdict QEMU runs observed ESR.EC `0x00` and a terminal W05/W07 report on the local unmerged branch; hardware behavior is not claimed
-- **audit-status:** author and independent soundness review complete; local paired QEMU execution complete, final integrated S1–S6 review pending
+- **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two post-W10 scenario-verdict QEMU runs observed ESR.EC `0x00` and a terminal W05/W07 report on the local branch; hardware behavior is not claimed
+- **audit-status:** author and independent soundness review complete; W10-integrated paired QEMU execution and W11 S1–S6 source/linked-image review recorded, with NC6/P1-V18 still blocked
 - **permanence:** validation-image only; absent from the default image
 
 ### U-017 — W11 NC5 post-MMU unmapped-address probe
@@ -363,8 +363,8 @@ completed.
 - **authorizing-design:** [W11 trigger reconciliation](../stages/p1/implementation/p1-w11-negative-fault-validation/04-trigger-reconciliation.md)
 - **owner:** P1-W11
 - **review-record:** `/root/w11_unsafe_review`, 2026-09-25: independently accepted the single-load assembly boundary, no `nomem`/`readonly`/`pure` claim, W08 invalid-hole premise and W09 post-MMU insertion. This is static soundness review, not P1-V18 runtime evidence.
-- **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two scenario-verdict QEMU runs observed ESR.EC `0x25`, FAR `0x5000_0000`, and a terminal W05/W07 report on the local unmerged branch; hardware behavior is not claimed
-- **audit-status:** author and independent soundness review complete; local paired QEMU execution complete, final integrated S1–S6 review pending
+- **validation:** [W11 verification](../stages/p1/verification/p1-w11-negative-fault-validation-verification.md); target build and two post-W10 scenario-verdict QEMU runs observed ESR.EC `0x25`, FAR `0x5000_0000`, and a terminal W05/W07 report on the local branch; hardware behavior is not claimed
+- **audit-status:** author and independent soundness review complete; W10-integrated paired QEMU execution and W11 S1–S6 source/linked-image review recorded, with NC6/P1-V18 still blocked
 - **permanence:** validation-image only; absent from the default image
 
 ## History

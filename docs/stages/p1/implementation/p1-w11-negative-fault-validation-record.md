@@ -113,3 +113,25 @@ public API, dependency, allocator, Guest, SMP, GIC, recovery or runtime
 configuration mechanism was added. The earlier “no new unsafe” statement
 applies only to the NC2 foundation; this section supersedes it for the
 combined branch. W11 closure, P1-V18 and final P1-V19 remain open.
+
+## W10-integrated NC1 profile and final local handoff (2026-09-26)
+
+After W10 PR #55 entered `main` at `5319995`, this branch added the fixed
+`p1-no-el2` profile to the **same** `scripts/qemu-runner` process owner. It
+changes only `virt,virtualization=on` to `off` for the W01 environment case;
+CPU, memory, serial, timeout, and image-selection grammar are unchanged.
+Its oracle requires the exact EL rejection token and forbids runtime, Stable,
+panic, fatal, and DTB-rejection tokens. Runner status 0 means this rejection
+was observed, not that the hypervisor reached Stable. The W11 verdict layer
+then checks the entire capture has exactly one P1 EL rejection line, matches
+the image digest, and agrees across two runs. The [design amendment](p1-w11-negative-fault-validation/04-trigger-reconciliation.md)
+owns this fixed profile. There is no in-image NC1 trigger, arbitrary QEMU
+flag input, or second QEMU launcher.
+
+NC1–NC5 now have local paired QEMU scenario evidence on the W10-integrated
+source; NC4 also re-anchors W10 R2 as a real intentional panic control.
+The [verification record](../verification/p1-w11-negative-fault-validation-verification.md)
+contains the exact image identities and S1–S6 audit. NC6 remains blocked by
+the absence of an approved genuine unexpected event source. W11 therefore
+does **not** close P1-V18 or the P1 stage. No new production ABI, dependency,
+runtime configuration, Guest, GIC or recovery mechanism was added.

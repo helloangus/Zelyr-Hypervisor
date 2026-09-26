@@ -1,9 +1,9 @@
 # P1-W11 validation-trigger reconciliation
 
-**Status:** Proposed detailed-design correction; execution is not claimed.  
-**Scope:** NC3–NC5 trigger placement and NC6 feasibility on the integrated W09 path.  
-**Version:** v0.1.  
-**Owner/change context:** P1-W11 implementation, 2026-09-25.  
+**Status:** Proposed detailed-design correction; execution is not claimed.
+**Scope:** NC1 runner profile, NC3–NC5 trigger placement, and NC6 feasibility on the integrated W09 path.
+**Version:** v0.1.
+**Owner/change context:** P1-W11 implementation, 2026-09-26.
 **Supersedes:** The suggested NC5 Rust volatile-read technique in the scenario matrix; all other scenario requirements remain.
 
 ## Current-state and foundation check
@@ -88,10 +88,29 @@ requires W10's ordinary image regression.
 
 The W11-specific `scripts/p1-w11-verify` is a verdict layer, not a QEMU
 entry: it calls the one W10 `scripts/qemu-runner` entry twice with the
-`p1-boot-smoke` profile, retains both complete evidence sets, then parses
+fixed `p1-no-el2` profile for NC1 or `p1-boot-smoke` for NC2–NC5, retains both complete evidence sets, then parses
 their serial reports and status records. Its inputs are a closed scenario
-name NC2–NC5, an image, finite timeout and fresh evidence root; output is a
+name NC1–NC5, an image, finite timeout and fresh evidence root; output is a
 paired `summary.json` and status 0 only if both runs match the exact class,
-phase, syndrome/FAR expectations and image identity. NC1 requires a W10
-profile that varies EL2 availability; it is not expressible by this current
-profile and remains blocked for formal evidence pending that integration.
+phase, syndrome/FAR expectations and image identity.
+
+## NC1 fixed runner profile after W10 integration
+
+The W10 runner's single `profile` function adds `p1-no-el2` for W11. It uses
+the same trusted default or `boot-smoke=<image>` image selection, CPU,
+memory, serial capture, timeout and process ownership as `p1-boot-smoke`;
+the sole QEMU machine delta is `virt,virtualization=off`. No arbitrary QEMU
+option or runtime environment selector is accepted. The required marker is
+exactly `ZELYR P1 BOOT REJECT reason=EL`. The forbidden set includes P1 phase,
+Stable, panic and fatal prefixes, and a DTB rejection. For this
+scenario-specific oracle, runner status 0 means the W01 rejection marker was
+observed and no forbidden marker arrived during its bounded post-marker
+window. It does not mean the EL2 runtime booted. W11's paired verdict also
+requires exactly one complete EL rejection line and no other P1 marker in the
+full capture, matching image hashes and two concordant runs.
+
+The W01 rejection loop intentionally does not exit; the runner terminates the
+QEMU process after its fixed observation window. This is an environment-only
+case using the same default image as a normal boot, not an in-image trigger.
+It proves the QEMU `virtualization=off` variant is rejected before Runtime,
+not a real-board firmware behavior. NC6 remains independently blocked.

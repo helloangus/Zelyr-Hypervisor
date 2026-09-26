@@ -169,7 +169,9 @@ it is not. Retention locations follow the stage verification conventions
 **Current implementation:** [`scripts/qemu-runner`](../../scripts/qemu-runner)
 implements this unchanged v0.1 interface. Its P1 profiles, defaults, dependencies
 and evidence behavior are recorded in the
-[W10 implementation record](../stages/p1/implementation/p1-w10-qemu-boot-regression-record.md).
+[W10 implementation record](../stages/p1/implementation/p1-w10-qemu-boot-regression-record.md);
+W11's fixed `p1-no-el2` scenario profile is recorded in the
+[W11 implementation record](../stages/p1/implementation/p1-w11-negative-fault-validation-record.md).
 The [verification record](../stages/p1/verification/p1-w10-qemu-boot-regression-verification.md)
 distinguishes mechanism checks from pending integrated execution. This does
 not promote a QEMU check into CI. The paragraph below records P0's historical

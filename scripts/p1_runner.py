@@ -25,6 +25,9 @@ LINE_LIMIT = 4096
 STABLE = b"ZELYR P1 STABLE"
 START = (b"ZELYR P1 PHASE entry", b"ZELYR P1 PHASE runtime")
 FORBIDDEN = (b"ZELYR P1 PANIC", b"ZELYR P1 FATAL", b"ZELYR P1 BOOT REJECT")
+NO_EL2_REJECT = b"ZELYR P1 BOOT REJECT reason=EL"
+NO_EL2_FORBIDDEN = (b"ZELYR P1 PHASE", STABLE, b"ZELYR P1 PANIC",
+                    b"ZELYR P1 FATAL", b"ZELYR P1 BOOT REJECT reason=DTB")
 MARKER_CONTROL_SHA256 = "399114e99cddcdf6686e2b04d8632dbc0409be3628aa22098a07caf3a6bd685b"
 RESERVED = {"boot-smoke", "smp", "memory", "gic", "smmu", "guest-image", "regression"}
 
@@ -197,7 +200,7 @@ def capture(command, directory, timeout, required, forbidden, observe=OBSERVE):
 
 
 def profile(name, params):
-    if name not in ("p1-boot-smoke", "p1-marker-control"):
+    if name not in ("p1-boot-smoke", "p1-marker-control", "p1-no-el2"):
         raise UsageError("unknown profile: " + name)
     values = {}
     for parameter in params:
@@ -206,11 +209,14 @@ def profile(name, params):
             raise UsageError("unsupported or duplicate parameter: " + parameter)
         values[key] = value
     image = Path(values.get("boot-smoke", str(DEFAULT_IMAGE))).resolve()
-    command = ["qemu-system-aarch64", "-machine", "virt,virtualization=on", "-cpu", "cortex-a57",
+    machine = "virt,virtualization=off" if name == "p1-no-el2" else "virt,virtualization=on"
+    command = ["qemu-system-aarch64", "-machine", machine, "-cpu", "cortex-a57",
                "-smp", "1", "-m", "128M", "-display", "none", "-monitor", "none",
                "-serial", "stdio", "-kernel", str(image)]
     if name == "p1-marker-control":
         command += ["-semihosting-config", "enable=on,target=native"]
+    if name == "p1-no-el2":
+        return command, image, (NO_EL2_REJECT,), NO_EL2_FORBIDDEN
     return command, image, (STABLE,) + START, FORBIDDEN
 
 
