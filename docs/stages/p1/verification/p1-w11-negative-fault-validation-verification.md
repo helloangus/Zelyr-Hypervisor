@@ -236,3 +236,12 @@ conditions without rerunning an unchanged artifact solely because the gate
 changed. NC6's genuine asynchronous execution remains absent and is required
 by P6-W12/P6-V29 after Host GIC/IRQ readiness. This addendum is governance
 traceability only, not new runtime evidence or a P1 completion report.
+
+## 2026-09-26 evidence custody addendum
+
+The `target/` paths above describe the original W11 execution worktree.
+Its complete build-tree artifacts and NC1–NC5 paired captures were preserved
+under their original member paths in the
+[local evidence archive](p1-local-evidence-archive.md) before worktree
+cleanup. This changes custody only: NC6 still has no genuine asynchronous
+execution, and no historical blocked verdict is retroactively passed.
