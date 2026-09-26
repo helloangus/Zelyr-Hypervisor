@@ -6,8 +6,9 @@ binding, evidence labels), per-gate minimum standards and failure semantics,
 development/integration verification sets, check-failure handling principles,
 and mutation thresholds. It does not configure CI (P0-W20) or own the bound
 build/test entries (P0-W03/P0-W08 own those).  
-**Version:** v0.1  
-**Owner/change context:** P0-W07 development quality gates; operationalizes
+**Version:** v0.2
+**Owner/change context:** P0-W07 development quality gates; bilingual-documentation
+design-level extension; operationalizes
 the P0 task book's quality outcomes (P0-V03–V08).  
 **Supersedes:** The absence of an explicit gate register.
 
@@ -25,7 +26,7 @@ can be traced to its register row and stage validation ID.
 | `QG-WARN` | Warning policy | Required | Yes | No compiler/lint warning suppressed or tolerated in gate-bearing builds | this document §4; enforcement point is the delivered build baseline | `QG-WARN` | P0-V07 |
 | `QG-TEST-HOST` | Host tests | Required | Yes | Every host-target test executes and passes, independent of QEMU | [host-test baseline](../testing/host-test-baseline.md) entry | `QG-TEST-HOST` | P0-V03/V04 |
 | `QG-BUILD-TARGET` | AArch64 target build | Required | Yes | The bare-metal AArch64 baseline artifact builds through the delivered entry | [build-target baseline](build-target-baseline.md) entry | `QG-BUILD-TARGET` | P0-V05 |
-| `QG-DOCS` | Documentation consistency | Required | Yes | Tracked-document link integrity and entry-point reachability | this document §7; CI realization is P0-W20's | `QG-DOCS` | P0-V09 |
+| `QG-DOCS` | Documentation consistency | Required | Yes | Tracked-document links, entry-point reachability, headers, and language-edition consistency | this document §7; CI realization is P0-W20's | `QG-DOCS` | P0-V09 |
 
 Register rules:
 
@@ -162,13 +163,27 @@ baseline](../testing/host-test-baseline.md), §4). `cargo fmt` needs no exclusio
      within four link hops; and
   3. normative documents carry the status header required by the
      [documentation baseline](documentation-baseline.md) (that baseline owns
-     what the header must contain; this gate only checks presence).
+     what the header must contain; this gate only checks presence); and
+  4. each existing language edition links to its source, identifies the
+     source Git blob and authority, and accurately states whether it is
+     current. A changed source in a critical class defined by the
+     [documentation baseline](documentation-baseline.md#7-language-editions-and-translation-authority)
+     cannot merge with an outdated edition. Untranslated documents remain
+     permitted during the phased rollout and are counted in the coverage
+     report, not treated as translated.
 - **Realization binding:** the mechanical realization inside CI is P0-W20's.
   Until dependency governance (P0-W18) exists, only mechanisms already
   available in the baseline environment may be used.
-- **Passing condition:** all three checks hold for the changed tree.
-- **Failure semantics:** a broken link, unreachable normative document, or
-  missing status header blocks merge.
+- **Passing condition:** all four checks hold for the changed tree.
+- **Failure semantics:** a broken link, unreachable normative document,
+  missing status header, or invalid/stale critical translation blocks merge.
+
+The v0.2 language-edition condition is a design-level extension of the
+existing `QG-DOCS` gate. It preserves the original three passing conditions
+and adds a check against an authoritative source drifting from an existing
+critical translation. Phased coverage allows source documents without an
+edition, while the coverage report makes the remaining work visible. This
+change requires the §8 reviewer approval in its carrying pull request.
 
 ## 8. Classification, promotion, and mutation thresholds
 

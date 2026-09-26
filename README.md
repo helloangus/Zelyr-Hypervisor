@@ -9,6 +9,8 @@ console and bounded fault diagnostics; it does not yet run a Guest or provide
 GIC, dynamic platform discovery or allocation services.
 
 Start with [AGENTS.md](AGENTS.md) and the [documentation index](docs/README.md).
+Chinese readers can start with the [Chinese documentation index](docs/README.zh-CN.md).
+The [Chinese edition of this page](README.zh-CN.md) is also available.
 Contributors and agents must read both before non-trivial work; reading this
 README alone does not authorize code or architecture changes.
 

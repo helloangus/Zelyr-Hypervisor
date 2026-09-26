@@ -1,5 +1,7 @@
 # P1 Completion Report — AArch64 EL2 Minimum Bring-up
 
+Chinese readers can use the [Chinese edition](p1-completion-report.zh-CN.md).
+
 **Status:** P1 stage completion decision for the declared reference-QEMU scope.
 **Scope:** P1 task book v0.2 gates and seven exit conditions; no P2/P6 or real-hardware completion claim.
 **Version:** v0.1.

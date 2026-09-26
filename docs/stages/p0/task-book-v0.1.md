@@ -1,5 +1,7 @@
 # Zelyr Hypervisor — P0 Stage Task Book v0.1
 
+Chinese readers can use the [Chinese edition](task-book-v0.1.zh-CN.md).
+
 **Stage ID:** P0  
 **Stage name:** Repository, Specification & Toolchain Baseline  
 **Status:** Defined; not an implementation-completion claim  

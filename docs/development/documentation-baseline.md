@@ -1,5 +1,7 @@
 # Zelyr Documentation Baseline
 
+Chinese readers can use the [Chinese edition](documentation-baseline.zh-CN.md).
+
 **Status:** Normative documentation governance.  
 **Scope:** The document class inventory, normative/informative discipline,
 document metadata rules, version and change thresholds, stage-document
@@ -7,8 +9,9 @@ separation, and entry/link/referencability rules for the whole `docs/` tree.
 It does not define ADR lifecycle detail (owned by the ADR governance
 document, P0-W06), workflow admission rules (P0-W21), templates, or any
 future contract's content.  
-**Version:** v0.1  
-**Owner/change context:** P0-W05 documentation baseline; operationalizes the
+**Version:** v0.2
+**Owner/change context:** P0-W05 documentation baseline; bilingual-documentation
+policy update; operationalizes the
 [`docs/README.md`](../README.md) mandate and the P0 task book's delivery
 hierarchy.  
 **Supersedes:** The absence of an explicit documentation taxonomy (the
@@ -117,3 +120,36 @@ locations and their contents.
   restating it (single-home rule).
 - Referencability: for every output a P0 package or a P1 planner produces,
   the §1 inventory names its home before the package starts.
+
+## 7. Language editions and translation authority
+
+English is the authoritative edition of an English-source document. The
+accepted [ADR-000](../adr/adr-000-architecture-baseline-v0.1.md) is the
+exception: its existing Chinese text remains authoritative under the ADR
+history rules. An English translation of ADR-000 is a reading aid and does
+not amend, replace, or supersede that decision. A translation never creates
+an independent contract, approval, implementation claim, or verification
+claim. Resolve discrepancies against the authoritative source and correct the
+translation in a reviewed change.
+
+Keep translations beside their sources, using `.zh-CN.md` for Chinese and
+`.en.md` for the ADR-000 English translation. Preserve the source stem and
+stage sublocation. Each translation starts with its own translation status,
+a relative link to the source, the source Git blob ID used for translation,
+and an authority statement. A translation may faithfully reproduce normative
+verbs from its source despite §2; those verbs have no independent authority.
+Do not silently abridge a document or alter identifiers, commands, evidence
+values, dates, approval states, or negative claims in translation. Links should
+prefer a current translated target when it exists and otherwise point to the
+authoritative source. Translation of an accepted ADR does not permit editing
+the accepted source to add a reciprocal link; use the ADR index instead.
+
+When an English source with a Chinese edition changes, synchronize in the same
+pull request if it is an ADR, governance document, stage task book, approved
+detailed design, or completion report. Other existing translations may lag if
+they visibly say `Outdated` and retain the source blob ID they translated.
+An untranslated source remains in the staged translation inventory; this
+phased rollout does not imply that a missing edition is current. The
+[documentation check](quality-gates.md) verifies pair metadata and these
+sync rules. Translation status never changes the source document's status or
+version.

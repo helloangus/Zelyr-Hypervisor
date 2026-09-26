@@ -8,8 +8,9 @@ model, and the `main` protection requirements. It does not define gate
 semantics or own gate command spelling (the [quality
 gates](quality-gates.md) own both); the workflow file carries data plus a
 pointer comment and no policy prose.  
-**Version:** v0.1  
-**Owner/change context:** P0-W20 CI baseline; implements the deferred
+**Version:** v0.2
+**Owner/change context:** P0-W20 CI baseline; bilingual-documentation
+realization extension; implements the deferred
 technical enforcement of the [integration
 workflow](integration-workflow.md) without amending it.  
 **Supersedes:** The absence of repository CI (`.github/workflows/` held only
@@ -45,7 +46,7 @@ that is not a register member.
 | `QG-WARN` | Warning policy | Required | yes | yes | gate-bearing builds evaluated for the zero-warnings condition under the delivered enforcement configuration |
 | `QG-TEST-HOST` | Host tests | Required | yes | yes | the delivered host-test execution entry, unmodified |
 | `QG-BUILD-TARGET` | AArch64 target build | Required | yes | yes | the delivered target-build entry; success requires exit success and the declared artifact present |
-| `QG-DOCS` | Documentation consistency | Required | yes | yes | inline workflow steps implementing the quality-gates §7 three check semantics |
+| `QG-DOCS` | Documentation consistency | Required | yes | yes | workflow link/reachability/header checks plus the translation-consistency runner implementing quality-gates §7 |
 
 Rules: each check reports its own result — two checks may execute the same
 build (QG-WARN and QG-BUILD-TARGET over the target build), but each
@@ -95,7 +96,7 @@ here.
   exit success with the declared baseline artifact present. Compilation
   success never substitutes for execution evidence; this check says nothing
   about EL2, QEMU, or hardware behavior.
-- **QG-DOCS:** inline workflow steps implementing the three semantics of the
+- **QG-DOCS:** workflow steps implementing the four semantics of the
   quality-gates §7: (1) every relative link in tracked documentation
   resolves from a fresh checkout — exempting exactly the recorded class of
   forward references inside a stage's implementation designs that point at
@@ -103,12 +104,14 @@ here.
   quality-gates contract records; any other broken link fails); (2) every
   normative development-governance document is reachable from the repository
   entry points within four link hops; (3) normative documents carry the
-  status header required by the documentation baseline (presence only).
+  status header required by the documentation baseline (presence only);
+  (4) each existing translation has a valid source link, source blob,
+  authority and current/outdated status, with critical editions current.
   Mechanisms are restricted to shell, Git, and text tools already available
   in the baseline environment — no new tooling dependency (dependency
-  governance would apply first). If the logic outgrows inline realizability,
-  extraction into a committed gate-runner script is a Reserved change
-  requiring a reviewed design.
+  governance would apply first). The translation-consistency portion uses
+  the committed `scripts/check-doc-translations.py` runner; the
+  existing three checks stay inline.
 
 ## 5. Future-class classification (no row is configured at P0)
 
