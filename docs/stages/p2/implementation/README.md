@@ -21,5 +21,9 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 | P2-W09 | [QEMU platform integration regression detailed implementation design](p2-w09-qemu-integration-regression/README.md) | Proposed design; implementation not claimed |
 | P2-W10 | [P3/P4 handoff contract detailed implementation design](p2-w10-p3-p4-handoff-contract/README.md) | Proposed design; implementation not claimed |
 
+The [P2-W01/W02 prerequisite conflict](p2-w01-w02-prerequisite-conflict.md)
+records the current DTB-length and Stage-1-access mismatch with the completed
+P1 handoff. Boot integration is blocked pending an authorized design decision.
+
 Actual command logs and pass/fail evidence belong in `../verification/`, not in
 this index or a detailed design.
