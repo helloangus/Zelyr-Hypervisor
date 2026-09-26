@@ -1,6 +1,6 @@
 # P1-W12 contract and P2 handoff implementation record
 
-**Status:** Draft source inventory and assembly record; merged W10/W11 included, W12 final review pending.\
+**Status:** W12 contract set authored and locally reviewed on rebased branch; PR integration pending, P1 completion not claimed.\
 **Scope:** Sources and editorial decisions for the eight P1 contract documents; no runtime evidence or P1 completion claim.\
 **Version:** v0.1.\
 **Owner/change context:** P1-W12, 2026-09-26.\
@@ -8,10 +8,11 @@
 
 ## Source inventory at the W10/W11-integrated baseline
 
-This inventory was checked on the W12 branch based on `main` at `249e1b3`,
-then refreshed against merged `main` at `2f821e0` for W10 and W11. The W12
-branch itself has not yet been rebased; final integration review must repeat
-path/status checks after rebase.
+This inventory was first assembled on the W12 branch based on `main` at
+`249e1b3`, then refreshed for W10/W11 and rebased without conflict onto
+`main` at `2f821e0`. The reviewed W12 commit is `e5d0e4f`; the final
+read-only documentation checks are recorded in [W12
+verification](../verification/p1-w12-p1-documentation-handoff-verification.md).
 An implementation record fixes its package's delivered boundary; a verification
 record fixes only the result it actually reports. Earlier records can retain
 historical “pending W09” wording even where the later [W09 integrated

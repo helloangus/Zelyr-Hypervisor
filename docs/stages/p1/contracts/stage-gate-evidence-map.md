@@ -48,7 +48,7 @@ proof or a substitute for NC6.
 | 4. Mapping classes and no permanent identity promise | V13, V14, V19 | **Locally supported with scope limit:** W08 classes, W11 S2 no-W+X review and paired NC5; no permanent identity ABI or real-hardware cache/TLB claim. |
 | 5. Automated verdict and 100 clean boots | V16, V17 | **Locally supported:** R1–R6 including NC4 R2 and the accepted one-image 100/100 reference run; raw evidence is local, not a durable CI artifact. |
 | 6. Unsupported entry, sync fault, panic, post-MMU fault, unexpected vector | V02, V09, V11, V12, V18 | **Blocked:** NC1–NC5 pairs are recorded, but NC6 genuine unexpected-vector evidence is absent. |
-| 7. Contracts, limitations, reporting and P2 handoff | V19–V21 | **Review pending:** W11 S1–S6 locally supports V19; W12's V20/V21 document review and final rebased-diff check remain. |
+| 7. Contracts, limitations, reporting and P2 handoff | V19–V21 | **Locally supported:** W11 S1–S6 and W12 contract/governance review recorded; online PR checks and stage-wide decision remain separate, with V18 blocked. |
 
 ## Completion review questions and decision rule
 
