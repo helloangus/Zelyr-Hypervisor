@@ -12,6 +12,8 @@ do not authorize implementation detail or assert that platform or memory
 functionality exists.
 
 Current implementation status is tracked in the [implementation index](implementation/README.md).
-W01/W02 have bounded reference evidence; W03–W10 remain unimplemented.
+W01/W02 have bounded reference evidence; W03 has pure-map host evidence
+([verification](verification/p2-w03-boot-memory-map-ownership-verification.md)).
+W03 target integration/storage fit and W04–W10 remain pending.
 The [contract reconciliation record](implementation/p2-contract-reconciliation-record.md)
 separates corrected documentation from remaining design and runtime foundations.

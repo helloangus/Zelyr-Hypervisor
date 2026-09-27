@@ -1,6 +1,7 @@
 # P2-W03 Implementation Workflow and Acceptance Design
 
-**Status:** Proposed detailed design; implementation not claimed.  
+**Status:** Detailed design selected for the user-requested W03 implementation;
+see the [implementation record](../p2-w03-boot-memory-map-ownership-record.md).
 **Parent:** [P2-W03 detailed design](README.md).
 
 ## 1. Preconditions and failure boundary
@@ -8,7 +9,8 @@
 Load the documents named in the [entry README](README.md); inspect the
 tracked tree. W01/W02 and the P1 linker range now exist. Use the real typed
 facts and the current input table; build host fixtures through W01/W02 or a
-bounded internal fixture adapter. W03 has no implementation yet.
+bounded internal fixture adapter. W03 implementation and evidence now live in
+the linked delivery records; the steps below define their required behavior.
 
 
 
@@ -38,7 +40,7 @@ primitives), `ram_to_frames`/`protect_to_frames`, spatial predicates; fixture se
 boundaries (unaligned base/len, overflow, adjacency).
 
 **Acceptance:** no raw integer can become a frame span outside the
-constructors (review check); all boundary fixtures pass; zero heap.  
+constructors (review check); all boundary fixtures pass; zero heap.
 **Failure/blocker:** if P0 already ships conflicting address types, adopt
 them and record the deviation — do not maintain parallel type systems.
 
@@ -52,7 +54,7 @@ capacity bound.
 **Acceptance:** conflict, duplicate, zero-size, and out-of-RAM fixtures
 produce the exact outcomes of the
 [02 §4](02-architecture-and-state.md) table; identities preserved for P4
-extension.  
+extension.
 **Failure/blocker:** any silent precedence between protection sources —
 stop; that is Decision-3 territory requiring a design change.
 
@@ -65,7 +67,7 @@ entry assembly, invariants.
 
 **Acceptance:** multi-bank, adjacent, overlapping, unaligned, zero-size,
 and protected-interleaved fixtures all classify exactly per the policy
-table; clip log records every shrink; no board/QEMU constants.  
+table; clip log records every shrink; no board/QEMU constants.
 **Failure/blocker:** an invariant that cannot hold without dropping
 protection fidelity is a design breach — stop and fix the policy, not the
 test.
@@ -92,7 +94,7 @@ accounting equation.
 **Acceptance:** valid seals produce sealed maps whose protected superset
 equals union(rounded protected + plan) intersect RAM (independently audited); each
 R11 violation class rejected; summary equation exact; sealed type offers
-`&self` methods only.  
+`&self` methods only.
 **Failure/blocker:** an audit that cannot be expressed without trusting
 the builder's own bookkeeping — restructure so the audit re-derives from
 entries, as the contract requires.
@@ -106,7 +108,7 @@ DTB release, no mutation APIs, no board names, no heap; confirm P2-ACR-01
 restated in the implementation record.
 
 **Acceptance:** review note in the implementation record with zero
-violations.  
+violations.
 **Failure/blocker:** a hit is removed or escalated per §1.
 
 ### Step 7 — host validation pass and evidence
@@ -121,7 +123,7 @@ Work: run the matrix of [05 §3](05-validation-and-handoff.md)
 metadata-planning interplay is validated with W04).
 
 **Acceptance:** every row statused with evidence; no completion claim
-beyond what ran.  
+beyond what ran.
 **Failure/blocker:** failures recorded as failures with diagnosis.
 
 ### Step 8 — closure review

@@ -1,6 +1,7 @@
 # P2-W03 Validation, Error Model, and Handoff Design
 
-**Status:** Proposed detailed design; implementation not claimed.  
+**Status:** Detailed design selected for the user-requested W03 implementation;
+see the [implementation record](../p2-w03-boot-memory-map-ownership-record.md).
 **Parent:** [P2-W03 detailed design](README.md).
 
 ## 1. Scope of validation for this package
