@@ -11,14 +11,9 @@ fn span(base: u64, len: u64) -> Span {
     }
 }
 fn empty() -> MapData {
-    MapData {
-        banks: Buffer::new(),
-        sources: Buffer::new(),
-        entries: Buffer::new(),
-        clips: Buffer::new(),
-        anomalies: MapAnomaly::default(),
-    }
+    MapStorage::new()
 }
+
 #[test]
 fn every_nonusable_fact_state_fails_closed_in_every_list() {
     for fact in [

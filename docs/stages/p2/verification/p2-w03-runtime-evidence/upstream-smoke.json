@@ -1,0 +1,177 @@
+[
+  {
+    "command": [
+      "qemu-system-aarch64",
+      "-machine",
+      "virt,virtualization=on",
+      "-cpu",
+      "cortex-a57",
+      "-smp",
+      "1",
+      "-m",
+      "128M",
+      "-display",
+      "none",
+      "-monitor",
+      "none",
+      "-serial",
+      "stdio",
+      "-kernel",
+      "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img"
+    ],
+    "elapsed_seconds": 0.31629155200062087,
+    "image": {
+      "path": "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img",
+      "sha256": "a28f4856e2406dfb00d0d4b33cc76d5f7f0c72ffce3dcaece5b541a3e80da77e",
+      "size": 299328
+    },
+    "name": "canonical",
+    "observation_seconds": 0.2,
+    "predicates": {
+      "ZELYR P1 BOOT REJECT": false,
+      "ZELYR P1 FATAL": false,
+      "ZELYR P1 PANIC": false,
+      "ZELYR P1 STABLE": true,
+      "ZELYR P2 DISCOVERY complete cpus=1 banks=1 boot=0": true,
+      "ZELYR P2 FACTS gic=unsupported timer=usable psci=usable": true,
+      "ZELYR P2 INTAKE complete": true,
+      "ZELYR P2 REJECT": false
+    },
+    "raw_exit": 0,
+    "reason": "observed",
+    "serial_bytes": 1589,
+    "status": 0,
+    "timestamp": "2026-09-27T11:25:22.082036+00:00"
+  },
+  {
+    "command": [
+      "qemu-system-aarch64",
+      "-machine",
+      "virt,virtualization=on,gic-version=3",
+      "-cpu",
+      "cortex-a57",
+      "-smp",
+      "1",
+      "-m",
+      "128M",
+      "-display",
+      "none",
+      "-monitor",
+      "none",
+      "-serial",
+      "stdio",
+      "-kernel",
+      "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img"
+    ],
+    "elapsed_seconds": 0.3124447230002261,
+    "image": {
+      "path": "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img",
+      "sha256": "a28f4856e2406dfb00d0d4b33cc76d5f7f0c72ffce3dcaece5b541a3e80da77e",
+      "size": 299328
+    },
+    "name": "gic3",
+    "observation_seconds": 0.2,
+    "predicates": {
+      "ZELYR P1 BOOT REJECT": false,
+      "ZELYR P1 FATAL": false,
+      "ZELYR P1 PANIC": false,
+      "ZELYR P1 STABLE": true,
+      "ZELYR P2 DISCOVERY complete cpus=1 banks=1 boot=0": true,
+      "ZELYR P2 FACTS gic=usable timer=usable psci=usable": true,
+      "ZELYR P2 INTAKE complete": true,
+      "ZELYR P2 REJECT": false
+    },
+    "raw_exit": 0,
+    "reason": "observed",
+    "serial_bytes": 1579,
+    "status": 0,
+    "timestamp": "2026-09-27T11:25:22.395416+00:00"
+  },
+  {
+    "command": [
+      "qemu-system-aarch64",
+      "-machine",
+      "virt,virtualization=on,gic-version=3",
+      "-cpu",
+      "cortex-a57",
+      "-smp",
+      "4",
+      "-m",
+      "128M",
+      "-display",
+      "none",
+      "-monitor",
+      "none",
+      "-serial",
+      "stdio",
+      "-kernel",
+      "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img"
+    ],
+    "elapsed_seconds": 0.34375826199902804,
+    "image": {
+      "path": "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img",
+      "sha256": "a28f4856e2406dfb00d0d4b33cc76d5f7f0c72ffce3dcaece5b541a3e80da77e",
+      "size": 299328
+    },
+    "name": "gic3-four-cpus",
+    "observation_seconds": 0.2,
+    "predicates": {
+      "ZELYR P1 BOOT REJECT": false,
+      "ZELYR P1 FATAL": false,
+      "ZELYR P1 PANIC": false,
+      "ZELYR P1 STABLE": true,
+      "ZELYR P2 DISCOVERY complete cpus=4 banks=1 boot=0": true,
+      "ZELYR P2 FACTS gic=usable timer=usable psci=usable": true,
+      "ZELYR P2 INTAKE complete": true,
+      "ZELYR P2 REJECT": false
+    },
+    "raw_exit": 0,
+    "reason": "observed",
+    "serial_bytes": 1579,
+    "status": 0,
+    "timestamp": "2026-09-27T11:25:22.740115+00:00"
+  },
+  {
+    "command": [
+      "qemu-system-aarch64",
+      "-machine",
+      "virt,virtualization=on,gic-version=3",
+      "-cpu",
+      "cortex-a57",
+      "-smp",
+      "1",
+      "-m",
+      "256M",
+      "-display",
+      "none",
+      "-monitor",
+      "none",
+      "-serial",
+      "stdio",
+      "-kernel",
+      "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img"
+    ],
+    "elapsed_seconds": 0.2511915830000362,
+    "image": {
+      "path": "/home/angus/dev/Zelyr-Hypervisor/target/p2-w03-runtime/debug2.img",
+      "sha256": "a28f4856e2406dfb00d0d4b33cc76d5f7f0c72ffce3dcaece5b541a3e80da77e",
+      "size": 299328
+    },
+    "name": "outside-bootstrap-envelope",
+    "observation_seconds": 0.2,
+    "predicates": {
+      "ZELYR P1 BOOT REJECT": false,
+      "ZELYR P1 FATAL": false,
+      "ZELYR P1 PANIC": false,
+      "ZELYR P1 STABLE": true,
+      "ZELYR P2 DISCOVERY complete": false,
+      "ZELYR P2 INTAKE complete": false,
+      "ZELYR P2 REJECT reason=DtbUnreachable": true
+    },
+    "raw_exit": 0,
+    "reason": "observed",
+    "serial_bytes": 1183,
+    "status": 0,
+    "timestamp": "2026-09-27T11:25:22.992220+00:00"
+  }
+]

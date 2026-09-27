@@ -7,9 +7,12 @@ and its linked verification for actual delivery scope.
 every P2-protected range before any dynamic page allocation, required by
 [P2-W03](../../plans/p2-w03-boot-memory-map-ownership.md).
 **Owner/change context:** P2-W03 implementation handoff.
-**Version:** v0.3\
+**Version:** v0.4\
 **Supersedes:** Conflicting September 18 assumptions and contracts in this
 package; reconciled on 2026-09-27, with concrete Rust bindings added for W03 delivery.
+
+Read the [runtime storage correction](06-runtime-storage-and-handoff.md) before
+code changes; it supersedes the prior deferral of W03 runtime foundations.
 
 ## Purpose and use
 

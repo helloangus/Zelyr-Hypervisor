@@ -1,0 +1,2674 @@
+{
+  "root": 1074292540,
+  "parent_frames": 11632,
+  "reviewed_envelope_bytes": 45984,
+  "envelope_scope": "W03 normal/typed-error paths; max four non-pretty formatting callback levels (MapFatal -> SourceId/SealViolation -> scalar -> Line writer); excludes invariant panic recursion and interrupts",
+  "owning_map_entries": [],
+  "functions": {
+    "hypervisor::platform::discovery::normalize": {
+      "address": 1074285156,
+      "frame_bytes": 24640,
+      "indirect": []
+    },
+    "<hypervisor::boot::p2::BootReadEnvelope>::range": {
+      "address": 1074292512,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::memory_map": {
+      "address": 1074292540,
+      "frame_bytes": 16144,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::run": {
+      "address": 1074294300,
+      "frame_bytes": 11536,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::stop": {
+      "address": 1074296000,
+      "frame_bytes": 304,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::map_stop": {
+      "address": 1074296172,
+      "frame_bytes": 224,
+      "indirect": []
+    },
+    "<usize as core::iter::traits::accum::Sum>::sum::<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}": {
+      "address": 1074297292,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<usize as core::iter::traits::accum::Sum>::sum::<core::iter::adapters::map::Map<core::slice::iter::Iter<bool>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}>>::{closure#0}": {
+      "address": 1074297364,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<usize as core::iter::traits::accum::Sum>::sum::<core::iter::adapters::map::Map<hypervisor::platform::intake::Nodes, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}>>::{closure#0}": {
+      "address": 1074297436,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "core::ptr::drop_glue::<core::array::iter::IntoIter<hypervisor::platform::bootmap::ranges::PhysFrameNum, 2>>": {
+      "address": 1074297536,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "core::ptr::drop_glue::<core::array::iter::IntoIter<hypervisor::platform::bootmap::ranges::PageCount, 7>>": {
+      "address": 1074297564,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "core::ptr::drop_glue::<core::array::iter::IntoIter<(hypervisor::platform::intake::Span, hypervisor::platform::bootmap::SourceId, hypervisor::platform::bootmap::RegionClass), 2>>": {
+      "address": 1074297704,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::array::iter::IntoIter<hypervisor::platform::bootmap::ranges::PhysFrameNum, 2> as core::ops::drop::Drop>::drop": {
+      "address": 1074297880,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::array::iter::IntoIter<hypervisor::platform::bootmap::ranges::PageCount, 7> as core::ops::drop::Drop>::drop": {
+      "address": 1074297900,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::array::iter::IntoIter<(hypervisor::platform::intake::Span, hypervisor::platform::bootmap::SourceId, hypervisor::platform::bootmap::RegionClass), 2> as core::ops::drop::Drop>::drop": {
+      "address": 1074298000,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>> as core::ops::function::FnMut<(&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>,)>>::call_mut": {
+      "address": 1074298040,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::MapEntry>> as core::ops::function::FnMut<(&core::option::Option<hypervisor::platform::bootmap::MapEntry>,)>>::call_mut": {
+      "address": 1074298076,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<<core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>> as core::ops::function::FnMut<(usize, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>)>>::call_mut": {
+      "address": 1074298112,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::seal::audit::{closure#0} as core::ops::function::FnOnce<()>>::call_once": {
+      "address": 1074298224,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PageCount as core::ops::function::FnOnce<(u64,)>>::call_once": {
+      "address": 1074298348,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::collect_ram::<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>": {
+      "address": 1074298616,
+      "frame_bytes": 2848,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::collect_ram::<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}": {
+      "address": 1074300968,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::collect_ram::<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#2}": {
+      "address": 1074301012,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::collect_ram::<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#1}": {
+      "address": 1074301048,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::classify::add": {
+      "address": 1074312304,
+      "frame_bytes": 1088,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::classify::assemble": {
+      "address": 1074313408,
+      "frame_bytes": 2256,
+      "indirect": []
+    },
+    "core::hint::black_box::<(&hypervisor::arch::aarch64::stage1::dtb::DtbWindow, &hypervisor::platform::intake::ValidatedBootDtb, &hypervisor::platform::discovery::PlatformInfo, &hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>)>": {
+      "address": 1074315000,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::filter_map::filter_map_fold<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>": {
+      "address": 1074315352,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>> as core::iter::traits::iterator::Iterator>::filter_map::<hypervisor::platform::bootmap::ClipRecord, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>": {
+      "address": 1074315448,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<_> as core::iter::traits::iterator::Iterator>::fold::enumerate::<&hypervisor::platform::bootmap::Bank, usize, core::iter::adapters::filter_map::filter_map_fold<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074315516,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074315724,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<core::slice::iter::Iter<hypervisor::platform::bootmap::ranges::PhysFrameRange>> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074315756,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074316228,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::enumerate::Enumerate<core::slice::iter::Iter<hypervisor::platform::bootmap::ranges::PhysFrameRange>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074316416,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize::<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}": {
+      "address": 1074316980,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize::<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}": {
+      "address": 1074317016,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize::<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}": {
+      "address": 1074317060,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<hypervisor::platform::intake::Nodes, hypervisor::platform::discovery::normalize::{closure#3}> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074317200,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, hypervisor::platform::discovery::normalize::{closure#1}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074317232,
+      "frame_bytes": 304,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<core::slice::iter::Iter<bool>, hypervisor::platform::bootmap::seal::audit::{closure#1}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074317464,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<hypervisor::platform::intake::Nodes, hypervisor::platform::discovery::normalize::{closure#3}> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074317720,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<hypervisor::platform::intake::Nodes, hypervisor::platform::discovery::normalize::{closure#9}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074317752,
+      "frame_bytes": 1104,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::audit::{closure#0}": {
+      "address": 1074321264,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::audit::{closure#1}": {
+      "address": 1074321304,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::seal_data::{closure#0}": {
+      "address": 1074321332,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, (), core::ops::control_flow::ControlFlow<usize>, core::iter::traits::iterator::Iterator::position::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, hypervisor::platform::discovery::normalize::{closure#2}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<usize>>": {
+      "address": 1074326716,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, (), core::ops::control_flow::ControlFlow<()>, core::iter::adapters::filter_map::filter_map_try_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, (), core::ops::control_flow::ControlFlow<()>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074326880,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::all::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>, hypervisor::platform::discovery::normalize::{closure#4}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074327016,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::bootmap::Bank>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074327128,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>>>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::bootmap::MapEntry>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::seal::seal_data::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074327252,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>>::next": {
+      "address": 1074327584,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>::next": {
+      "address": 1074327688,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::adapters::fuse::FuseImpl<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>>>::next": {
+      "address": 1074327792,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::boot::address::PhysAddr>>::ok_or::<hypervisor::platform::bootmap::MapFatal>": {
+      "address": 1074328508,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::intake::Node>>::is_some_and::<hypervisor::platform::discovery::normalize::{closure#3}::{closure#0}>": {
+      "address": 1074328984,
+      "frame_bytes": 160,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::Bank>>::map::<hypervisor::platform::bootmap::ranges::PhysFrameNum, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#2}>": {
+      "address": 1074329944,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::Bank>>::map::<hypervisor::platform::bootmap::ranges::PhysFrameNum, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#1}>": {
+      "address": 1074330096,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PhysFrameRange>>::map::<hypervisor::platform::bootmap::ClipRecord, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}::{closure#0}>": {
+      "address": 1074330248,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PhysFrameRange>>::ok_or::<hypervisor::platform::bootmap::MapFatal>": {
+      "address": 1074330388,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PageCount>>::ok_or_else::<hypervisor::platform::bootmap::MapFatal, hypervisor::platform::bootmap::seal::audit::{closure#0}>": {
+      "address": 1074330528,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PageCount>>::ok_or::<hypervisor::platform::bootmap::MapFatal>": {
+      "address": 1074330640,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::option::Option<&hypervisor::platform::bootmap::MapEntry>>::ok_or_else::<hypervisor::platform::bootmap::MapFatal, hypervisor::platform::bootmap::seal::audit::{closure#0}>": {
+      "address": 1074331200,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::option::Option<&hypervisor::platform::discovery::Cpu>>::is_some_and::<hypervisor::platform::discovery::normalize::{closure#2}::{closure#0}>": {
+      "address": 1074331304,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::option::Option<&hypervisor::platform::discovery::Text>>::and_then::<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#8}>": {
+      "address": 1074331388,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::option::Option<&hypervisor::platform::discovery::Console>>::and_then::<&hypervisor::platform::discovery::Text, hypervisor::platform::discovery::normalize::{closure#7}>": {
+      "address": 1074331476,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::option::Option<u64>>::map::<hypervisor::platform::bootmap::ranges::PageCount, hypervisor::platform::bootmap::ranges::PageCount>": {
+      "address": 1074334024,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::option::Option<u64>>::ok_or::<hypervisor::platform::bootmap::MapFatal>": {
+      "address": 1074334248,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::ProtectionSource>]>::iter": {
+      "address": 1074334696,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::Bank>]>::iter": {
+      "address": 1074334728,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::Bank>]>::swap": {
+      "address": 1074334760,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::Bank>]>::last_mut": {
+      "address": 1074334928,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::MapEntry>]>::iter": {
+      "address": 1074335008,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::option::Option<&hypervisor::platform::bootmap::MapEntry>>::is_some": {
+      "address": 1074335252,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074335652,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<&core::option::Option<hypervisor::platform::bootmap::Bank> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074335720,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<&core::option::Option<hypervisor::platform::bootmap::MapEntry> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074335788,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PhysFrameRange> as core::ops::try_trait::FromResidual<core::option::Option<core::convert::Infallible>>>::from_residual": {
+      "address": 1074336924,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::ProtectionSource>; 84] as core::ops::index::Index<core::ops::range::RangeTo<usize>>>::index": {
+      "address": 1074337684,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::Bank>; 8] as core::ops::index::Index<core::ops::range::RangeTo<usize>>>::index": {
+      "address": 1074337856,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::MapEntry>; 184] as core::ops::index::Index<core::ops::range::RangeTo<usize>>>::index": {
+      "address": 1074338028,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<[core::option::Option<hypervisor::platform::bootmap::Bank>; 8] as core::ops::index::IndexMut<core::ops::range::RangeTo<usize>>>::index_mut": {
+      "address": 1074338200,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PhysFrameNum> as core::cmp::PartialOrd>::partial_cmp": {
+      "address": 1074339104,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::option::Iter<hypervisor::platform::bootmap::ProtectionSource> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074339364,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::option::Iter<hypervisor::platform::bootmap::Bank> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074339396,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::option::Iter<hypervisor::platform::bootmap::MapEntry> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074339428,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::option::Option<hypervisor::platform::bootmap::ranges::PhysFrameNum> as core::cmp::PartialOrd>::lt": {
+      "address": 1074339480,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::RegionClass>::is_protected": {
+      "address": 1074339676,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::RegionClass>::index": {
+      "address": 1074339716,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapStorage>::clips": {
+      "address": 1074339740,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMapBuilder>::draft_in": {
+      "address": 1074339808,
+      "frame_bytes": 288,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SourceSet>::insert": {
+      "address": 1074339996,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SourceSet as core::cmp::PartialEq>::eq": {
+      "address": 1074340116,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapSummary as core::default::Default>::default": {
+      "address": 1074340164,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::StorageState as core::cmp::PartialEq>::eq": {
+      "address": 1074340280,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapFatal as core::fmt::Debug>::fmt": {
+      "address": 1074340324,
+      "frame_bytes": 192,
+      "indirect": [
+        {
+          "pc": 1074340380,
+          "instruction": "br\tx8"
+        }
+      ]
+    },
+    "<hypervisor::platform::bootmap::ProtectionFlags as core::default::Default>::default": {
+      "address": 1074341208,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ProtectionFlags as core::cmp::PartialEq>::eq": {
+      "address": 1074341220,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SourceSet as core::default::Default>::default": {
+      "address": 1074341328,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::RegionClass as core::cmp::PartialEq>::eq": {
+      "address": 1074341340,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SourceId as core::fmt::Debug>::fmt": {
+      "address": 1074341384,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SourceId as core::cmp::PartialEq>::eq": {
+      "address": 1074341876,
+      "frame_bytes": 160,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::FactList as core::fmt::Debug>::fmt": {
+      "address": 1074342372,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SealViolation as core::fmt::Debug>::fmt": {
+      "address": 1074342532,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>": {
+      "address": 1074342908,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074342976,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::fold::<usize, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>": {
+      "address": 1074343020,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable> as core::iter::traits::iterator::Iterator>::any::<hypervisor::platform::discovery::normalize::{closure#0}>": {
+      "address": 1074343156,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable> as core::iter::traits::iterator::Iterator>::map::<usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>": {
+      "address": 1074343208,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable> as core::iter::traits::iterator::Iterator>::filter::<hypervisor::platform::discovery::normalize::{closure#1}>": {
+      "address": 1074343248,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "core::iter::adapters::filter_map::filter_map_fold::<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>, &hypervisor::platform::bootmap::ProtectionSource, usize, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}": {
+      "address": 1074343288,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::filter_map::filter_map_fold::<&core::option::Option<hypervisor::platform::bootmap::MapEntry>, &hypervisor::platform::bootmap::MapEntry, usize, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::MapEntry>>, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>>, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}": {
+      "address": 1074343404,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::filter_map::filter_map_fold::<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, usize, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::adapters::map::map_fold<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074343520,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::filter_map::filter_map_fold::<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}": {
+      "address": 1074343636,
+      "frame_bytes": 256,
+      "indirect": []
+    },
+    "core::iter::adapters::filter_map::filter_map_try_fold::<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, (), core::ops::control_flow::ControlFlow<()>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074343996,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074344096,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074344320,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::audit": {
+      "address": 1074344360,
+      "frame_bytes": 2848,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::rejected": {
+      "address": 1074347224,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::seal_data": {
+      "address": 1074347264,
+      "frame_bytes": 1264,
+      "indirect": []
+    },
+    "core::ptr::swap::<core::option::Option<hypervisor::platform::bootmap::Bank>>": {
+      "address": 1074348712,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::classify::usable::<hypervisor::platform::intake::Span>": {
+      "address": 1074359044,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::classify::usable::<hypervisor::platform::discovery::Reservation>": {
+      "address": 1074359192,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::ops::range::Range<usize> as core::slice::index::SliceIndex<[core::option::Option<hypervisor::platform::bootmap::Bank>]>>::index_mut": {
+      "address": 1074361664,
+      "frame_bytes": 160,
+      "indirect": []
+    },
+    "<core::ops::range::RangeTo<usize> as core::slice::index::SliceIndex<[core::option::Option<hypervisor::platform::bootmap::Bank>]>>::index_mut": {
+      "address": 1074362400,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<[hypervisor::platform::bootmap::ranges::PhysFrameRange]>::iter": {
+      "address": 1074382204,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<[hypervisor::platform::bootmap::ranges::PageCount; 7] as core::default::Default>::default": {
+      "address": 1074382236,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<[hypervisor::platform::bootmap::ranges::PhysFrameNum; 2] as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074382368,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<[hypervisor::platform::bootmap::ranges::PageCount; 7] as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074382528,
+      "frame_bytes": 352,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::PartialOrd>::gt": {
+      "address": 1074382684,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::PartialOrd>::le": {
+      "address": 1074382776,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::PartialOrd>::lt": {
+      "address": 1074382868,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::Ord>::max": {
+      "address": 1074382956,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::Ord>::min": {
+      "address": 1074383032,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::PartialEq>::ne": {
+      "address": 1074383108,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PageCount as core::cmp::PartialEq>::ne": {
+      "address": 1074383144,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "el2_rust_entry": {
+      "address": 1074388100,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::intake::Span, hypervisor::platform::discovery::Problem>>::map::<hypervisor::platform::discovery::Reservation, hypervisor::platform::discovery::normalize::{closure#5}>": {
+      "address": 1074388884,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::result::Result<(), hypervisor::platform::bootmap::MapFatal>>::is_ok": {
+      "address": 1074390104,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::boot::address::PhysAddr, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074390944,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::bootmap::MapSummary, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074391808,
+      "frame_bytes": 240,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::bootmap::ranges::PhysFrameRange, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074392256,
+      "frame_bytes": 160,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::bootmap::ranges::PageCount, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074392412,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<&hypervisor::platform::intake::Span, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074393068,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074393212,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<&hypervisor::platform::discovery::Reservation, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074393356,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<(), hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074395060,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<u64, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::Try>::branch": {
+      "address": 1074395604,
+      "frame_bytes": 144,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::bootmap::UnsealedMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::FromResidual<core::result::Result<core::convert::Infallible, hypervisor::platform::bootmap::MapFatal>>>::from_residual": {
+      "address": 1074395996,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::bootmap::MapSummary, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::FromResidual<core::result::Result<core::convert::Infallible, hypervisor::platform::bootmap::MapFatal>>>::from_residual": {
+      "address": 1074396260,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::result::Result<hypervisor::platform::bootmap::ranges::PhysFrameRange, hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::FromResidual<core::result::Result<core::convert::Infallible, hypervisor::platform::bootmap::MapFatal>>>::from_residual": {
+      "address": 1074396620,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::result::Result<(), hypervisor::platform::bootmap::MapFatal> as core::ops::try_trait::FromResidual<core::result::Result<core::convert::Infallible, hypervisor::platform::bootmap::MapFatal>>>::from_residual": {
+      "address": 1074397496,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::array::iter::iter_inner::PolymorphicIter<[core::mem::maybe_uninit::MaybeUninit<hypervisor::platform::bootmap::ranges::PhysFrameNum>]>>::next": {
+      "address": 1074398568,
+      "frame_bytes": 208,
+      "indirect": []
+    },
+    "<core::array::iter::iter_inner::PolymorphicIter<[core::mem::maybe_uninit::MaybeUninit<hypervisor::platform::bootmap::ranges::PageCount>]>>::next": {
+      "address": 1074398936,
+      "frame_bytes": 208,
+      "indirect": []
+    },
+    "<core::array::iter::iter_inner::PolymorphicIter<[core::mem::maybe_uninit::MaybeUninit<(hypervisor::platform::intake::Span, hypervisor::platform::bootmap::SourceId, hypervisor::platform::bootmap::RegionClass)>]>>::next": {
+      "address": 1074401204,
+      "frame_bytes": 256,
+      "indirect": []
+    },
+    "<hypervisor::platform::intake::Nodes as core::iter::traits::iterator::Iterator>::map::<usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}>": {
+      "address": 1074402436,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::intake::Nodes as core::iter::traits::iterator::Iterator>::find::<&mut hypervisor::platform::discovery::normalize::{closure#3}>": {
+      "address": 1074403080,
+      "frame_bytes": 160,
+      "indirect": []
+    },
+    "<hypervisor::platform::intake::Nodes as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<hypervisor::platform::intake::Node, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<hypervisor::platform::intake::Nodes, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}>>::{closure#0}>::{closure#0}>": {
+      "address": 1074403220,
+      "frame_bytes": 224,
+      "indirect": []
+    },
+    "<hypervisor::platform::intake::Nodes as core::iter::traits::iterator::Iterator>::filter::<hypervisor::platform::discovery::normalize::{closure#3}>": {
+      "address": 1074403508,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::intake::Nodes as core::iter::traits::iterator::Iterator>::filter::<hypervisor::platform::discovery::normalize::{closure#9}>": {
+      "address": 1074403548,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::intake::Nodes as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::find::check<hypervisor::platform::intake::Node, &mut hypervisor::platform::discovery::normalize::{closure#3}>::{closure#0}, core::ops::control_flow::ControlFlow<hypervisor::platform::intake::Node>>": {
+      "address": 1074404512,
+      "frame_bytes": 384,
+      "indirect": []
+    },
+    "<[(hypervisor::platform::intake::Span, hypervisor::platform::bootmap::SourceId, hypervisor::platform::bootmap::RegionClass); 2] as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074406132,
+      "frame_bytes": 448,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::flatten::flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, usize, core::iter::adapters::filter_map::filter_map_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, usize, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::adapters::map::map_fold<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074406340,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::filter_map::filter_map_fold<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>, &hypervisor::platform::bootmap::ProtectionSource, usize, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>": {
+      "address": 1074406676,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::flatten::flatten_one<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>, usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::ProtectionSource, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}, <core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074407040,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::flatten::flatten_one<&core::option::Option<hypervisor::platform::bootmap::Bank>, usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::ranges::PhysFrameRange, usize, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}, <core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074407412,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::flatten::flatten_one<&core::option::Option<hypervisor::platform::bootmap::Bank>, usize, <core::iter::adapters::enumerate::Enumerate<_> as core::iter::traits::iterator::Iterator>::fold::enumerate<&hypervisor::platform::bootmap::Bank, usize, core::iter::adapters::filter_map::filter_map_fold<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074407748,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::filter_map::filter_map_fold<&core::option::Option<hypervisor::platform::bootmap::MapEntry>, &hypervisor::platform::bootmap::MapEntry, usize, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::MapEntry>>, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>>, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>": {
+      "address": 1074408092,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<&[u8]> as core::iter::traits::iterator::Iterator>::any::<hypervisor::platform::discovery::normalize::{closure#9}::{closure#0}>": {
+      "address": 1074409240,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<&[u8]> as core::iter::traits::iterator::Iterator>::any::<hypervisor::platform::discovery::normalize::{closure#6}>": {
+      "address": 1074409436,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<bool> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<&bool, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::slice::iter::Iter<bool>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>": {
+      "address": 1074409828,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, (), core::ops::control_flow::ControlFlow<usize>, core::iter::traits::iterator::Iterator::position::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, hypervisor::platform::discovery::normalize::{closure#2}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<usize>>": {
+      "address": 1074411860,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, (), core::ops::control_flow::ControlFlow<()>, core::iter::adapters::filter_map::filter_map_try_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, (), core::ops::control_flow::ControlFlow<()>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074412016,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::all::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>, hypervisor::platform::discovery::normalize::{closure#4}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074412148,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::bootmap::Bank>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074412272,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::flatten::try_flatten_one<&core::option::Option<hypervisor::platform::bootmap::MapEntry>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::seal::seal_data::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074412400,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<bool> as core::iter::traits::iterator::Iterator>::map::<usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}>": {
+      "address": 1074412564,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<bool> as core::iter::traits::iterator::Iterator>::filter::<hypervisor::platform::bootmap::seal::audit::{closure#1}>": {
+      "address": 1074412584,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>::new": {
+      "address": 1074413656,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>::new": {
+      "address": 1074413744,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>>::new": {
+      "address": 1074413824,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<hypervisor::platform::bootmap::ranges::PhysFrameRange>>::new": {
+      "address": 1074413912,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074415372,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074415512,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074415652,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<hypervisor::platform::bootmap::ranges::PhysFrameRange> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074415792,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::fuse": {
+      "address": 1074418660,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::flatten": {
+      "address": 1074418680,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::fuse": {
+      "address": 1074418760,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::flatten": {
+      "address": 1074418780,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::fuse": {
+      "address": 1074418860,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::flatten": {
+      "address": 1074418880,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::slice::iter::Iter<hypervisor::platform::bootmap::ranges::PhysFrameRange> as core::iter::traits::iterator::Iterator>::enumerate": {
+      "address": 1074418960,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::populate_fresh": {
+      "address": 1074419760,
+      "frame_bytes": 1120,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::populate": {
+      "address": 1074420348,
+      "frame_bytes": 224,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::partition": {
+      "address": 1074420612,
+      "frame_bytes": 1904,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#2}::{closure#0}": {
+      "address": 1074451792,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#3}::{closure#0}": {
+      "address": 1074451896,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#9}::{closure#0}": {
+      "address": 1074451948,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#0}": {
+      "address": 1074454612,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#2}": {
+      "address": 1074454652,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#3}": {
+      "address": 1074454712,
+      "frame_bytes": 160,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#4}": {
+      "address": 1074454852,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#5}": {
+      "address": 1074454908,
+      "frame_bytes": 240,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#6}": {
+      "address": 1074455136,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#7}": {
+      "address": 1074455212,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#8}": {
+      "address": 1074455240,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#9}": {
+      "address": 1074455328,
+      "frame_bytes": 720,
+      "indirect": []
+    },
+    "hypervisor::platform::discovery::normalize::{closure#1}": {
+      "address": 1074456336,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<&mut hypervisor::platform::discovery::normalize::{closure#3} as core::ops::function::FnMut<(&hypervisor::platform::intake::Node,)>>::call_mut": {
+      "address": 1074460572,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "core::iter::traits::iterator::Iterator::all::check::<&hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>, hypervisor::platform::discovery::normalize::{closure#4}>::{closure#0}": {
+      "address": 1074460612,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "core::iter::traits::iterator::Iterator::any::check::<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>::{closure#0}": {
+      "address": 1074460680,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "core::iter::traits::iterator::Iterator::any::check::<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::seal::seal_data::{closure#0}>::{closure#0}": {
+      "address": 1074460748,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "core::iter::traits::iterator::Iterator::any::check::<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}": {
+      "address": 1074460816,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "core::iter::traits::iterator::Iterator::find::check::<hypervisor::platform::intake::Node, &mut hypervisor::platform::discovery::normalize::{closure#3}>::{closure#0}": {
+      "address": 1074461388,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "core::iter::traits::iterator::Iterator::position::check::<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, hypervisor::platform::discovery::normalize::{closure#2}>::{closure#0}": {
+      "address": 1074461832,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::count::{closure#0}": {
+      "address": 1074462180,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::fuse::Fuse<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>>, core::iter::adapters::flatten::into_item<&core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::count::{closure#0}": {
+      "address": 1074462252,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}": {
+      "address": 1074462324,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}": {
+      "address": 1074462468,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::fmt::rt::Argument>::new_debug::<hypervisor::platform::bootmap::MapFatal>": {
+      "address": 1074463064,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}>, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::iter_fold::<usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>": {
+      "address": 1074463716,
+      "frame_bytes": 496,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::into_item::<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>": {
+      "address": 1074464060,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::into_item::<&core::option::Option<hypervisor::platform::bootmap::MapEntry>>": {
+      "address": 1074464100,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count::<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>": {
+      "address": 1074464140,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::filter_map::filter_map_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, usize, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::adapters::map::map_fold<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074464232,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::filter_map::filter_map_try_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, (), core::ops::control_flow::ControlFlow<()>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074464300,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::position::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, hypervisor::platform::discovery::normalize::{closure#2}>::{closure#0}, core::ops::control_flow::ControlFlow<usize>>": {
+      "address": 1074464336,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::all::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>, hypervisor::platform::discovery::normalize::{closure#4}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074464372,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::ProtectionSource, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}, <core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}>::{closure#0}>": {
+      "address": 1074464400,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::ranges::PhysFrameRange, usize, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}, <core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>": {
+      "address": 1074464492,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::fold::<usize, <core::iter::adapters::enumerate::Enumerate<_> as core::iter::traits::iterator::Iterator>::fold::enumerate<&hypervisor::platform::bootmap::Bank, usize, core::iter::adapters::filter_map::filter_map_fold<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074464560,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074464652,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::seal::seal_data::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074464684,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>, core::option::Iter<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::filter_map::filter_map_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, usize, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::adapters::map::map_fold<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074464716,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>, core::option::Iter<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::adapters::filter_map::filter_map_try_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, (), core::ops::control_flow::ControlFlow<()>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074464824,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>, core::option::Iter<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::position::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, hypervisor::platform::discovery::normalize::{closure#2}>::{closure#0}, core::ops::control_flow::ControlFlow<usize>>": {
+      "address": 1074464876,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>, core::option::Iter<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::all::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>, hypervisor::platform::discovery::normalize::{closure#4}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074464928,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>, core::option::Iter<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::ProtectionSource, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}, <core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}>::{closure#0}>": {
+      "address": 1074464964,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>, core::option::Iter<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::fold::<usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::ranges::PhysFrameRange, usize, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}, <core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>": {
+      "address": 1074465104,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>, core::option::Iter<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::fold::<usize, <core::iter::adapters::enumerate::Enumerate<_> as core::iter::traits::iterator::Iterator>::fold::enumerate<&hypervisor::platform::bootmap::Bank, usize, core::iter::adapters::filter_map::filter_map_fold<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}>": {
+      "address": 1074465212,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>, core::option::Iter<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074465352,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>, core::option::Iter<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::try_fold::<(), core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::seal::seal_data::{closure#0}>::{closure#0}, core::ops::control_flow::ControlFlow<()>>": {
+      "address": 1074465396,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>> as core::iter::traits::iterator::Iterator>::position::<hypervisor::platform::discovery::normalize::{closure#2}>": {
+      "address": 1074465480,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>> as core::iter::traits::iterator::Iterator>::all::<hypervisor::platform::discovery::normalize::{closure#4}>": {
+      "address": 1074465612,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::map::<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}>": {
+      "address": 1074465660,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::flat_map::<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}>": {
+      "address": 1074465728,
+      "frame_bytes": 512,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::any::<hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>": {
+      "address": 1074465916,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::map::<hypervisor::platform::bootmap::ranges::PhysFrameRange, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}>": {
+      "address": 1074465968,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::any::<hypervisor::platform::bootmap::seal::seal_data::{closure#0}>": {
+      "address": 1074466008,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::flatten_one::<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, usize, core::iter::adapters::filter_map::filter_map_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, usize, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::adapters::map::map_fold<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074466060,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::flatten_one::<&core::option::Option<hypervisor::platform::bootmap::ProtectionSource>, usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::ProtectionSource, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}, <core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074466188,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::flatten_one::<&core::option::Option<hypervisor::platform::bootmap::Bank>, usize, core::iter::adapters::map::map_fold<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::ranges::PhysFrameRange, usize, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}, <core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074466316,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::flatten_one::<&core::option::Option<hypervisor::platform::bootmap::Bank>, usize, <core::iter::adapters::enumerate::Enumerate<_> as core::iter::traits::iterator::Iterator>::fold::enumerate<&hypervisor::platform::bootmap::Bank, usize, core::iter::adapters::filter_map::filter_map_fold<(usize, &hypervisor::platform::bootmap::Bank), hypervisor::platform::bootmap::ClipRecord, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}, <core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074466444,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::try_flatten_one::<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, (), core::ops::control_flow::ControlFlow<usize>, core::iter::traits::iterator::Iterator::position::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, hypervisor::platform::discovery::normalize::{closure#2}>::{closure#0}>::{closure#0}": {
+      "address": 1074466572,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::try_flatten_one::<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>, (), core::ops::control_flow::ControlFlow<()>, core::iter::adapters::filter_map::filter_map_try_fold<&hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>, &hypervisor::platform::discovery::Cpu, (), core::ops::control_flow::ControlFlow<()>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#0}>::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074466700,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::try_flatten_one::<&core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::all::check<&hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>, hypervisor::platform::discovery::normalize::{closure#4}>::{closure#0}>::{closure#0}": {
+      "address": 1074466816,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::try_flatten_one::<&core::option::Option<hypervisor::platform::bootmap::Bank>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::build::collect_ram<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::intake::Span>>>>>::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074466932,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::flatten::try_flatten_one::<&core::option::Option<hypervisor::platform::bootmap::MapEntry>, (), core::ops::control_flow::ControlFlow<()>, core::iter::traits::iterator::Iterator::any::check<&hypervisor::platform::bootmap::MapEntry, hypervisor::platform::bootmap::seal::seal_data::{closure#0}>::{closure#0}>::{closure#0}": {
+      "address": 1074467048,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten::<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}": {
+      "address": 1074467164,
+      "frame_bytes": 208,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074467280,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::collect::IntoIterator>::into_iter": {
+      "address": 1074467312,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlatMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074467344,
+      "frame_bytes": 208,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074467480,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074467508,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074467560,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074467588,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074467616,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>, core::option::Iter<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074468260,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>, core::option::Iter<hypervisor::platform::bootmap::ProtectionSource>> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074468396,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>, core::option::Iter<hypervisor::platform::bootmap::Bank>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074468492,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>, core::option::Iter<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074468628,
+      "frame_bytes": 80,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::MapEntry>>, core::option::Iter<hypervisor::platform::bootmap::MapEntry>> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074468764,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::FlattenCompat<core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}>, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074468860,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>> as core::iter::traits::iterator::Iterator>::enumerate": {
+      "address": 1074468992,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>> as core::iter::traits::iterator::Iterator>::enumerate": {
+      "address": 1074469048,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}::{closure#0}": {
+      "address": 1074470308,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}": {
+      "address": 1074470368,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}": {
+      "address": 1074470480,
+      "frame_bytes": 176,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}": {
+      "address": 1074470572,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::UnsealedMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::seal": {
+      "address": 1074470600,
+      "frame_bytes": 496,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::ProtectionSource, 84>>::iter": {
+      "address": 1074471024,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::ProtectionSource, 84>>::push": {
+      "address": 1074471080,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::Bank, 8>>::new": {
+      "address": 1074471372,
+      "frame_bytes": 336,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::Bank, 8>>::iter": {
+      "address": 1074471532,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::Bank, 8>>::push": {
+      "address": 1074471588,
+      "frame_bytes": 176,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::MapEntry, 184>>::iter": {
+      "address": 1074471904,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::Buffer<hypervisor::platform::bootmap::MapEntry, 184>>::push": {
+      "address": 1074471960,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::source_ledger": {
+      "address": 1074472252,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::clips": {
+      "address": 1074472300,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::entries": {
+      "address": 1074472340,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::summary": {
+      "address": 1074472384,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::anomalies": {
+      "address": 1074472404,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans": {
+      "address": 1074472432,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<&mut hypervisor::platform::bootmap::MapStorage as core::borrow::Borrow<hypervisor::platform::bootmap::MapStorage>>::borrow": {
+      "address": 1074472496,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<&hypervisor::platform::bootmap::SealViolation as core::fmt::Debug>::fmt": {
+      "address": 1074472516,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<&hypervisor::platform::bootmap::SourceId as core::fmt::Debug>::fmt": {
+      "address": 1074472552,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<&mut hypervisor::platform::bootmap::MapStorage as core::borrow::BorrowMut<hypervisor::platform::bootmap::MapStorage>>::borrow_mut": {
+      "address": 1074472588,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::RegionClass as core::cmp::PartialEq>::ne": {
+      "address": 1074472608,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::StorageState as core::cmp::PartialEq>::ne": {
+      "address": 1074472644,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::SourceSet as core::cmp::PartialEq>::ne": {
+      "address": 1074472680,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::ranges::PageCount": {
+      "address": 1074472900,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum>::address": {
+      "address": 1074472916,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::contains_range": {
+      "address": 1074472988,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::end": {
+      "address": 1074473088,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::new": {
+      "address": 1074473120,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::bytes": {
+      "address": 1074473296,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::count": {
+      "address": 1074473408,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::first": {
+      "address": 1074473468,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::between": {
+      "address": 1074473488,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::contains": {
+      "address": 1074473604,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::overlaps": {
+      "address": 1074473696,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange>::intersect": {
+      "address": 1074473796,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PageCount>::checked_add": {
+      "address": 1074473904,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PageCount>::get": {
+      "address": 1074473940,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::ranges::ram_to_frames": {
+      "address": 1074473956,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::ranges::protect_to_frames": {
+      "address": 1074474000,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::ranges::convert": {
+      "address": 1074474044,
+      "frame_bytes": 848,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::PartialEq>::eq": {
+      "address": 1074474892,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::PartialOrd>::partial_cmp": {
+      "address": 1074474928,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameNum as core::cmp::Ord>::cmp": {
+      "address": 1074474960,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PageCount as core::default::Default>::default": {
+      "address": 1074474992,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PageCount as core::cmp::PartialEq>::eq": {
+      "address": 1074475000,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::ranges::PhysFrameRange as core::cmp::PartialEq>::eq": {
+      "address": 1074475036,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::ProtectionSource>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}> as core::iter::traits::iterator::Iterator>::fold::<usize, <core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}>": {
+      "address": 1074475792,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "<core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::fold::<usize, <core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>": {
+      "address": 1074475888,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::map::map_fold::<hypervisor::platform::intake::Node, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<hypervisor::platform::intake::Nodes, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<hypervisor::platform::intake::Node, hypervisor::platform::discovery::normalize::{closure#9}>::{closure#0}>>::{closure#0}>::{closure#0}": {
+      "address": 1074475956,
+      "frame_bytes": 128,
+      "indirect": []
+    },
+    "core::iter::adapters::map::map_fold::<&hypervisor::platform::bootmap::ProtectionSource, core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}, <core::iter::adapters::flatten::FlattenCompat<_, _>>::iter_fold::flatten<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>, usize, <core::iter::adapters::flatten::FlattenCompat<_, _> as core::iter::traits::iterator::Iterator>::count::count<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::enumerate::Enumerate<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>>, <hypervisor::platform::bootmap::MapStorage>::clips::{closure#0}::{closure#0}>>>::{closure#0}>::{closure#0}": {
+      "address": 1074476060,
+      "frame_bytes": 224,
+      "indirect": []
+    },
+    "core::iter::adapters::map::map_fold::<&hypervisor::platform::bootmap::Bank, hypervisor::platform::bootmap::ranges::PhysFrameRange, usize, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}, <core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count::{closure#0}>::{closure#0}": {
+      "address": 1074476180,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "core::iter::adapters::map::map_fold::<&hypervisor::platform::discovery::Cpu, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::iter::adapters::filter_map::FilterMap<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>>>, <hypervisor::platform::discovery::Fact<hypervisor::platform::discovery::Cpu>>::usable>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&hypervisor::platform::discovery::Cpu, hypervisor::platform::discovery::normalize::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}": {
+      "address": 1074476276,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "core::iter::adapters::map::map_fold::<&bool, usize, usize, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}, <usize as core::iter::traits::accum::Sum>::sum<core::iter::adapters::map::Map<core::slice::iter::Iter<bool>, <core::iter::adapters::filter::Filter<_, _> as core::iter::traits::iterator::Iterator>::count::to_usize<&bool, hypervisor::platform::bootmap::seal::audit::{closure#1}>::{closure#0}>>::{closure#0}>::{closure#0}": {
+      "address": 1074476348,
+      "frame_bytes": 64,
+      "indirect": []
+    },
+    "<core::iter::adapters::map::Map<core::iter::adapters::flatten::Flatten<core::slice::iter::Iter<core::option::Option<hypervisor::platform::bootmap::Bank>>>, <hypervisor::platform::bootmap::BootMemoryMap<&mut hypervisor::platform::bootmap::MapStorage>>::ram_spans::{closure#0}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074476616,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<core::array::iter::IntoIter<hypervisor::platform::bootmap::ranges::PhysFrameNum, 2> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074478160,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::array::iter::IntoIter<hypervisor::platform::bootmap::ranges::PageCount, 7> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074478196,
+      "frame_bytes": 32,
+      "indirect": []
+    },
+    "<core::array::iter::IntoIter<(hypervisor::platform::intake::Span, hypervisor::platform::bootmap::SourceId, hypervisor::platform::bootmap::RegionClass), 2> as core::iter::traits::iterator::Iterator>::next": {
+      "address": 1074478420,
+      "frame_bytes": 32,
+      "indirect": []
+    }
+  },
+  "trace_function_count": 530,
+  "direct_acyclic_frame_sum": 23536,
+  "fmt_direct_acyclic_frame_max": 2704,
+  "cycles": [
+    "__rustc::rust_begin_unwind",
+    "core::panicking::panic_nounwind_fmt",
+    "core::str::slice_error_fail"
+  ],
+  "indirect_sites": [
+    {
+      "name": "<core::fmt::Formatter>::write_fmt",
+      "sites": [
+        {
+          "pc": 1074318524,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<hypervisor::platform::bootmap::MapFatal as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074340380,
+          "instruction": "br\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::builders::DebugStruct>::field",
+      "sites": [
+        {
+          "pc": 1074479716,
+          "instruction": "blr\tx9"
+        },
+        {
+          "pc": 1074479740,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074479768,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074479788,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074479832,
+          "instruction": "blr\tx9"
+        },
+        {
+          "pc": 1074479944,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074480016,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::pad_integral",
+      "sites": [
+        {
+          "pc": 1074480212,
+          "instruction": "br\tx3"
+        },
+        {
+          "pc": 1074480512,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074480560,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074480620,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074480676,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074480764,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_tuple_field1_finish",
+      "sites": [
+        {
+          "pc": 1074480832,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074480896,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074480924,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074480952,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074481020,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074481048,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481092,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481128,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_tuple_field2_finish",
+      "sites": [
+        {
+          "pc": 1074481196,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074481260,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074481288,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481316,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074481388,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074481416,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481452,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481472,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481544,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074481572,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481600,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_struct_field1_finish",
+      "sites": [
+        {
+          "pc": 1074481660,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074481776,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_struct_field2_finish",
+      "sites": [
+        {
+          "pc": 1074481880,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074482020,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::pad",
+      "sites": [
+        {
+          "pc": 1074482476,
+          "instruction": "br\tx3"
+        },
+        {
+          "pc": 1074482528,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074482556,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074482636,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::write_str",
+      "sites": [
+        {
+          "pc": 1074482656,
+          "instruction": "br\tx3"
+        }
+      ]
+    },
+    {
+      "name": "core::fmt::write",
+      "sites": [
+        {
+          "pc": 1074482752,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074482800,
+          "instruction": "blr\tx24"
+        },
+        {
+          "pc": 1074482912,
+          "instruction": "blr\tx24"
+        },
+        {
+          "pc": 1074483040,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074483112,
+          "instruction": "br\tx3"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::pad_integral::write_prefix",
+      "sites": [
+        {
+          "pc": 1074487544,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074487604,
+          "instruction": "br\tx3"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::builders::PadAdapter as core::fmt::Write>::write_char",
+      "sites": [
+        {
+          "pc": 1074487744,
+          "instruction": "blr\tx9"
+        },
+        {
+          "pc": 1074487808,
+          "instruction": "br\tx2"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::builders::PadAdapter as core::fmt::Write>::write_str",
+      "sites": [
+        {
+          "pc": 1074487944,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074488320,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::ops::range::Range<usize> as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074489492,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<str as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074489976,
+          "instruction": "blr\tx20"
+        },
+        {
+          "pc": 1074490384,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074490412,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074490440,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074490668,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074490692,
+          "instruction": "blr\tx20"
+        }
+      ]
+    },
+    {
+      "name": "<char as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074490844,
+          "instruction": "blr\tx21"
+        },
+        {
+          "pc": 1074490916,
+          "instruction": "blr\tx21"
+        },
+        {
+          "pc": 1074490968,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074491008,
+          "instruction": "blr\tx21"
+        }
+      ]
+    }
+  ],
+  "trace_ranges": [
+    [
+      1074274820,
+      1074274840
+    ],
+    [
+      1074274880,
+      1074274920
+    ],
+    [
+      1074292540,
+      1074294300
+    ],
+    [
+      1074296000,
+      1074296376
+    ],
+    [
+      1074296424,
+      1074297292
+    ],
+    [
+      1074297364,
+      1074297436
+    ],
+    [
+      1074297536,
+      1074297592
+    ],
+    [
+      1074297704,
+      1074297732
+    ],
+    [
+      1074297880,
+      1074297920
+    ],
+    [
+      1074298000,
+      1074298020
+    ],
+    [
+      1074298040,
+      1074298196
+    ],
+    [
+      1074298224,
+      1074298284
+    ],
+    [
+      1074298348,
+      1074298380
+    ],
+    [
+      1074298616,
+      1074301084
+    ],
+    [
+      1074302876,
+      1074303048
+    ],
+    [
+      1074303116,
+      1074303380
+    ],
+    [
+      1074306372,
+      1074307028
+    ],
+    [
+      1074307196,
+      1074307212
+    ],
+    [
+      1074307228,
+      1074307296
+    ],
+    [
+      1074307356,
+      1074307400
+    ],
+    [
+      1074307416,
+      1074307516
+    ],
+    [
+      1074307580,
+      1074307616
+    ],
+    [
+      1074307952,
+      1074308336
+    ],
+    [
+      1074309108,
+      1074309152
+    ],
+    [
+      1074309192,
+      1074309608
+    ],
+    [
+      1074311872,
+      1074314916
+    ],
+    [
+      1074315000,
+      1074315036
+    ],
+    [
+      1074315352,
+      1074315788
+    ],
+    [
+      1074315852,
+      1074316604
+    ],
+    [
+      1074317060,
+      1074317104
+    ],
+    [
+      1074317464,
+      1074317624
+    ],
+    [
+      1074318064,
+      1074318584
+    ],
+    [
+      1074321264,
+      1074321440
+    ],
+    [
+      1074322360,
+      1074322636
+    ],
+    [
+      1074322792,
+      1074323424
+    ],
+    [
+      1074323608,
+      1074323692
+    ],
+    [
+      1074323964,
+      1074323992
+    ],
+    [
+      1074327128,
+      1074327896
+    ],
+    [
+      1074328508,
+      1074328636
+    ],
+    [
+      1074329944,
+      1074330768
+    ],
+    [
+      1074331200,
+      1074331304
+    ],
+    [
+      1074332792,
+      1074332872
+    ],
+    [
+      1074333840,
+      1074333932
+    ],
+    [
+      1074334024,
+      1074334116
+    ],
+    [
+      1074334248,
+      1074334376
+    ],
+    [
+      1074334600,
+      1074334632
+    ],
+    [
+      1074334664,
+      1074335040
+    ],
+    [
+      1074335252,
+      1074335280
+    ],
+    [
+      1074335448,
+      1074335516
+    ],
+    [
+      1074335584,
+      1074335856
+    ],
+    [
+      1074336772,
+      1074336852
+    ],
+    [
+      1074336924,
+      1074336948
+    ],
+    [
+      1074336996,
+      1074337168
+    ],
+    [
+      1074337340,
+      1074338268
+    ],
+    [
+      1074339104,
+      1074339300
+    ],
+    [
+      1074339332,
+      1074339460
+    ],
+    [
+      1074339480,
+      1074339568
+    ],
+    [
+      1074339676,
+      1074342908
+    ],
+    [
+      1074343020,
+      1074343104
+    ],
+    [
+      1074343288,
+      1074343520
+    ],
+    [
+      1074343636,
+      1074343840
+    ],
+    [
+      1074344096,
+      1074344128
+    ],
+    [
+      1074344320,
+      1074344340
+    ],
+    [
+      1074344360,
+      1074348484
+    ],
+    [
+      1074348552,
+      1074348632
+    ],
+    [
+      1074348712,
+      1074349064
+    ],
+    [
+      1074350664,
+      1074350844
+    ],
+    [
+      1074351116,
+      1074351604
+    ],
+    [
+      1074359044,
+      1074360412
+    ],
+    [
+      1074361644,
+      1074361852
+    ],
+    [
+      1074362044,
+      1074362456
+    ],
+    [
+      1074364300,
+      1074364628
+    ],
+    [
+      1074365428,
+      1074366196
+    ],
+    [
+      1074366476,
+      1074366652
+    ],
+    [
+      1074366848,
+      1074367632
+    ],
+    [
+      1074367648,
+      1074368088
+    ],
+    [
+      1074368840,
+      1074368868
+    ],
+    [
+      1074380840,
+      1074380932
+    ],
+    [
+      1074381632,
+      1074381764
+    ],
+    [
+      1074381800,
+      1074382200
+    ],
+    [
+      1074382204,
+      1074383180
+    ],
+    [
+      1074384288,
+      1074384508
+    ],
+    [
+      1074384536,
+      1074385272
+    ],
+    [
+      1074386036,
+      1074386200
+    ],
+    [
+      1074386284,
+      1074386316
+    ],
+    [
+      1074386744,
+      1074386784
+    ],
+    [
+      1074387660,
+      1074387760
+    ],
+    [
+      1074390080,
+      1074390132
+    ],
+    [
+      1074390944,
+      1074391088
+    ],
+    [
+      1074391808,
+      1074392008
+    ],
+    [
+      1074392256,
+      1074392556
+    ],
+    [
+      1074393068,
+      1074393500
+    ],
+    [
+      1074394288,
+      1074394368
+    ],
+    [
+      1074395060,
+      1074395188
+    ],
+    [
+      1074395604,
+      1074395748
+    ],
+    [
+      1074395996,
+      1074396084
+    ],
+    [
+      1074396260,
+      1074396364
+    ],
+    [
+      1074396620,
+      1074396708
+    ],
+    [
+      1074397376,
+      1074397392
+    ],
+    [
+      1074397496,
+      1074397584
+    ],
+    [
+      1074398568,
+      1074399304
+    ],
+    [
+      1074401204,
+      1074401600
+    ],
+    [
+      1074401968,
+      1074402044
+    ],
+    [
+      1074406132,
+      1074406288
+    ],
+    [
+      1074406676,
+      1074408448
+    ],
+    [
+      1074409828,
+      1074410156
+    ],
+    [
+      1074412272,
+      1074412528
+    ],
+    [
+      1074412564,
+      1074412604
+    ],
+    [
+      1074413400,
+      1074413488
+    ],
+    [
+      1074413568,
+      1074413992
+    ],
+    [
+      1074414248,
+      1074414328
+    ],
+    [
+      1074414776,
+      1074414916
+    ],
+    [
+      1074415232,
+      1074415932
+    ],
+    [
+      1074416072,
+      1074416384
+    ],
+    [
+      1074416524,
+      1074416680
+    ],
+    [
+      1074418360,
+      1074418460
+    ],
+    [
+      1074418560,
+      1074419000
+    ],
+    [
+      1074419116,
+      1074419476
+    ],
+    [
+      1074419760,
+      1074422256
+    ],
+    [
+      1074426324,
+      1074426784
+    ],
+    [
+      1074426828,
+      1074427068
+    ],
+    [
+      1074427252,
+      1074428220
+    ],
+    [
+      1074430024,
+      1074430860
+    ],
+    [
+      1074435900,
+      1074436032
+    ],
+    [
+      1074436068,
+      1074436212
+    ],
+    [
+      1074436960,
+      1074437200
+    ],
+    [
+      1074437456,
+      1074437472
+    ],
+    [
+      1074458404,
+      1074458460
+    ],
+    [
+      1074459312,
+      1074459368
+    ],
+    [
+      1074459792,
+      1074459848
+    ],
+    [
+      1074460680,
+      1074460816
+    ],
+    [
+      1074462180,
+      1074462392
+    ],
+    [
+      1074462468,
+      1074463220
+    ],
+    [
+      1074463716,
+      1074464232
+    ],
+    [
+      1074464400,
+      1074464716
+    ],
+    [
+      1074464964,
+      1074465440
+    ],
+    [
+      1074465660,
+      1074466060
+    ],
+    [
+      1074466188,
+      1074466572
+    ],
+    [
+      1074466932,
+      1074467424
+    ],
+    [
+      1074467452,
+      1074467804
+    ],
+    [
+      1074468124,
+      1074469104
+    ],
+    [
+      1074469244,
+      1074469360
+    ],
+    [
+      1074469480,
+      1074469584
+    ],
+    [
+      1074469696,
+      1074469940
+    ],
+    [
+      1074470044,
+      1074472716
+    ],
+    [
+      1074472900,
+      1074475128
+    ],
+    [
+      1074475792,
+      1074475956
+    ],
+    [
+      1074476060,
+      1074476276
+    ],
+    [
+      1074476348,
+      1074476420
+    ],
+    [
+      1074476616,
+      1074477724
+    ],
+    [
+      1074478044,
+      1074478084
+    ],
+    [
+      1074478160,
+      1074478232
+    ],
+    [
+      1074478420,
+      1074478456
+    ],
+    [
+      1074478700,
+      1074484216
+    ],
+    [
+      1074484312,
+      1074485964
+    ],
+    [
+      1074486184,
+      1074486324
+    ],
+    [
+      1074486352,
+      1074491168
+    ],
+    [
+      1074491208,
+      1074491804
+    ]
+  ],
+  "limit": "Direct paths exclude vtable edges; review indirect callbacks and use instruction trace. Not an unqualified whole-program bound."
+}

@@ -1,0 +1,497 @@
+{
+  "root": 1074305288,
+  "parent_frames": 7024,
+  "reviewed_envelope_bytes": 26912,
+  "envelope_scope": "W03 normal/typed-error paths; max four non-pretty formatting callback levels (MapFatal -> SourceId/SealViolation -> scalar -> Line writer); excludes invariant panic recursion and interrupts",
+  "owning_map_entries": [],
+  "functions": {
+    "hypervisor::platform::discovery::normalize": {
+      "address": 1074280172,
+      "frame_bytes": 6480,
+      "indirect": []
+    },
+    "<core::iter::adapters::filter::Filter<hypervisor::platform::intake::Nodes, hypervisor::platform::discovery::normalize::{closure#9}> as core::iter::traits::iterator::Iterator>::count": {
+      "address": 1074292092,
+      "frame_bytes": 640,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::audit": {
+      "address": 1074298152,
+      "frame_bytes": 176,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::seal::seal_data": {
+      "address": 1074299364,
+      "frame_bytes": 96,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::populate": {
+      "address": 1074299992,
+      "frame_bytes": 384,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::build::partition": {
+      "address": 1074303856,
+      "frame_bytes": 48,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::memory_map": {
+      "address": 1074305288,
+      "frame_bytes": 14688,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::run": {
+      "address": 1074307356,
+      "frame_bytes": 7008,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::stop": {
+      "address": 1074308492,
+      "frame_bytes": 224,
+      "indirect": []
+    },
+    "hypervisor::boot::p2::map_stop": {
+      "address": 1074308664,
+      "frame_bytes": 192,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::classify::add": {
+      "address": 1074316120,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "hypervisor::platform::bootmap::classify::assemble": {
+      "address": 1074316812,
+      "frame_bytes": 112,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::MapFatal as core::fmt::Debug>::fmt": {
+      "address": 1074317484,
+      "frame_bytes": 48,
+      "indirect": [
+        {
+          "pc": 1074317524,
+          "instruction": "br\tx11"
+        }
+      ]
+    },
+    "<hypervisor::platform::bootmap::SourceId as core::fmt::Debug>::fmt": {
+      "address": 1074318188,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<hypervisor::platform::bootmap::FactList as core::fmt::Debug>::fmt": {
+      "address": 1074318488,
+      "frame_bytes": 0,
+      "indirect": []
+    },
+    "el2_rust_entry": {
+      "address": 1074326256,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<&hypervisor::platform::bootmap::SealViolation as core::fmt::Debug>::fmt": {
+      "address": 1074334820,
+      "frame_bytes": 16,
+      "indirect": []
+    },
+    "<&hypervisor::platform::bootmap::SourceId as core::fmt::Debug>::fmt": {
+      "address": 1074334996,
+      "frame_bytes": 16,
+      "indirect": []
+    }
+  },
+  "trace_function_count": 82,
+  "direct_acyclic_frame_sum": 15984,
+  "fmt_direct_acyclic_frame_max": 976,
+  "cycles": [
+    "core::panicking::panic_fmt",
+    "core::slice::index::slice_index_fail",
+    "core::str::slice_error_fail"
+  ],
+  "indirect_sites": [
+    {
+      "name": "<hypervisor::platform::bootmap::MapFatal as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074317524,
+          "instruction": "br\tx11"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::builders::DebugStruct>::field",
+      "sites": [
+        {
+          "pc": 1074342324,
+          "instruction": "blr\tx9"
+        },
+        {
+          "pc": 1074342348,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074342376,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074342396,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074342440,
+          "instruction": "blr\tx9"
+        },
+        {
+          "pc": 1074342552,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074342624,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::pad_integral",
+      "sites": [
+        {
+          "pc": 1074342820,
+          "instruction": "br\tx3"
+        },
+        {
+          "pc": 1074343120,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343168,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343228,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343284,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343372,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_tuple_field1_finish",
+      "sites": [
+        {
+          "pc": 1074343440,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074343504,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074343532,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343560,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074343628,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074343656,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343700,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343736,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_tuple_field2_finish",
+      "sites": [
+        {
+          "pc": 1074343804,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074343868,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074343896,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074343924,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074343996,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074344024,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074344060,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074344080,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074344152,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074344180,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074344208,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_struct_field1_finish",
+      "sites": [
+        {
+          "pc": 1074344268,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074344384,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::debug_struct_field2_finish",
+      "sites": [
+        {
+          "pc": 1074344488,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074344628,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::pad",
+      "sites": [
+        {
+          "pc": 1074345084,
+          "instruction": "br\tx3"
+        },
+        {
+          "pc": 1074345136,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074345164,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074345244,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::write_str",
+      "sites": [
+        {
+          "pc": 1074345264,
+          "instruction": "br\tx3"
+        }
+      ]
+    },
+    {
+      "name": "core::fmt::write",
+      "sites": [
+        {
+          "pc": 1074345360,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074345408,
+          "instruction": "blr\tx24"
+        },
+        {
+          "pc": 1074345520,
+          "instruction": "blr\tx24"
+        },
+        {
+          "pc": 1074345648,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074345720,
+          "instruction": "br\tx3"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::Formatter>::pad_integral::write_prefix",
+      "sites": [
+        {
+          "pc": 1074349788,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074349848,
+          "instruction": "br\tx3"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::builders::PadAdapter as core::fmt::Write>::write_char",
+      "sites": [
+        {
+          "pc": 1074349932,
+          "instruction": "blr\tx9"
+        },
+        {
+          "pc": 1074349996,
+          "instruction": "br\tx2"
+        }
+      ]
+    },
+    {
+      "name": "<core::fmt::builders::PadAdapter as core::fmt::Write>::write_str",
+      "sites": [
+        {
+          "pc": 1074350132,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074350508,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<core::ops::range::Range<usize> as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074351680,
+          "instruction": "blr\tx8"
+        }
+      ]
+    },
+    {
+      "name": "<str as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074352164,
+          "instruction": "blr\tx20"
+        },
+        {
+          "pc": 1074352572,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074352600,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074352628,
+          "instruction": "blr\tx25"
+        },
+        {
+          "pc": 1074352856,
+          "instruction": "blr\tx8"
+        },
+        {
+          "pc": 1074352880,
+          "instruction": "blr\tx20"
+        }
+      ]
+    },
+    {
+      "name": "<char as core::fmt::Debug>::fmt",
+      "sites": [
+        {
+          "pc": 1074353032,
+          "instruction": "blr\tx21"
+        },
+        {
+          "pc": 1074353104,
+          "instruction": "blr\tx21"
+        },
+        {
+          "pc": 1074353156,
+          "instruction": "blr\tx10"
+        },
+        {
+          "pc": 1074353196,
+          "instruction": "blr\tx21"
+        }
+      ]
+    }
+  ],
+  "trace_ranges": [
+    [
+      1074298152,
+      1074304976
+    ],
+    [
+      1074305288,
+      1074307356
+    ],
+    [
+      1074308492,
+      1074310224
+    ],
+    [
+      1074314724,
+      1074318528
+    ],
+    [
+      1074318540,
+      1074319152
+    ],
+    [
+      1074325660,
+      1074326244
+    ],
+    [
+      1074328568,
+      1074328592
+    ],
+    [
+      1074334520,
+      1074336460
+    ],
+    [
+      1074341348,
+      1074348404
+    ],
+    [
+      1074348624,
+      1074353240
+    ],
+    [
+      1074353280,
+      1074353876
+    ]
+  ],
+  "limit": "Direct paths exclude vtable edges; review indirect callbacks and use instruction trace. Not an unqualified whole-program bound."
+}
