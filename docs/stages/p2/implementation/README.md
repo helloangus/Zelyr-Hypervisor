@@ -1,7 +1,7 @@
 # P2 implementation designs and records
 
-**Status:** W01/W02 implemented in their bounded reference scope; later packages
-remain proposed designs. This is not whole-P2 completion.
+**Status:** W01/W02 implemented in their bounded reference scope; W03 pure map
+implemented with host evidence; W04–W10 remain proposed designs. This is not whole-P2 completion.
 **Scope:** P2 stage-local implementation material only.
 
 Read the P2 task book and selected work-package plan before using an
@@ -12,7 +12,7 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 |---|---|---|
 | P2-W01 | [Boot platform-description intake detailed implementation design](p2-w01-boot-platform-description-intake/README.md); [record](p2-w01-boot-platform-description-intake-record.md) | Implemented; see linked verification |
 | P2-W02 | [Platform discovery and normalization detailed implementation design](p2-w02-platform-discovery-normalization/README.md); [record](p2-w02-platform-discovery-normalization-record.md) | Implemented; see linked verification |
-| P2-W03 | [Boot memory map and ownership foundation detailed implementation design](p2-w03-boot-memory-map-ownership/README.md) | Contracts reconciled; implementation and joint validation pending |
+| P2-W03 | [Boot memory map and ownership foundation detailed implementation design](p2-w03-boot-memory-map-ownership/README.md); [record](p2-w03-boot-memory-map-ownership-record.md) | Pure map implemented; target storage fit and W04/W09 integration pending |
 | P2-W04 | [Physical-page allocation foundation detailed implementation design](p2-w04-physical-page-allocation/README.md) | Proposed design; see remaining admission gates |
 | P2-W05 | [Dynamic small-allocation foundation detailed implementation design](p2-w05-dynamic-small-allocation/README.md) | Proposed design; see remaining admission gates |
 | P2-W06 | [Platform and memory inspection detailed implementation design](p2-w06-platform-memory-inspection/README.md) | Proposed design; implementation not claimed |
@@ -27,7 +27,8 @@ through P2-owned bounded access.
 
 The [W03/W04 design-conflict audit](p2-w03-w04-design-conflicts.md) records
 the missing writable metadata window and normalization/allocator contract
-issues and their current disposition. Neither package is complete.
+issues and their disposition at the time of that audit. W03
+now has the linked implementation/verification record; W04 remains pending.
 The [contract reconciliation record](p2-contract-reconciliation-record.md) links
 the corrected W03–W10 designs and remaining layout/mapping/adapter gates.
 

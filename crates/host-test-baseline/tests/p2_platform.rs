@@ -695,3 +695,6 @@ fn cursor_properties_and_subtree_skip_preserve_sibling_boundaries() {
     nodes.skip_subtree();
     assert!(nodes.next().is_none());
 }
+
+#[path = "p2_platform/bootmap.rs"]
+mod bootmap_tests;

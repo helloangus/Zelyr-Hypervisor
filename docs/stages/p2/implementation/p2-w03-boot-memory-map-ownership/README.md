@@ -1,14 +1,15 @@
 # P2-W03 Boot Memory Map and Ownership Foundation — Detailed Implementation Design
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Detailed design selected for the user-requested W03 implementation;
+see the [implementation record](../p2-w03-boot-memory-map-ownership-record.md)
+and its linked verification for actual delivery scope.
 **Scope:** The normalized, checked host physical-memory map that identifies
 every P2-protected range before any dynamic page allocation, required by
-[P2-W03](../../plans/p2-w03-boot-memory-map-ownership.md).  
-**Owner/change context:** P2-W03 implementation handoff.  
-**Version:** v0.2\
+[P2-W03](../../plans/p2-w03-boot-memory-map-ownership.md).
+**Owner/change context:** P2-W03 implementation handoff.
+**Version:** v0.3\
 **Supersedes:** Conflicting September 18 assumptions and contracts in this
-package; reconciled on 2026-09-27. Implementation is not claimed.
+package; reconciled on 2026-09-27, with concrete Rust bindings added for W03 delivery.
 
 ## Purpose and use
 
@@ -99,7 +100,8 @@ scope wording.
 
 Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
 `aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
-bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+bounds and bounded W01/W02 implementation exist. W03 implementation is now recorded in the linked delivery record; W04–W10
+remain unimplemented. This table retains the pre-implementation audit context.
 The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
 available inputs, corrected contracts and remaining design admission gates.
 Do not infer a writable RAM window or completed downstream consumer from the

@@ -1,7 +1,8 @@
 # P2-W03 Code Contracts — Boot Memory Map
 
-**Status:** Proposed detailed design; implementation not claimed.  
-**Parent:** [P2-W03 detailed design](README.md).  
+**Status:** Detailed design selected for the user-requested W03 implementation;
+see the [implementation record](../p2-w03-boot-memory-map-ownership-record.md).
+**Parent:** [P2-W03 detailed design](README.md).
 **Contract notation:** implementation-design checklist §3. Pseudocode is an
 outline, not production code. Names are stage-local design freedom owned by
 this design.
@@ -127,7 +128,7 @@ Security checks: clipping is the only RAM shrink path; the builder cannot
   add RAM.
 Logic (pseudocode):
     protected = assemble(...)?                       # §3
-    ram = [] 
+    ram = []
     for (i, fact) in platform.banks().iter():
         bank = require_usable(fact, Ram, i)          # R12
         if bank.len == 0: count and continue        # R8
@@ -237,3 +238,32 @@ interior arrays in a way that lets a caller reconstruct and allocate from
 protected spans (queries return borrow slices — W04's review must show it
 filters by `Allocatable` only); no memory objects, no Guest-memory
 concepts, no DTB release, no serialization.
+
+## 9. Rust binding for the W03 delivery
+
+The implementation uses `platform::bootmap` within the existing hypervisor
+member; the source-sharing host harness compiles the same production code.
+These concrete bindings preserve the contracts above:
+
+- `SourceId` is the concrete `ProtectedSourceId` spelling, also including
+  `Ram(ordinal)` for errors. Ordinals are from the original W02 lists.
+- Query collections are bounded borrowed iterators, avoiding redundant cached
+  arrays. `entries()` exposes the sorted partition and `ram_spans()` exposes
+  the normalized RAM union. Clip `bank` indexes that union.
+- `seal(self, metadata: &[PhysFrameRange])` accepts the physical-extents view
+  of W04's plan and enforces the 46-range capacity. W04 owns plan construction,
+  region bindings, sizing and writable access; W03 does not invent that type.
+  Empty plans are valid for the map contract, not evidence of an allocator.
+- Consuming the draft prevents retry or double seal. On failure there is no
+  sealed output or partially published authority; the draft is retired.
+- `SourceSet` stores at most 84 ledger indices in a private `u128` bitset.
+  `DuplicateSource` additionally rejects internal identity re-ingestion;
+  `SealRejected::Audit` covers invariant violations. `MapAnomaly` exposes
+  counters; `clips()` exposes the separate bounded clip ledger.
+- Sealed `MapSummary` includes hole frames between RAM banks and per-class
+  protected totals. Adding a future class requires extending accounting slots
+  and tests while retaining the fail-closed `is_protected()` predicate.
+
+This binding does not authorize target boot integration. The
+[record's storage/lifetime boundary](../p2-w03-boot-memory-map-ownership-record.md#downstream-handoff-and-execution-limits)
+remains a prerequisite for W04/W09 target callers.
