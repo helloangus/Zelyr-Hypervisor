@@ -1,7 +1,6 @@
 # P2-W01/W02 prerequisite conflict: boot DTB access
 
-**Status:** Architecture Change Request; P2-W01 boot integration and P2-W02
-completion blocked.
+**Status:** Resolved by the P2-W01 current-baseline amendment and implementation.
 **Scope:** Reconcile the P2-W01 detailed design's P1 input assumptions with
 the completed P1 handoff before implementing boot DTB access.
 **Version:** v0.1
@@ -24,7 +23,7 @@ an improvised P2 workaround. The accepted P1 handoff names P2 as owner of
 validated DTB access. Thus the current W01 detailed design's A1/A2 assumptions
 cannot be implemented against the current completed P1 contract.
 
-## Decision needed before boot integration
+## Original decision required before boot integration
 
 The owning design must resolve how P2 obtains a bounded, readable header from
 the pointer-only handoff, derives and validates the declared `totalsize`, and
@@ -44,11 +43,13 @@ Two possible owners require review against the task book and P1 handoff:
    readable window, then amend P2-W01's prerequisite table to cite that new
    verified P1 contract.
 
-This record does not select either route, define a mapping algorithm, or
-claim W01/W02 implementation. After an authorized decision, update the W01
-design and its validation matrix, then implement W01 and W02 in dependency
-order. W02's [normalization entry](p2-w02-platform-discovery-normalization/04-code-contracts-facts.md#42-normalizerun)
-requires W01's `ValidatedBootDtb`; it cannot complete its boot path until this
-boundary exists. Host-only fixture tests may be developed independently and
+The initial audit left those alternatives open. The subsequent request to
+resolve the problem authorizes route 1, consistent with the P1 handoff's
+existing ownership. The [current-baseline amendment](p2-w01-boot-platform-description-intake/00-current-baseline-amendment.md)
+specifies the bounded P2 mapping and specification corrections; the
+[W01 record](p2-w01-boot-platform-description-intake-record.md) and
+[W02 record](p2-w02-platform-discovery-normalization-record.md) link executed
+verification. This conflict is resolved for the declared reference boot scope. W02's [normalization entry](p2-w02-platform-discovery-normalization/04-code-contracts-facts.md#42-normalizerun)
+requires W01's `ValidatedBootDtb`; the implemented boot path now supplies that boundary. Host-only fixture tests may be developed independently and
 can provide structural and discovery evidence, but cannot prove that the boot
 image can read its active DTB or complete either package's boot integration.

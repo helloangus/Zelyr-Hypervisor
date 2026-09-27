@@ -11,6 +11,7 @@
 
 mod arch;
 mod boot;
+pub mod platform;
 #[cfg(any(
     all(feature = "p1-w11-nc2", feature = "p1-w11-nc3"),
     all(feature = "p1-w11-nc2", feature = "p1-w11-nc4"),

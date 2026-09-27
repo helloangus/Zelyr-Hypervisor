@@ -8,6 +8,11 @@ AArch64 device tree blob (DTB) required by
 **Owner/change context:** P2-W01 implementation handoff.  
 **Supersedes:** None.
 
+Read the [current-baseline amendment](../p2-w01-boot-platform-description-intake/00-current-baseline-amendment.md)
+before the original assumed contracts or pseudocode below. It reconciles the
+completed P1 handoff, source placement and DT specification corrections.
+Actual implementation and evidence are linked from the [implementation index](../README.md).
+
 ## Purpose and use
 
 This is the implementation-level design for P2-W01. It converts the bounded
