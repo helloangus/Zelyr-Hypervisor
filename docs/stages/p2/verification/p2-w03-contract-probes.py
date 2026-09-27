@@ -16,13 +16,19 @@ pub mod address;
 pub mod boot {{ pub use crate::address; }}
 #[path = "{ROOT}/hypervisor/src/platform/mod.rs"]
 pub mod platform;
-use platform::bootmap::{{BootMemoryMap, UnsealedMemoryMap, PageCount}};
+use platform::bootmap::{{BootMemoryMap, UnsealedMemoryMap, MapStorage, BootMapBuilder, PageCount}};
 '''
 CASES = [
     ("target-layout", "aarch64-unknown-none-softfloat", "", '''
-const _: () = assert!(core::mem::size_of::<UnsealedMemoryMap>() == 40768);
-const _: () = assert!(core::mem::size_of::<BootMemoryMap>() == 40864);
+const _: () = assert!(core::mem::size_of::<UnsealedMemoryMap>() == 13888);
+const _: () = assert!(core::mem::size_of::<BootMemoryMap>() == 13984);
 const _: () = assert!(core::mem::size_of::<PageCount>() == 8);
+const _: () = assert!(core::mem::size_of::<UnsealedMemoryMap<&mut MapStorage>>() == 8);
+const _: () = assert!(core::mem::size_of::<BootMemoryMap<&mut MapStorage>>() == 96);
+pub fn target_path(data: &mut MapStorage, facts: &platform::discovery::PlatformInfo,
+    dtb: platform::intake::Span, image: platform::intake::Span) {
+    let _ = BootMapBuilder::draft_in(data, facts, dtb, image);
+}
 '''),
     ("draft-is-not-authority", None, "E0308", '''
 pub fn misuse(draft: UnsealedMemoryMap) { consume(&draft); }
@@ -42,6 +48,22 @@ pub fn misuse(sealed: &mut BootMemoryMap) {
     sealed.summary().ram_frames = PageCount::new(0);
 }
 '''),
+    ("borrowed-map-cannot-outlive-storage", None, "E0515", '''
+pub fn misuse(facts: &platform::discovery::PlatformInfo, span: platform::intake::Span)
+ -> UnsealedMemoryMap<&'static mut MapStorage> {
+    let mut storage = MapStorage::new();
+    BootMapBuilder::draft_in(&mut storage, facts, span, span).unwrap()
+}
+'''),
+    ("live-map-excludes-second-borrow", None, "E0499", '''
+pub fn misuse(facts: &platform::discovery::PlatformInfo, span: platform::intake::Span) {
+    let mut storage = MapStorage::new();
+    let map = BootMapBuilder::draft_in(&mut storage, facts, span, span).unwrap().seal(&[]).unwrap();
+    let _other = BootMapBuilder::draft_in(&mut storage, facts, span, span);
+    core::hint::black_box(map.summary());
+}
+'''),
+
 ]
 with tempfile.TemporaryDirectory(prefix="zelyr-w03-") as work:
     for name, target, expected, body in CASES:

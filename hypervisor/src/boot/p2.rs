@@ -1,11 +1,15 @@
 //! Reference boot adapter: trusted minimum RAM envelope, not discovered RAM.
 use super::{
-    address::{ByteSize, PhysAddr},
+    address::{ByteSize, PhysAddr, VirtAddr},
     console,
 };
 use crate::{
     arch::aarch64::stage1::dtb::DtbWindow,
-    platform::{discovery, intake::Span},
+    platform::{
+        bootmap::{BootMapBuilder, MapStorage},
+        discovery,
+        intake::{Span, ValidatedBootDtb},
+    },
 };
 pub(crate) struct BootReadEnvelope {
     coverage: Span,
@@ -75,8 +79,84 @@ pub(super) fn run(pointer: PhysAddr) -> ! {
         facts.psci().label()
     );
     console::transport_line(line.as_str());
+    memory_map(&window, &dtb, &facts)
+}
+
+/// W03 owns this non-returning frame and its backing until restart. Keeping it
+/// separate prevents its array from overlapping W02's normalization call stack.
+#[inline(never)]
+fn memory_map(
+    window: &DtbWindow,
+    dtb: &ValidatedBootDtb<'_>,
+    facts: &discovery::PlatformInfo,
+) -> ! {
+    use core::fmt::Write;
+    // Const initialization emits no runtime full-MapStorage constructor or
+    // by-value map return. The W03 pinned-binary stack audit covers this frame.
+    let mut storage = const { MapStorage::new() };
+    let storage_extent = Span {
+        base: VirtAddr::new(core::ptr::from_ref(&storage) as u64).p1_identity_physical(),
+        len: ByteSize(core::mem::size_of::<MapStorage>() as u64),
+    };
+    let image = window.image_range();
+    if !image.contains(storage_extent) {
+        stop("MapStoragePlacement", "outside-image");
+    }
+    let draft = match BootMapBuilder::draft_in(&mut storage, facts, dtb.range(), image) {
+        Ok(map) => map,
+        Err(error) => map_stop(error),
+    };
+    console::transport_line("ZELYR P2 MAP draft ready");
+    // W04 inserts its metadata planner here. No allocator exists in this
+    // binary, so there are no allocator metadata extents to reserve yet.
+    let map = match draft.seal(&[]) {
+        Ok(map) => map,
+        Err(error) => map_stop(error),
+    };
+    let summary = map.summary();
+    let mut line = super::fatal_line::Line::new();
+    let _ = write!(
+        line,
+        "ZELYR P2 MAP sealed ram={} allocatable={} protected={} metadata=0 allocator=absent",
+        summary.ram_frames.get(),
+        summary.allocatable_frames.get(),
+        summary.ram_frames.get() - summary.allocatable_frames.get()
+    );
+    console::transport_line(line.as_str());
+    let mut line = super::fatal_line::Line::new();
+    let _ = write!(
+        line,
+        "ZELYR P2 MAP bounds image={:#x}+{:#x} dtb={:#x}+{:#x} storage={}",
+        image.base.raw(),
+        image.len.0,
+        dtb.range().base.raw(),
+        dtb.range().len.0,
+        storage_extent.len.0
+    );
+    console::transport_line(line.as_str());
+    let mut line = super::fatal_line::Line::new();
+    let _ = write!(
+        line,
+        "ZELYR P2 MAP records banks={} sources={} entries={} clips={} outside={}",
+        map.ram_spans().count(),
+        map.source_ledger().count(),
+        map.entries().count(),
+        map.clips().count(),
+        map.anomalies().outside_ram_warnings
+    );
+    console::transport_line(line.as_str());
     loop {
-        core::hint::black_box((&window, &dtb, &facts));
+        // Retain the window/validated input, facts and map/backing lifetimes.
+        core::hint::black_box((window, dtb, facts, &map));
+        crate::arch::aarch64::idle::wait_for_interrupt();
+    }
+}
+fn map_stop(error: crate::platform::bootmap::MapFatal) -> ! {
+    use core::fmt::Write;
+    let mut line = super::fatal_line::Line::new();
+    let _ = write!(line, "ZELYR P2 MAP REJECT {error:?}");
+    console::transport_line(line.as_str());
+    loop {
         crate::arch::aarch64::idle::wait_for_interrupt();
     }
 }

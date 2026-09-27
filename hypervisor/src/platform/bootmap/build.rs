@@ -1,22 +1,34 @@
 //! Bounded endpoint sweep: only discovered RAM is ever partitioned.
 use super::*;
-pub(super) fn draft(
+pub(super) fn populate(
+    data: &mut MapData,
     platform: &PlatformInfo,
     dtb: Span,
     image: Span,
-) -> Result<UnsealedMemoryMap, MapFatal> {
-    let mut data = MapData {
-        banks: Buffer::new(),
-        sources: Buffer::new(),
-        entries: Buffer::new(),
-        clips: Buffer::new(),
-        anomalies: MapAnomaly::default(),
+) -> Result<(), MapFatal> {
+    if data.state != StorageState::Fresh {
+        return Err(MapFatal::StorageUnavailable);
+    }
+    data.state = StorageState::Building;
+    let result = populate_fresh(data, platform, dtb, image);
+    data.state = if result.is_ok() {
+        StorageState::Draft
+    } else {
+        StorageState::Failed
     };
-    classify::assemble(&mut data, platform, dtb, image)?;
-    collect_ram(&mut data, platform.banks().iter())?;
-    partition(&mut data)?;
-    super::seal::audit(&data)?;
-    Ok(UnsealedMemoryMap { data })
+    result
+}
+fn populate_fresh(
+    data: &mut MapData,
+    platform: &PlatformInfo,
+    dtb: Span,
+    image: Span,
+) -> Result<(), MapFatal> {
+    classify::assemble(data, platform, dtb, image)?;
+    collect_ram(data, platform.banks().iter())?;
+    partition(data)?;
+    super::seal::audit(data)?;
+    Ok(())
 }
 pub(super) fn collect_ram<'a>(
     data: &mut MapData,
@@ -46,7 +58,18 @@ pub(super) fn collect_ram<'a>(
             source: SourceId::Ram(0),
         });
     }
-    data.banks.items[..data.banks.len].sort_unstable_by_key(|b| b.map(|b| b.range.first()));
+    // At most eight banks: bounded insertion sort avoids a general sorter's
+    // recursive call graph in the boot-stack budget.
+    for i in 1..data.banks.len {
+        let mut j = i;
+        while j > 0
+            && data.banks.items[j].map(|b| b.range.first())
+                < data.banks.items[j - 1].map(|b| b.range.first())
+        {
+            data.banks.items.swap(j, j - 1);
+            j -= 1;
+        }
+    }
     let mut merged: Buffer<Bank, MAX_MEMORY_BANKS> = Buffer::new();
     for bank in data.banks.iter() {
         if let Some(Some(last)) = merged.items[..merged.len].last_mut()
@@ -64,23 +87,14 @@ pub(super) fn collect_ram<'a>(
 }
 pub(super) fn partition(data: &mut MapData) -> Result<(), MapFatal> {
     data.entries.len = 0;
-    data.clips.len = 0;
     data.anomalies.outside_ram_warnings = 0;
     for source in data.sources.iter() {
         let mut covered = PageCount::default();
-        for (bank, b) in data.banks.iter().enumerate() {
+        for b in data.banks.iter() {
             if let Some(kept) = b.range.intersect(source.rounded) {
                 covered = covered
                     .checked_add(kept.count())
                     .ok_or(MapFatal::RangeOverflow { source: source.id })?;
-                data.clips.push(
-                    ClipRecord {
-                        protected: source.id,
-                        bank,
-                        kept,
-                    },
-                    "clip log",
-                )?;
             }
         }
         if covered != source.rounded.count() {

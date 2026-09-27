@@ -1,7 +1,8 @@
 # P2-W03 boot memory map verification
 
-**Status:** W03 complete within its designed pure-map / host-validation scope;
-not runtime map, W04 allocator, W09 QEMU accounting or whole-P2 completion.
+**Status:** Historical PR #70 host evidence. Its earlier package-completion
+claim is withdrawn: W03-owned runtime storage and boot integration were missing.
+See the [runtime closure verification](p2-w03-runtime-verification.md) for current status.
 **Scope:** P2-V05; W03-DV01–DV10, with downstream execution limits below.
 **Version:** v0.1
 **Owner/change context:** P2-W03 implementation verification, 2026-09-27.

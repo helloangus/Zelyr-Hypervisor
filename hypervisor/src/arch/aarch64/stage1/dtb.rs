@@ -111,6 +111,10 @@ impl DtbWindow {
         owner.len = length;
         Ok(owner)
     }
+    /// Existing linker-owned image extent, including the complete boot stack.
+    pub(crate) fn image_range(&self) -> Span {
+        self.image
+    }
     pub(crate) fn bytes(&self) -> &[u8] {
         // SAFETY: U-018. open() proves rounded trusted coverage and image
         // exclusion before populating RO/XN pages and ordering their use.

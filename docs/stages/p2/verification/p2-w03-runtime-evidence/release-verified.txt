@@ -1,0 +1,236 @@
+=== target/p2-w03-runtime/release-verified/canonical/serial.log ===
+ZELYR P1 CHANNEL ready ident=profile=unavailable rev=unavailable dirty=unavailable 0.1.0 aarch64
+ZELYR P1 PHASE entry enter
+ZELYR P1 PHASE entry complete
+ZELYR P1 PHASE runtime enter
+ZELYR P1 PHASE runtime complete
+ZELYR P1 PHASE capabilities enter
+ZELYR P1 PHASE capabilities complete
+ZELYR P1 PHASE el2-baseline enter
+ZELYR P1 PHASE el2-baseline complete
+ZELYR P1 PHASE exceptions enter
+ZELYR P1 PHASE exceptions complete
+ZELYR P1 PHASE console enter
+cap execution-level=2 (Required)
+cap cpu-affinity=0 (Optional)
+cap arch-profile=546 (Optional)
+cap gic-version=1 (Future)
+cap pa-range=44 (Optional)
+cap asid-bits=16 (Future)
+cap granule-4k=1 (Required)
+cap granule-16k=Absent (Optional)
+cap granule-64k=1 (Optional)
+cap virtual-host-extensions=Absent (Future)
+cap el2-virtual-timer=Absent (Optional)
+cap counter-frequency=62500000 (Required)
+cap el2-physical-timer=1 (Optional)
+ZELYR P1 PHASE console complete
+ZELYR P1 PHASE fatal-path enter
+ZELYR P1 PHASE fatal-path complete
+ZELYR P1 PHASE stage1 enter
+ZELYR P1 PHASE stage1 complete
+ZELYR P1 STABLE
+ZELYR P2 INTAKE pointer=0x44000000
+ZELYR P2 INTAKE complete bytes=1048576 version=17 nodes=56 props=222 reservations=0
+ZELYR P2 DISCOVERY complete cpus=1 banks=1 boot=0
+ZELYR P2 FACTS gic=usable timer=usable psci=usable
+ZELYR P2 MAP draft ready
+ZELYR P2 MAP sealed ram=32768 allocatable=32451 protected=317 metadata=0 allocator=absent
+ZELYR P2 MAP bounds image=0x40080000+0x3d000 dtb=0x44000000+0x100000 storage=13888
+ZELYR P2 MAP records banks=1 sources=2 entries=5 clips=2 outside=0
+
+=== target/p2-w03-runtime/release-verified/image-conflict/serial.log ===
+ZELYR P1 CHANNEL ready ident=profile=unavailable rev=unavailable dirty=unavailable 0.1.0 aarch64
+ZELYR P1 PHASE entry enter
+ZELYR P1 PHASE entry complete
+ZELYR P1 PHASE runtime enter
+ZELYR P1 PHASE runtime complete
+ZELYR P1 PHASE capabilities enter
+ZELYR P1 PHASE capabilities complete
+ZELYR P1 PHASE el2-baseline enter
+ZELYR P1 PHASE el2-baseline complete
+ZELYR P1 PHASE exceptions enter
+ZELYR P1 PHASE exceptions complete
+ZELYR P1 PHASE console enter
+cap execution-level=2 (Required)
+cap cpu-affinity=0 (Optional)
+cap arch-profile=546 (Optional)
+cap gic-version=1 (Future)
+cap pa-range=44 (Optional)
+cap asid-bits=16 (Future)
+cap granule-4k=1 (Required)
+cap granule-16k=Absent (Optional)
+cap granule-64k=1 (Optional)
+cap virtual-host-extensions=Absent (Future)
+cap el2-virtual-timer=Absent (Optional)
+cap counter-frequency=62500000 (Required)
+cap el2-physical-timer=1 (Optional)
+ZELYR P1 PHASE console complete
+ZELYR P1 PHASE fatal-path enter
+ZELYR P1 PHASE fatal-path complete
+ZELYR P1 PHASE stage1 enter
+ZELYR P1 PHASE stage1 complete
+ZELYR P1 STABLE
+ZELYR P2 INTAKE pointer=0x43000000
+ZELYR P2 INTAKE complete bytes=428 version=17 nodes=4 props=9 reservations=2
+ZELYR P2 DISCOVERY complete cpus=1 banks=1 boot=0
+ZELYR P2 FACTS gic=absent timer=absent psci=absent
+ZELYR P2 MAP REJECT ProtectionConflict { a: HypervisorImage, b: DtbReservation(0) }
+
+=== target/p2-w03-runtime/release-verified/multibank-capacity/serial.log ===
+ZELYR P1 CHANNEL ready ident=profile=unavailable rev=unavailable dirty=unavailable 0.1.0 aarch64
+ZELYR P1 PHASE entry enter
+ZELYR P1 PHASE entry complete
+ZELYR P1 PHASE runtime enter
+ZELYR P1 PHASE runtime complete
+ZELYR P1 PHASE capabilities enter
+ZELYR P1 PHASE capabilities complete
+ZELYR P1 PHASE el2-baseline enter
+ZELYR P1 PHASE el2-baseline complete
+ZELYR P1 PHASE exceptions enter
+ZELYR P1 PHASE exceptions complete
+ZELYR P1 PHASE console enter
+cap execution-level=2 (Required)
+cap cpu-affinity=0 (Optional)
+cap arch-profile=546 (Optional)
+cap gic-version=1 (Future)
+cap pa-range=44 (Optional)
+cap asid-bits=16 (Future)
+cap granule-4k=1 (Required)
+cap granule-16k=Absent (Optional)
+cap granule-64k=1 (Optional)
+cap virtual-host-extensions=Absent (Future)
+cap el2-virtual-timer=Absent (Optional)
+cap counter-frequency=62500000 (Required)
+cap el2-physical-timer=1 (Optional)
+ZELYR P1 PHASE console complete
+ZELYR P1 PHASE fatal-path enter
+ZELYR P1 PHASE fatal-path complete
+ZELYR P1 PHASE stage1 enter
+ZELYR P1 PHASE stage1 complete
+ZELYR P1 STABLE
+ZELYR P2 INTAKE pointer=0x43000000
+ZELYR P2 INTAKE complete bytes=1524 version=17 nodes=11 props=23 reservations=32
+ZELYR P2 DISCOVERY complete cpus=1 banks=8 boot=0
+ZELYR P2 FACTS gic=absent timer=absent psci=absent
+ZELYR P2 MAP draft ready
+ZELYR P2 MAP sealed ram=32760 allocatable=32666 protected=94 metadata=0 allocator=absent
+ZELYR P2 MAP bounds image=0x40080000+0x3d000 dtb=0x43000000+0x5f4 storage=13888
+ZELYR P2 MAP records banks=8 sources=34 entries=75 clips=34 outside=0
+
+=== target/p2-w03-runtime/release-verified/ram-overlap/serial.log ===
+ZELYR P1 CHANNEL ready ident=profile=unavailable rev=unavailable dirty=unavailable 0.1.0 aarch64
+ZELYR P1 PHASE entry enter
+ZELYR P1 PHASE entry complete
+ZELYR P1 PHASE runtime enter
+ZELYR P1 PHASE runtime complete
+ZELYR P1 PHASE capabilities enter
+ZELYR P1 PHASE capabilities complete
+ZELYR P1 PHASE el2-baseline enter
+ZELYR P1 PHASE el2-baseline complete
+ZELYR P1 PHASE exceptions enter
+ZELYR P1 PHASE exceptions complete
+ZELYR P1 PHASE console enter
+cap execution-level=2 (Required)
+cap cpu-affinity=0 (Optional)
+cap arch-profile=546 (Optional)
+cap gic-version=1 (Future)
+cap pa-range=44 (Optional)
+cap asid-bits=16 (Future)
+cap granule-4k=1 (Required)
+cap granule-16k=Absent (Optional)
+cap granule-64k=1 (Optional)
+cap virtual-host-extensions=Absent (Future)
+cap el2-virtual-timer=Absent (Optional)
+cap counter-frequency=62500000 (Required)
+cap el2-physical-timer=1 (Optional)
+ZELYR P1 PHASE console complete
+ZELYR P1 PHASE fatal-path enter
+ZELYR P1 PHASE fatal-path complete
+ZELYR P1 PHASE stage1 enter
+ZELYR P1 PHASE stage1 complete
+ZELYR P1 STABLE
+ZELYR P2 INTAKE pointer=0x43000000
+ZELYR P2 INTAKE complete bytes=500 version=17 nodes=5 props=11 reservations=1
+ZELYR P2 DISCOVERY complete cpus=1 banks=2 boot=0
+ZELYR P2 FACTS gic=absent timer=absent psci=absent
+ZELYR P2 MAP REJECT RamOverlap { a: Ram(0), b: Ram(1) }
+
+=== target/p2-w03-runtime/release-verified/repeat/serial.log ===
+ZELYR P1 CHANNEL ready ident=profile=unavailable rev=unavailable dirty=unavailable 0.1.0 aarch64
+ZELYR P1 PHASE entry enter
+ZELYR P1 PHASE entry complete
+ZELYR P1 PHASE runtime enter
+ZELYR P1 PHASE runtime complete
+ZELYR P1 PHASE capabilities enter
+ZELYR P1 PHASE capabilities complete
+ZELYR P1 PHASE el2-baseline enter
+ZELYR P1 PHASE el2-baseline complete
+ZELYR P1 PHASE exceptions enter
+ZELYR P1 PHASE exceptions complete
+ZELYR P1 PHASE console enter
+cap execution-level=2 (Required)
+cap cpu-affinity=0 (Optional)
+cap arch-profile=546 (Optional)
+cap gic-version=1 (Future)
+cap pa-range=44 (Optional)
+cap asid-bits=16 (Future)
+cap granule-4k=1 (Required)
+cap granule-16k=Absent (Optional)
+cap granule-64k=1 (Optional)
+cap virtual-host-extensions=Absent (Future)
+cap el2-virtual-timer=Absent (Optional)
+cap counter-frequency=62500000 (Required)
+cap el2-physical-timer=1 (Optional)
+ZELYR P1 PHASE console complete
+ZELYR P1 PHASE fatal-path enter
+ZELYR P1 PHASE fatal-path complete
+ZELYR P1 PHASE stage1 enter
+ZELYR P1 PHASE stage1 complete
+ZELYR P1 STABLE
+ZELYR P2 INTAKE pointer=0x44000000
+ZELYR P2 INTAKE complete bytes=1048576 version=17 nodes=56 props=222 reservations=0
+ZELYR P2 DISCOVERY complete cpus=1 banks=1 boot=0
+ZELYR P2 FACTS gic=usable timer=usable psci=usable
+ZELYR P2 MAP draft ready
+ZELYR P2 MAP sealed ram=32768 allocatable=32451 protected=317 metadata=0 allocator=absent
+ZELYR P2 MAP bounds image=0x40080000+0x3d000 dtb=0x44000000+0x100000 storage=13888
+ZELYR P2 MAP records banks=1 sources=2 entries=5 clips=2 outside=0
+
+=== target/p2-w03-runtime/release-verified/unusable-reservation/serial.log ===
+ZELYR P1 CHANNEL ready ident=profile=unavailable rev=unavailable dirty=unavailable 0.1.0 aarch64
+ZELYR P1 PHASE entry enter
+ZELYR P1 PHASE entry complete
+ZELYR P1 PHASE runtime enter
+ZELYR P1 PHASE runtime complete
+ZELYR P1 PHASE capabilities enter
+ZELYR P1 PHASE capabilities complete
+ZELYR P1 PHASE el2-baseline enter
+ZELYR P1 PHASE el2-baseline complete
+ZELYR P1 PHASE exceptions enter
+ZELYR P1 PHASE exceptions complete
+ZELYR P1 PHASE console enter
+cap execution-level=2 (Required)
+cap cpu-affinity=0 (Optional)
+cap arch-profile=546 (Optional)
+cap gic-version=1 (Future)
+cap pa-range=44 (Optional)
+cap asid-bits=16 (Future)
+cap granule-4k=1 (Required)
+cap granule-16k=Absent (Optional)
+cap granule-64k=1 (Optional)
+cap virtual-host-extensions=Absent (Future)
+cap el2-virtual-timer=Absent (Optional)
+cap counter-frequency=62500000 (Required)
+cap el2-physical-timer=1 (Optional)
+ZELYR P1 PHASE console complete
+ZELYR P1 PHASE fatal-path enter
+ZELYR P1 PHASE fatal-path complete
+ZELYR P1 PHASE stage1 enter
+ZELYR P1 PHASE stage1 complete
+ZELYR P1 STABLE
+ZELYR P2 INTAKE pointer=0x43000000
+ZELYR P2 INTAKE complete bytes=534 version=17 nodes=6 props=12 reservations=1
+ZELYR P2 DISCOVERY complete cpus=1 banks=1 boot=0
+ZELYR P2 FACTS gic=absent timer=absent psci=absent
+ZELYR P2 MAP REJECT UnusableFact { list: Reserved, ordinal: 1 }

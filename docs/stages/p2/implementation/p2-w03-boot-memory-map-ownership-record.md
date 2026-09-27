@@ -7,6 +7,9 @@
 **Owner/change context:** User-requested P2-W03 implementation, 2026-09-27.
 **Supersedes:** None; records implementation of the reconciled W03 design.
 
+This is the historical PR #70 record. The [runtime completion record](p2-w03-runtime-record.md)
+supersedes its deferral of W03-owned storage and target integration.
+
 ## Authority and current baseline
 
 The user selected W03 for implementation after the reconciled design was

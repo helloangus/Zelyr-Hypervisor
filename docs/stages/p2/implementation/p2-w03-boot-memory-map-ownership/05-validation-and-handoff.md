@@ -6,10 +6,12 @@ see the [implementation record](../p2-w03-boot-memory-map-ownership-record.md).
 
 ## 1. Scope of validation for this package
 
-W03's own evidence is host-side over synthetic fact records. The W04
+W03 requires host-side evidence plus its own runtime storage/boot evidence
+under the [runtime correction](06-runtime-storage-and-handoff.md). The W04
 metadata-planning interplay (draft → plan → seal) is validated jointly with
-W04 but the seal contract is exercisable now with hand-built plans. QEMU
-accounting evidence (map totals versus observed RAM) is W09; conflict
+W04 but the seal contract is exercisable now with hand-built plans. The full QEMU
+configuration/accounting matrix is W09; bounded W03 runtime accounting belongs
+to W03; conflict
 regression coverage is W08's harness over this package's policy table.
 
 ## 2. Error, security, and observability model
@@ -63,7 +65,8 @@ Before handing W03 to review, provide:
   sealed authority), W06 (summary/clip/anomaly queries), W08 (policy
   table as regression oracle), W09 (accounting totals), W10 (ledger
   identities, extension protocol, under-declaration limit);
-- open items recorded, not resolved: W04 joint-seal integration, target storage/stack fit, DTB copy/release Reserved, P2-ACR-01 unresolved and
+- W03 target storage/stack fit closed with its own runtime evidence; downstream
+  open items: W04 planner integration, DTB copy/release Reserved, P2-ACR-01 unresolved and
   blocking any memory-object work;
 - explicit statement of the hard-gate division of responsibility: W03
   guarantees the map; W04 must derive allocation only from it.

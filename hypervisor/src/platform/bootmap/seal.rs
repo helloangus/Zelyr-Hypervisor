@@ -3,43 +3,59 @@ use super::*;
 fn rejected(violation: SealViolation) -> MapFatal {
     MapFatal::SealRejected { violation }
 }
-impl UnsealedMemoryMap {
-    /// Consume the draft exactly once. W04 owns placement and storage bindings;
-    /// this boundary accepts only its physical extents, including an empty plan.
-    /// Failure publishes no sealed authority; the consumed draft cannot be retried.
-    pub fn seal(mut self, metadata: &[PhysFrameRange]) -> Result<BootMemoryMap, MapFatal> {
-        if metadata.len() > MAX_METADATA_RANGES {
-            return Err(rejected(SealViolation::Capacity));
+impl<S: core::borrow::BorrowMut<MapStorage>> UnsealedMemoryMap<S> {
+    /// Consume the draft; borrowed backing remains in place on every path.
+    /// Failure poisons this storage and publishes no allocation authority.
+    pub fn seal(mut self, metadata: &[PhysFrameRange]) -> Result<BootMemoryMap<S>, MapFatal> {
+        let data = self.data.borrow_mut();
+        if data.state != StorageState::Draft {
+            return Err(MapFatal::StorageUnavailable);
         }
-        for (i, range) in metadata.iter().enumerate() {
-            if !self
-                .allocatable_spans()
-                .any(|span| span.contains_range(*range))
-            {
-                return Err(rejected(SealViolation::OutsideAllocatable(i)));
+        data.state = StorageState::Sealing;
+        match seal_data(data, metadata) {
+            Ok(summary) => {
+                data.state = StorageState::Sealed;
+                Ok(BootMemoryMap {
+                    data: self.data,
+                    summary,
+                })
             }
-            for (j, other) in metadata[..i].iter().enumerate() {
-                if range.overlaps(*other) {
-                    return Err(rejected(SealViolation::Overlap(j, i)));
-                }
+            Err(error) => {
+                data.state = StorageState::Failed;
+                Err(error)
             }
         }
-        for (i, range) in metadata.iter().enumerate() {
-            classify::add(
-                &mut self.data,
-                range.bytes(),
-                SourceId::AllocatorMetadata(i),
-                RegionClass::HypervisorMetadata,
-                ProtectionFlags::default(),
-            )?;
-        }
-        build::partition(&mut self.data)?;
-        let summary = audit(&self.data)?;
-        Ok(BootMemoryMap {
-            data: self.data,
-            summary,
-        })
     }
+}
+fn seal_data(data: &mut MapData, metadata: &[PhysFrameRange]) -> Result<MapSummary, MapFatal> {
+    if metadata.len() > MAX_METADATA_RANGES {
+        return Err(rejected(SealViolation::Capacity));
+    }
+    for (i, range) in metadata.iter().enumerate() {
+        if !data
+            .entries
+            .iter()
+            .any(|entry| !entry.class.is_protected() && entry.range.contains_range(*range))
+        {
+            return Err(rejected(SealViolation::OutsideAllocatable(i)));
+        }
+        for (j, other) in metadata[..i].iter().enumerate() {
+            if range.overlaps(*other) {
+                return Err(rejected(SealViolation::Overlap(j, i)));
+            }
+        }
+    }
+    for (i, range) in metadata.iter().enumerate() {
+        classify::add(
+            data,
+            range.bytes(),
+            SourceId::AllocatorMetadata(i),
+            RegionClass::HypervisorMetadata,
+            ProtectionFlags::default(),
+        )?;
+    }
+    build::partition(data)?;
+    audit(data)
 }
 /// Walk final entries against the RAM union, independently of the endpoint
 /// sweep. Each entry must have exactly every intersecting source, each of which

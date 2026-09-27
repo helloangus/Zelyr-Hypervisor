@@ -12,6 +12,13 @@ package; reconciled on 2026-09-27. Implementation is not claimed.
 
 **Admission:** W04-LAYOUT must close before allocator coding; W04-MAP before target integration. See the [owning gate](01-scope-and-foundations.md#6-metadata-sizing-and-design-admission).
 
+Current W03 prerequisite update: the [W03 runtime record](../p2-w03-runtime-record.md)
+supersedes the historical "W03 not implemented" snapshot below. The target
+consumer uses `UnsealedMemoryMap<&mut MapStorage>` and
+`BootMemoryMap<&mut MapStorage>` over W03-owned backing; it does not need to
+repair W03 storage or stack fit. W04 inserts actual metadata planning between
+draft and seal. W04-LAYOUT/W04-MAP remain this package's own admission gates.
+
 ## Purpose and use
 
 This is the implementation-level design for P2-W04. It converts the bounded

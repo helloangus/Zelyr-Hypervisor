@@ -154,11 +154,12 @@ and 4 artifacts, plus image and DTB. Let B=8 and P=38 source slots. At most
 B+P=46 draft allocatable spans exist. Define `MAX_ALLOCATABLE_SPANS=46` and
 `MAX_METADATA_RANGES=46`; these are distinct from `MAX_MEMORY_BANKS=8`.
 A conservative endpoint-partition bound is `2*(B+P+MAX_METADATA_RANGES)=184`
-map entries, each with a bounded source set. Clip records are bounded by
-B*(P+MAX_METADATA_RANGES); overflow is fatal, never truncation. Revisit these
-bounds together if upstream capacities change. Fixed arrays also require a
-boot-stack/storage review before target integration; a host allocation does
-not prove fit on the P1 boot stack. No IRQ interaction. Sorting plus bounded
+map entries, each with a bounded source set. Clip views enumerate at most
+B*(P+MAX_METADATA_RANGES) intersections from retained banks and sources; they
+never truncate and require no separately materialized cache. Revisit these
+bounds together if upstream capacities change. The [runtime correction](06-runtime-storage-and-handoff.md) makes fixed-array
+boot-stack/storage review a W03-owned completion requirement; a host allocation
+does not prove fit on the P1 boot stack. No IRQ interaction. Sorting plus bounded
 source-set construction is permitted; no allocator hot-path cost is claimed.
 
 ## 9. Failure model

@@ -5,6 +5,7 @@ mod classify;
 pub mod ranges;
 mod seal;
 use super::{discovery::PlatformInfo, intake::Span};
+use core::borrow::Borrow;
 pub use ranges::{PageCount, PhysFrameNum, PhysFrameRange};
 
 pub const MAX_MEMORY_BANKS: usize = 8;
@@ -13,7 +14,7 @@ pub const MAX_ALLOCATABLE_SPANS: usize = MAX_MEMORY_BANKS + MAX_INPUT_SOURCES;
 pub const MAX_METADATA_RANGES: usize = MAX_ALLOCATABLE_SPANS;
 pub const MAX_SOURCES: usize = MAX_INPUT_SOURCES + MAX_METADATA_RANGES;
 pub const MAX_MAP_ENTRIES: usize = 2 * (MAX_MEMORY_BANKS + MAX_SOURCES);
-const MAX_CLIPS: usize = MAX_MEMORY_BANKS * MAX_SOURCES;
+pub const MAX_CLIPS: usize = MAX_MEMORY_BANKS * MAX_SOURCES;
 const _: () = assert!(MAX_SOURCES <= 128);
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -62,6 +63,7 @@ pub enum SealViolation {
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum MapFatal {
+    StorageUnavailable,
     MissingRequiredRange { source: SourceId },
     UnusableFact { list: FactList, ordinal: usize },
     UnalignedRange { source: SourceId },
@@ -167,14 +169,58 @@ struct Bank {
     range: PhysFrameRange,
     id: SourceId,
 }
-struct MapData {
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum StorageState {
+    Fresh,
+    Building,
+    Draft,
+    Sealing,
+    Sealed,
+    Failed,
+}
+/// Caller-owned bounded backing; target callers initialize with inline const
+/// and lend it to draft_in. Never reconstruct or move it on the boot hot path.
+pub struct MapStorage {
     banks: Buffer<Bank, MAX_MEMORY_BANKS>,
     sources: Buffer<ProtectionSource, MAX_SOURCES>,
     entries: Buffer<MapEntry, MAX_MAP_ENTRIES>,
-    clips: Buffer<ClipRecord, MAX_CLIPS>,
+    state: StorageState,
     anomalies: MapAnomaly,
 }
-impl MapData {
+type MapData = MapStorage;
+impl Default for MapStorage {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl MapStorage {
+    pub const fn new() -> Self {
+        Self {
+            banks: Buffer::new(),
+            sources: Buffer::new(),
+            entries: Buffer::new(),
+            state: StorageState::Fresh,
+            anomalies: MapAnomaly {
+                merged_banks: 0,
+                deduped_banks: 0,
+                deduped_protections: 0,
+                dropped_zero_ram: 0,
+                dropped_zero_protection: 0,
+                outside_ram_warnings: 0,
+            },
+        }
+    }
+    fn clips(&self) -> impl Iterator<Item = ClipRecord> {
+        self.sources.iter().flat_map(move |source| {
+            self.banks.iter().enumerate().filter_map(move |(bank, b)| {
+                b.range.intersect(source.rounded).map(|kept| ClipRecord {
+                    protected: source.id,
+                    bank,
+                    kept,
+                })
+            })
+        })
+    }
     fn class_at(&self, frame: PhysFrameNum) -> ClassQuery {
         let entries = &self.entries.items[..self.entries.len];
         let i = entries.partition_point(|entry| entry.is_some_and(|e| e.range.end() <= frame));
@@ -190,12 +236,12 @@ impl MapData {
     }
 }
 pub struct BootMapBuilder;
-pub struct UnsealedMemoryMap {
-    data: MapData,
+pub struct UnsealedMemoryMap<S = MapStorage> {
+    data: S,
 }
 /// Only successful seal can construct this authority; no Clone or mutation API.
-pub struct BootMemoryMap {
-    data: MapData,
+pub struct BootMemoryMap<S = MapStorage> {
+    data: S,
     summary: MapSummary,
 }
 impl BootMapBuilder {
@@ -204,17 +250,30 @@ impl BootMapBuilder {
         active_dtb: Span,
         image: Span,
     ) -> Result<UnsealedMemoryMap, MapFatal> {
-        build::draft(platform, active_dtb, image)
+        let mut data = MapStorage::new();
+        build::populate(&mut data, platform, active_dtb, image)?;
+        Ok(UnsealedMemoryMap { data })
+    }
+    /// Build without copying the backing arrays. A failed or previously used
+    /// storage cannot be reused; no partial draft is published.
+    pub fn draft_in<'a>(
+        data: &'a mut MapStorage,
+        platform: &PlatformInfo,
+        active_dtb: Span,
+        image: Span,
+    ) -> Result<UnsealedMemoryMap<&'a mut MapStorage>, MapFatal> {
+        build::populate(data, platform, active_dtb, image)?;
+        Ok(UnsealedMemoryMap { data })
     }
 }
 // Queries return bounded borrowed iterators rather than duplicate cached arrays.
 macro_rules! map_queries {
     () => {
         pub fn ram_spans(&self) -> impl Iterator<Item = PhysFrameRange> + '_ {
-            self.data.banks.iter().map(|bank| bank.range)
+            self.data.borrow().banks.iter().map(|bank| bank.range)
         }
         pub fn entries(&self) -> impl Iterator<Item = &MapEntry> {
-            self.data.entries.iter()
+            self.data.borrow().entries.iter()
         }
         pub fn allocatable_spans(&self) -> impl Iterator<Item = PhysFrameRange> + '_ {
             self.entries()
@@ -225,23 +284,23 @@ macro_rules! map_queries {
             self.entries().filter(|e| e.class.is_protected())
         }
         pub fn source_ledger(&self) -> impl Iterator<Item = &ProtectionSource> {
-            self.data.sources.iter()
+            self.data.borrow().sources.iter()
         }
-        pub fn clips(&self) -> impl Iterator<Item = &ClipRecord> {
-            self.data.clips.iter()
+        pub fn clips(&self) -> impl Iterator<Item = ClipRecord> {
+            self.data.borrow().clips()
         }
         pub fn anomalies(&self) -> &MapAnomaly {
-            &self.data.anomalies
+            &self.data.borrow().anomalies
         }
         pub fn class_at(&self, frame: PhysFrameNum) -> ClassQuery {
-            self.data.class_at(frame)
+            self.data.borrow().class_at(frame)
         }
     };
 }
-impl UnsealedMemoryMap {
+impl<S: Borrow<MapStorage>> UnsealedMemoryMap<S> {
     map_queries!();
 }
-impl BootMemoryMap {
+impl<S: Borrow<MapStorage>> BootMemoryMap<S> {
     map_queries!();
     pub fn summary(&self) -> &MapSummary {
         &self.summary

@@ -264,6 +264,9 @@ These concrete bindings preserve the contracts above:
   protected totals. Adding a future class requires extending accounting slots
   and tests while retaining the fail-closed `is_protected()` predicate.
 
-This binding does not authorize target boot integration. The
-[record's storage/lifetime boundary](../p2-w03-boot-memory-map-ownership-record.md#downstream-handoff-and-execution-limits)
-remains a prerequisite for W04/W09 target callers.
+The [runtime storage correction](06-runtime-storage-and-handoff.md) supersedes
+the original target deferral. `MapStorage` is now explicit one-shot backing;
+`draft_in` and `BootMemoryMap<&mut MapStorage>` keep it in place. The owning
+API remains a host convenience. `clips()` now yields bounded computed values,
+not references to a redundant cache. Target lifetime/stack evidence is W03's
+own delivery obligation, recorded in the runtime verification.

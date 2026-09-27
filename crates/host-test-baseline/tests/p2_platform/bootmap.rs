@@ -515,3 +515,74 @@ fn full_input_and_metadata_capacities_remain_bounded() {
         std::mem::size_of::<ClipRecord>()
     );
 }
+
+#[test]
+fn borrowed_storage_matches_owned_map_without_moving_backing() {
+    let bytes = blob(&root(), &[(0x45000000, 17)]);
+    let dtb = validate(&bytes).unwrap();
+    let facts = discovery::normalize(&dtb).unwrap();
+    let mut storage = const { MapStorage::new() };
+    let address = core::ptr::from_ref(&storage);
+    let metadata = [fr(0x46000000, 2)];
+    {
+        let map = BootMapBuilder::draft_in(&mut storage, &facts, dtb.range(), image())
+            .unwrap()
+            .seal(&metadata)
+            .unwrap();
+        let owned = BootMapBuilder::draft(&facts, dtb.range(), image())
+            .unwrap()
+            .seal(&metadata)
+            .unwrap();
+        assert_eq!(
+            map.entries().collect::<Vec<_>>(),
+            owned.entries().collect::<Vec<_>>()
+        );
+        assert_eq!(
+            map.source_ledger().collect::<Vec<_>>(),
+            owned.source_ledger().collect::<Vec<_>>()
+        );
+        assert_eq!(
+            map.clips().collect::<Vec<_>>(),
+            owned.clips().collect::<Vec<_>>()
+        );
+        assert_eq!(map.summary(), owned.summary());
+        assert!(map.clips().count() <= MAX_CLIPS);
+    }
+    assert_eq!(core::ptr::from_ref(&storage), address);
+    assert!(matches!(
+        BootMapBuilder::draft_in(&mut storage, &facts, dtb.range(), image()),
+        Err(MapFatal::StorageUnavailable)
+    ));
+    assert_eq!(
+        core::mem::size_of::<UnsealedMemoryMap<&mut MapStorage>>(),
+        8
+    );
+    assert_eq!(core::mem::size_of::<BootMemoryMap<&mut MapStorage>>(), 96);
+}
+#[test]
+fn failed_or_dropped_draft_storage_cannot_publish_a_second_map() {
+    let bytes = blob(&root(), &[]);
+    let dtb = validate(&bytes).unwrap();
+    let facts = discovery::normalize(&dtb).unwrap();
+    for case in 0..3 {
+        let mut storage = const { MapStorage::new() };
+        match case {
+            0 => assert!(
+                BootMapBuilder::draft_in(&mut storage, &facts, dtb.range(), span(0, 0)).is_err()
+            ),
+            1 => {
+                let draft =
+                    BootMapBuilder::draft_in(&mut storage, &facts, dtb.range(), image()).unwrap();
+                assert!(draft.seal(&[fr(0, 1)]).is_err());
+            }
+            _ => {
+                let _draft =
+                    BootMapBuilder::draft_in(&mut storage, &facts, dtb.range(), image()).unwrap();
+            }
+        }
+        assert!(matches!(
+            BootMapBuilder::draft_in(&mut storage, &facts, dtb.range(), image()),
+            Err(MapFatal::StorageUnavailable)
+        ));
+    }
+}
