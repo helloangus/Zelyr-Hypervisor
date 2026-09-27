@@ -25,5 +25,9 @@ The [P2-W01/W02 prerequisite conflict](p2-w01-w02-prerequisite-conflict.md)
 records the original DTB-length and Stage-1-access mismatch and its resolution
 through P2-owned bounded access.
 
+The [W03/W04 design-conflict audit](p2-w03-w04-design-conflicts.md) records
+the missing writable metadata window and normalization/allocator contract
+issues that block their implementation. Neither package is complete.
+
 Actual command logs and pass/fail evidence belong in `../verification/`, not in
 this index or a detailed design.
