@@ -12,9 +12,9 @@ item here.  For code changes, the repository `AGENTS.md` and the mandatory
 |---|---|---|
 | P2-W01 | [Boot platform-description intake detailed implementation design](p2-w01-boot-platform-description-intake/README.md); [record](p2-w01-boot-platform-description-intake-record.md) | Implemented; see linked verification |
 | P2-W02 | [Platform discovery and normalization detailed implementation design](p2-w02-platform-discovery-normalization/README.md); [record](p2-w02-platform-discovery-normalization-record.md) | Implemented; see linked verification |
-| P2-W03 | [Boot memory map and ownership foundation detailed implementation design](p2-w03-boot-memory-map-ownership/README.md) | Proposed design; implementation not claimed |
-| P2-W04 | [Physical-page allocation foundation detailed implementation design](p2-w04-physical-page-allocation/README.md) | Proposed design; implementation not claimed |
-| P2-W05 | [Dynamic small-allocation foundation detailed implementation design](p2-w05-dynamic-small-allocation/README.md) | Proposed design; implementation not claimed |
+| P2-W03 | [Boot memory map and ownership foundation detailed implementation design](p2-w03-boot-memory-map-ownership/README.md) | Contracts reconciled; implementation and joint validation pending |
+| P2-W04 | [Physical-page allocation foundation detailed implementation design](p2-w04-physical-page-allocation/README.md) | Proposed design; see remaining admission gates |
+| P2-W05 | [Dynamic small-allocation foundation detailed implementation design](p2-w05-dynamic-small-allocation/README.md) | Proposed design; see remaining admission gates |
 | P2-W06 | [Platform and memory inspection detailed implementation design](p2-w06-platform-memory-inspection/README.md) | Proposed design; implementation not claimed |
 | P2-W07 | [Offline DTB compatibility checking detailed implementation design](p2-w07-offline-dtb-compatibility/README.md) | Proposed design; implementation not claimed |
 | P2-W08 | [Host robustness and negative regression detailed implementation design](p2-w08-host-robustness-regression/README.md) | Proposed design; implementation not claimed |
@@ -27,7 +27,9 @@ through P2-owned bounded access.
 
 The [W03/W04 design-conflict audit](p2-w03-w04-design-conflicts.md) records
 the missing writable metadata window and normalization/allocator contract
-issues that block their implementation. Neither package is complete.
+issues and their current disposition. Neither package is complete.
+The [contract reconciliation record](p2-contract-reconciliation-record.md) links
+the corrected W03–W10 designs and remaining layout/mapping/adapter gates.
 
 Actual command logs and pass/fail evidence belong in `../verification/`, not in
 this index or a detailed design.

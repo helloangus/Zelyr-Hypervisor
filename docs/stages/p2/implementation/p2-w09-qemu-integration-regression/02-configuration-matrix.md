@@ -12,6 +12,16 @@ Machine model and boot recipe follow the P1 reference boot contract
 
 ## 2. Pinning procedure (implementation-time, before expectations)
 
+**W09-DTB admission gate:** the implemented W01 boot adapter trusts only
+`[0x40000000, 0x48000000)`. Existing W01 evidence records rejection for a
+256 MiB default boot whose DTB lies outside that envelope. The 512 MiB and
+2 GiB success cases below remain required targets, currently blocked pending
+a reviewed trustworthy DTB placement/access design and its W01 integration.
+Do not silently enlarge the read envelope or reinterpret expected rejection
+as a successful matrix cell. Preserve separate negative reachability tests.
+Pin the QEMU version, loader placement and read-envelope evidence for each cell
+before recording successful full-chain expectations.
+
 For each RAM variant, dump the DTB QEMU supplies (documented QEMU
 mechanism, e.g. `-machine dumpdtb=`, recorded with the exact QEMU version)
 and derive from the *actual blob*: memory-bank count, bank base/length
@@ -63,7 +73,7 @@ parameters.
 ## 5. Accounting domain (P2-K04)
 
 - **Exact part:** `ram_frames == allocatable_frames + protected_frames`;
-  allocator `managed == allocatable − metadata`; heap
+  allocator `managed == sealed allocatable`; heap
   `pages_used ≤ allocator used`. These hold per W03/W04/W05 contracts;
   violation is a failed row, never a domain adjustment.
 - **Bounded part:** `protected_total ∈ [min, max]` per configuration,

@@ -1,7 +1,7 @@
 # P2-W02 Platform Discovery and Normalization — Detailed Implementation Design
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Original design with implemented current-baseline amendment;
+completion evidence remains in the linked verification record.\
 **Scope:** Capability-driven discovery of P2-required platform facts and one
 normalized, host-usable platform result, required by
 [P2-W02](../../plans/p2-w02-platform-discovery-normalization.md).  

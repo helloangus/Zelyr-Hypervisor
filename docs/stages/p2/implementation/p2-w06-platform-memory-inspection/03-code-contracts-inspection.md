@@ -116,12 +116,13 @@ Errors: the check's own failure is its output; internal overflow maps to
 Security checks: checks compare derived-vs-derived and derived-vs-source
   only; they never read frame contents or DT bytes.
 Logic (pseudocode):
-    c1: plat.ram_total_frames == mm.summary.ram_frames or Err(C1{...})
+    c1: checked_union_count(plat.banks()) == mm.summary.ram_frames or Err(C1{...})
     c2: mm.summary.ram_frames
         == mm.summary.allocatable_frames + mm.summary.protected_total
         or Err(C2)
-    c3: pg.managed == sum(mm.allocatable_spans().counts) - pg.reserved_meta
-        and pg.managed == pg.free + pg.used + pg.reserved_meta or Err(C3)
+    c3: pg.managed == sum(mm.allocatable_spans().counts)
+        and pg.managed == pg.free + pg.used
+        and pg.reserved_meta == count(mm.metadata_ledger union) or Err(C3)
     c4: hp.pages_used <= pg.used
         and hp.pages_used == hp.slab_pages + hp.large_pages or Err(C4)
 Validation: W06-DV05 (each check fired by injected divergence, each ID

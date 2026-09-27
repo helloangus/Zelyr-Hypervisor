@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `28ed286c0ad7aed421e13f3e7835a3b232f9276e`
+**Source blob:** `81dad3c684e14646399e1fb43b01a90e9ee405c0`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 P2 的规范性范围由[任务书 v0.1](task-book-v0.1.zh-CN.md)规定。开展特定工作包时，
@@ -11,3 +11,7 @@ P2 的规范性范围由[任务书 v0.1](task-book-v0.1.zh-CN.md)规定。开展
 
 本目录分开存放 P2 规划、后续实施可追溯记录与验证证据。P2 计划确立有界成果和移交；
 它们不授权实施细节，也不声称平台或内存功能已经存在。
+
+当前实施状态见[实施索引](implementation/README.md)。W01／W02 已有有界参考环境证据；
+W03–W10 仍未实施。[契约修订记录](implementation/p2-contract-reconciliation-record.md)
+区分已修正的文档与仍待完成的设计和运行时基础。

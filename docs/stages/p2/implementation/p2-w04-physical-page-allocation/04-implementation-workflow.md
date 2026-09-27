@@ -6,10 +6,12 @@
 ## 1. Preconditions and failure boundary
 
 Load the documents named in the [entry README](README.md); inspect the
-tracked tree. Expected state: no workspace; W01–W03 designed but not
-implemented. W04 develops host-first: the frame-storage window (A2) is a
-trait injected with a plain buffer on host; the sealed map is a fixture
-built through W03's builder with hand-computed plans.
+tracked tree. P0/P1 and W01/W02 exist; W03/W04 do not. Close W04-LAYOUT
+before allocator coding and W04-MAP before target integration. These are
+P2-owned design deliverables, not missing P1 completion evidence. Host storage
+is an exclusive buffer; fixture maps must use the W03 draft/plan/seal path.
+
+
 
 Stop and obtain direction instead of guessing when:
 
@@ -33,10 +35,10 @@ Stop and obtain direction instead of guessing when:
 Target: `pagealloc::table`, contract
 [03 §1](03-code-contracts-pagealloc.md).
 
-Work: bitfield table over injected storage; state transitions; audit
-counts.
+Work: locally indexed frame states and allocation identity over exclusive
+storage; head/order/continuation validation; audit counts.
 
-**Acceptance:** boundary fixtures (managed-domain edges, all four states,
+**Acceptance:** boundary fixtures (managed-domain edges, holes, head/tail states,
 storage-length checks) pass; no raw index can bypass the table (review
 check).  
 **Failure/blocker:** a needed P0 primitive missing → upstream defect path
@@ -65,7 +67,7 @@ the fixed edit order.
 
 **Acceptance:** randomized allocate/free sequences (host, injected spans)
 maintain I2/I3 after every operation; coalescing stops at region
-boundaries; node exhaustion yields `MetadataFull`.  
+boundaries; worst-case fragmentation cannot exhaust nodes after Ready.\
 **Failure/blocker:** any case where an interrupted operation leaves table
 and lists inconsistent — restructure the edit order; do not add recovery
 ad hoc.
@@ -81,7 +83,7 @@ Work: init with audit; allocate; allocate_contiguous; free_contiguous.
 (`SealMismatch`, `DomainMismatch`, `ConservationBroken`); property tests:
 random valid sequences keep the hard gate and conservation; each error
 input yields its typed error with state unchanged (before/after stats
-equal).  
+equal, plus full tag/list-state equality).\
 **Failure/blocker:** any input that can steer allocation toward a
 protected frame is a critical breach — stop and fix the domain
 construction, never the test.
@@ -102,8 +104,8 @@ Target: whole module set.
 
 Work: confirm no locks/atomics, no board names, no arch code, no writes
 to managed frames, fixed region iteration order; confirm the
-order-mismatch documented limit ([02 §5](02-architecture-and-state.md))
-is recorded in the implementation record.
+original-allocation identity checks ([02 §5](02-architecture-and-state.md))
+reject wrong order, partial/combined blocks and foreign allocator handles.
 
 **Acceptance:** review note with zero violations.  
 **Failure/blocker:** hits removed or escalated per §1.

@@ -6,7 +6,9 @@ claimed.
 every P2-protected range before any dynamic page allocation, required by
 [P2-W03](../../plans/p2-w03-boot-memory-map-ownership.md).  
 **Owner/change context:** P2-W03 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
 
 ## Purpose and use
 
@@ -33,7 +35,7 @@ Guidelines preflight (repository `AGENTS.md`, documentation index,
 
 | Supporting file | Load it for |
 |---|---|
-| [01-scope-and-foundations.md](01-scope-and-foundations.md) | Requirement enumeration, scope classification, P2-ACR-01 handling, assumed contracts, page-size and representation decisions. |
+| [01-scope-and-foundations.md](01-scope-and-foundations.md) | Requirement enumeration, scope classification, P2-ACR-01 handling, current input contracts, page-size and representation decisions. |
 | [02-architecture-and-state.md](02-architecture-and-state.md) | Range classification, conflict-policy rules, the draft→seal lifecycle, and ownership of every state. |
 | [03-code-contracts-bootmap.md](03-code-contracts-bootmap.md) | Exact function/type contracts with pseudocode. |
 | [04-implementation-workflow.md](04-implementation-workflow.md) | Ordered implementation steps with acceptance and failure handling. |
@@ -95,32 +97,31 @@ scope wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, no W01/W02
-implementation, and no P1 image-range fact. W03 is designed against W02's
-fact records and W01's validated DTB range as assumed prerequisites; the P1
-image range is an assumed P1 contract exactly as in
-[W01 §2](../p2-w01-boot-platform-description-intake/01-intake-boundary.md)
-(A3).
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
-| Normalized, checked map identifying every P2-protected range (P2-V05) | No map code or facts exist | Map builder over W02 records + P1 range with the §4 conflict policy | Protection must exist before allocation is even possible | W03 (this design), consuming W01/W02 outputs | W03-DV01–DV08 host tests |
+| Normalized, checked map identifying every P2-protected range (P2-V05) | W02 facts exist; map code absent | Map builder over W02 records + P1 range with the §4 conflict policy | Protection must exist before allocation is even possible | W03 (this design), consuming W01/W02 outputs | W03-DV01–DV08 host tests |
 | Explicit fatal outcomes for incompatible ownership (plan step 3) | n/a | Conflict-policy table with fatal classes | Silent overlap resolution would break the hard gate | W03 | W03-DV05/DV06 |
 | Sole permitted allocation domain identified (plan step 1; W04 step 1) | n/a | Sealed map with `allocatable_spans()` query | W04 must have exactly one authority | W03; consumed by W04 | W03-DV08 + W04 consumption review |
 | Reserved/ownership extension foundation (P2-G01–G03) | n/a | Extensible classification + source ledger + totals | ADR-018 evolution requires stable extension points | W03 | W03-DV10 review |
-| W02 facts and P1 image range available (plan step 1) | Not implemented upstream | Assumed contracts with failure boundaries | Task book §2 upstream-defect rule | W01/W02/P1 owners | Upstream verification when available; host fixtures meanwhile |
+| W02 facts and P1 image range available (plan step 1) | Available in W01/W02/P1 | Current typed inputs with failure boundaries | Task book §2 upstream-defect rule | W01/W02/P1 owners | Existing upstream records plus W03 integration fixtures |
 | P2-ACR-01 remains visible (task book §3) | Recorded in task book | Restated here; no object design | Conflict is unresolved and must block object work | ADR owner | P2-V13 stage review |
 
-No ledger row selects an allocator or memory-object design; the absent
-upstream implementations are ordered prerequisites handled with host
-fixtures.
+No ledger row selects an allocator or memory-object design. W04 planning and
+target writable access remain downstream foundations, not existing APIs.
 
 ## Resolved design decisions and their authority
 
 1. **Page size fixed at 4 KiB for the P2 map and allocator domain.**
    Rationale: the reference platform and fixture use 4 KiB granules, and
-   P0/P1 target decisions (assumed contracts) are designed around the AArch64
+   the existing P1 Stage-1 implementation uses the AArch64
    4 KiB granule; frame-based bookkeeping needs one fixed granule. A different
    granule is a design change, not a constant edit.
 2. **Frame-based internal representation.** The map stores
@@ -129,13 +130,12 @@ fixtures.
    fatal ([02 §4](02-architecture-and-state.md)). Rationale: page-granular
    allocation is the package's purpose; byte-vs-frame confusion is the
    classic bug class the typed newtypes exist to prevent.
-3. **Protected-wins conflict policy.** A protected range overlapping RAM
-   clips the RAM (recorded); protected-protected overlap is fatal except
-   exact duplicates from the same source class; RAM-RAM overlap is fatal.
-   Rationale: firmware protection statements are authoritative over the RAM
-   description (the hard gate is about never allocating them), but two
-   disagreeing protection statements are unresolvable — choosing one would
-   invent facts.
+3. **Protected-wins conflict policy.** Apply R4/R7 duplicate exceptions before
+   overlap rejection. Check protection ownership in original bytes, round
+   outward, then protect the page union with all source IDs. RAM exact
+   duplicates deduplicate; adjacency merges; other RAM overlap is fatal.
+   The complete rules live in [02 §4](02-architecture-and-state.md).
+
 4. **Two-phase draft→seal lifecycle.** W04 plans metadata against the draft;
    sealing records the metadata range as protected and freezes the map. The
    allocator initializes only from the sealed map. Rationale: makes "metadata

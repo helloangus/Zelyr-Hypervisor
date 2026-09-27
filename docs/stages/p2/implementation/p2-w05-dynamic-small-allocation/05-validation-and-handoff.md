@@ -41,9 +41,9 @@ performance claim (plan work sequence 5), and none may be recorded as one.
 | ID | Requirement | Test or review | Suggested technique | Passing condition | Proves / does not prove |
 |---|---|---|---|---|---|
 | W05-DV01 → P2-V07 | Backing chain | Host joint test with W04 fixtures + construction review | Every heap page traces to an `AllocatedFrames` value; W03 seal precedes | No heap byte exists outside a W04 allocation | Transitive protection inheritance; not W04's internals |
-| W05-DV02 → P2-V07 (P2-F01) | Small-object needs | Host unit + property tests | Alloc/free across all classes, header-boundary slots, zero size | Unique aligned handles; invariants hold per op | Class machinery correctness; not later-stage object designs |
+| W05-DV02 → P2-V07 (P2-F01) | Small-object needs | Host unit + property tests | Alloc/free across all classes, header-boundary slots for every class, zero size, fixed-directory initial accounting | Unique aligned handles; invariants hold per op | Class machinery correctness; not later-stage object designs |
 | W05-DV03 → P2-V07 (P2-F02) | Explicit failure | Host tests | Exhaust class, slabs, directory, budget, backing (small pools) | Each `OutOfMemory{which}` fires with correct `which`; stats unchanged | Typed exhaustion; not performance under pressure |
-| W05-DV04 → P2-V07 | `GlobalAlloc` adapter | Host integration (only if `alloc` available) | `Box`/`Vec`-shaped corpus through the adapter; failure-path hooks | Null-on-failure + fatal policy observed; dealloc breach halts | `alloc` surface works; skipped ⇒ blocked-by-upstream entry |
+| W05-DV04 → P2-V07 | `GlobalAlloc` adapter | Host integration (only if `alloc` available) | `Box`/`Vec`-shaped corpus through the adapter; failure-path hooks | Null trait result and separate infallible fatal path verified; reentry/publication tests pass; dealloc breach halts | `alloc` surface works; pending W05-GLOBAL ⇒ blocked-by-design entry |
 | W05-DV05 → P2-V07 (P2-F03) | Release | Host tests | Correct release; double free; unknown handle; cross-kind | `Ok` exactly once; each misuse typed `InvalidFree`; state unchanged | Release exactness; not Drop semantics (none designed) |
 | W05-DV06 → P2-V07 (P2-F04) | Stress invariants | Host property/soak test | Long randomized interleavings incl. empty-slab returns and exhaustion probes | Invariants 1–6 of [02 §5](02-architecture-and-state.md) hold after every operation; leak-freedom at cycle ends | Invariant preservation under stress; no performance claim |
 | W05-DV07 → P2-V07/P2-V10 | Determinism | Host property test | Identical operation sequences from identical init | Identical stats traces | Repeatability; not hardware-idempotence |
@@ -70,8 +70,7 @@ Before handing W05 to review, provide:
 - confirmed consumer readiness: W06 (`HeapStats`), W08 (typed errors and
   invariant list as fixtures), W09 (stats traces), W10 (dynamic-allocation
   contract, failure policy, containment bounds for P3/P4);
-- open items recorded, not resolved: P0 target/`alloc` decision (A2),
-  physical placement (P0-W03), Reserved items (realloc, zeroing, class
+- open items recorded, not resolved: W05-GLOBAL and W05-MAP, target Heap storage fit, Reserved items (realloc, zeroing, class
   tuning, CPU-local pools), and the static-array boundary review
   statement;
 - explicit statement that this package designs no VM/vCPU, scheduler, or

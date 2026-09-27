@@ -9,31 +9,14 @@ this design. The backing frame API is W04's
 
 ## 1. `Heap::init`
 
-```text
-Name and stability: heap::core::Heap::init(page_alloc: &mut PageAllocator,
-  budget: HeapBudget) -> Result<Heap, HeapError>. Internal; called once
-  per boot after W04 is ready.
-Purpose and caller: acquire directory storage through the page path,
-  initialize class states, publish the heap.
-Inputs / outputs: W04 allocator handle; budget. Output: ready Heap.
-Preconditions / postconditions: pre — W04 initialized (its own audit
-  passed); post — directory live, zero allocations, budget accounting
-  includes the directory pages; invariants 1–6 of
-  [02 §5](02-architecture-and-state.md) hold trivially.
-Concurrency/allocation context: single-core boot; uses W04 only; no
-  other allocation exists yet.
-Errors and failure guarantee: HeapError::OutOfMemory (directory storage
-  itself) — fatal to boot (no heap); state unchanged on failure.
-Security/authorization checks: directory storage is a W04
-  `AllocatedFrames` value — the ownership chain starts inside this call.
-Logic (pseudocode):
-    dir_block = page_alloc.allocate_contiguous(DIR_PAGES)?   # typed above
-    directory.init_over(dir_block)              # full block incl. held surplus
-    classes[].init(); pages_used = dir_block.range.count   # budget counts
-                                # actual held frames (invariant 3, [02 §5])
-    return Ok(Heap{ ... })
-Validation: W05-DV01 (backing chain), DV02 (first allocations).
-```
+Logical interface: `Heap::init(page_alloc, backing_adapter, budget)` returns a
+single owned Heap or typed initialization error. W04 must be Ready and W05-MAP
+must supply the backing ownership contract. Class heads and the fixed directory
+are in the Heap value, initially empty; `pages_used=0`. No directory pages are
+allocated and there is no hidden metadata debit against the heap page budget.
+Validate the budget, initialize state and publish once. Target storage/stack fit
+is required before boot integration. Host adapters supply exclusive buffers.
+Validation: W05-DV01/DV02, including initial zero-page accounting.
 
 ## 2. `heap::layout::route`
 
@@ -93,10 +76,10 @@ Logic (pseudocode):
       Pages{n}:
         frames = acquire_pages(n)?
         return Ok(handle(frames, kind=Large))
-  acquire_pages(n): budget check (on requested n; the full block counts
-                    while held) -> page_alloc.allocate_contiguous(n)
-                    -> directory.insert(full AllocatedFrames block, kind)
-                    -> page base
+  acquire_pages(n): compute checked rounded buddy count -> budget and directory preflight
+                    -> page_alloc.allocate_contiguous(n) -> W05-MAP acquisition
+                    -> commit directory(original handle, mapping owner, kind)
+                    -> mapped virtual base; rollback before publication on error
 Validation: W05-DV02/DV03.
 ```
 
@@ -126,10 +109,13 @@ Logic (pseudocode):
         slab.free_count += 1
         if slab was full: return slab to partial list
         if slab is entirely free and POLICY.return_empty:
-            classes[i].remove(slab); release_pages(slab.page, 1)
+            end borrows and unmap via backing owner before freeing W04 handle
+            commit directory/class removal only after successful release
       Large:
-        entry = directory.remove_large(handle.frames) else Err(...)
-        page_alloc.free_contiguous(entry.block)     # full block incl. held surplus
+        entry = directory.validate_large(handle.frames) else Err(...)
+        end borrows and unmap via backing owner
+        page_alloc.free_contiguous(entry.original_handle)
+        commit directory removal; mapping/release invariant failures are terminal
     return Ok(())
 Validation: W05-DV05.
 ```
@@ -153,35 +139,20 @@ Errors: audit reports the violated invariant class as
 Validation: W05-DV06/DV07.
 ```
 
-## 6. `GlobalAlloc` adapter (conditional module)
+## 6. `GlobalAlloc` adapter — design admission pending
 
-```text
-Name and stability: heap::global::HeapAdapter, `unsafe impl GlobalAlloc`
-  over a registered &Heap; compiles only when the target supplies `alloc`
-  ([01 §4](01-scope-and-foundations.md)); P2-local; the alloc-error
-  handler for the boot phase lives beside it.
-Purpose and caller: make `alloc`-based dynamic allocation available to
-  later P2 consumers and P3/P4 designs.
-Inputs / outputs: Layout in; ptr or null out (alloc contract); dealloc
-  per contract.
-Preconditions / postconditions: the adapter adds no logic — it routes to
-  core and maps outcomes: Ok -> ptr; core Err(OutOfMemory|...) -> null
-  plus the registered fatal allocation-error path (README Decision 5);
-  dealloc -> core dealloc with InvalidFree -> fatal invariant stop
-  (README Decision 6).
-Concurrency/allocation context: `GlobalAlloc` is &self; P2's single-core
-  ownership makes this sound; P3 revisits (its design owns the locked
-  wrapper).
-Errors and failure guarantee: per [01 §7](01-scope-and-foundations.md)
-  table — the adapter never invents a recovery.
-Security/authorization checks: none beyond core (adapter is a thin map);
-  `SAFETY` argument: single-threaded boot ownership; Layout values come
-  from the compiler's call sites.
-Logic: two thin functions + handler registration; no caching, no retries.
-Validation: W05-DV04 — only when `alloc` is available on the P0 target;
-  otherwise recorded as blocked-by-upstream with the inner API validated
-  regardless (W05-DV02/03/05/06/07).
-```
+The intended adapter uses `core::alloc::GlobalAlloc`; the target is already
+fixed. W05-GLOBAL in [01 §4](01-scope-and-foundations.md) must supply concrete
+registration, internal mutable state, lifetime, exclusive access, reentrancy and
+failure-handler contracts before any unsafe implementation. A registered shared
+`&Heap` is not a mutable heap owner; single-core execution does not repair this.
+
+Expected boundary behavior is pointer/null for allocation and terminal reporting
+for detected deallocation invariants. Null return and infallible caller failure
+handling are separate events. Specify original-layout validation and pointer
+ownership recovery before mapping raw deallocation to checked handles. W05-DV04
+remains blocked by design until these conditions and pinned-target linking are
+verified; host checked-API tests cannot substitute for adapter evidence.
 
 ## 7. Explicitly unauthorized interfaces
 

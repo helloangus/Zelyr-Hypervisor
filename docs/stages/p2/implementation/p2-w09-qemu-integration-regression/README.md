@@ -7,7 +7,11 @@ configuration matrix, expected observations, repeated-boot stability
 scenarios, evidence capture, and pass conditions (P2-K01–K05) — required by
 [P2-W09](../../plans/p2-w09-qemu-integration-regression.md).  
 **Owner/change context:** P2-W09 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
+
+**Admission:** W09-DTB blocks the large-RAM success cells until trusted access is designed. See the [owning gate](02-configuration-matrix.md#2-pinning-procedure-implementation-time-before-expectations).
 
 ## Purpose and use
 
@@ -101,13 +105,13 @@ wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, no hypervisor
-image, no QEMU runner, and no CI. The P1 EL2 runtime and P0 automation that
-W09 consumes are plans only. W09 is therefore designed entirely against
-assumed contracts with explicit blocked boundaries; this is the same stance
-as every P2 design and is restated here because W09 is the package where
-those assumptions become runtime-facing.
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
@@ -116,8 +120,8 @@ those assumptions become runtime-facing.
 | Map accounting in its documented domain (P2-K04) | No map exists | Accounting-domain definition (equation exact; protected-total interval) | The domain must be declared before results are judged | W09; W03 supplies the equation | Per-boot map sections |
 | Repeated-boot evidence detecting uninitialized-state dependence (plan step 4) | Nothing | Repeated-boot scenario with per-boot comparison | Drift across boots is the signature of uninitialized state | W09 | W09-C5 rows |
 | W06 inspection consistency active-state check (P2-V11 wording) | W06 designed, not implemented | Inspection render + C1–C4 pass required in every boot log | Integration-strength check of the active-state property | W06 (mechanism), W09 (expectation) | Per-boot inspection sections |
-| P0 runner entry with parameter carrying, capture, timeout, evidence conventions (plan step 1) | P0-W09 planned, unimplemented | Assumed contract with blocked boundary | W09 must not recreate automation (plan work sequence 1) | P0-W09 owner | Runner verification when it lands |
-| P1 boot path delivering EL2 entry + DTB handoff (W01 A1/A2/A3) | P1 planned, unimplemented | Assumed contracts with blocked boundaries | No boot, no evidence | P1 owners | P1 verification records |
+| P0 runner entry with parameter carrying, capture, timeout, evidence conventions (plan step 1) | Existing runner and P1 regression process owner | Reuse and audit matrix parameter support | W09 must not recreate automation (plan work sequence 1) | P0-W09 owner | Existing P0/P1 records and W09 matrix evidence |
+| P1 boot path delivering EL2 entry + DTB handoff (W01 A1/A2/A3) | P1 complete in reference scope; W01 owns bounded DTB access | Honor W09-DTB gate for larger RAM cells | No boot, no evidence | P1 owners | P1 verification records |
 
 No ledger row invents QEMU behavior as authority or hardware claims; the
 multi-bank configuration is pinned from the actual dumped DTB at

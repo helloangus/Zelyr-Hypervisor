@@ -7,7 +7,9 @@ limitations, and stage-gate checklist that P3, P4, and the P2 completion
 review consume, required by
 [P2-W10](../../plans/p2-w10-p3-p4-handoff-contract.md).  
 **Owner/change context:** P2-W10 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
 
 ## Purpose and use
 
@@ -96,20 +98,20 @@ wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-all ten P2 plans exist; the five W01–W05 implementation designs exist;
-the W06–W10 designs (including this one) are being added; no P2
-implementation record or verification evidence exists yet, and no P0/P1
-implementation beyond P0-W01 exists. W10's record can therefore be
-authored only as a *structure with statuses to be filled*, and its
-evidence map points at record paths that do not exist yet — by design.
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
 | Reviewable P3/P4 consumer contract and evidence locations (P2-V12) | No handoff record exists | The W10 record artifact per [01](01-consumer-contract.md)/[02](02-evidence-map-and-gates.md) structure | Consumers need one locatable document, not nine designs to reverse-engineer | W10 (this design) | P2-V12 review of the authored record |
 | One plan per package; validation IDs with conditions; links resolve; dependencies acyclic; P2-ACR-01 visible (P2-V13) | Plans exist and satisfy structure today; statuses unevidenced | The gate checklist + package/validation mapping in the record | The completion reviewer needs the map in one place, cross-checked, not recomputed | W10; task book §4/§6 as source | P2-V13 review |
 | Known limitations recorded (plan work sequence 4) | Scattered across designs | Consolidated limitations section | Limitations must be findable by P3/P4 without reading every design | W10 | P2-V12 review |
-| W01–W09 outcomes, evidence locations available (plan step 1) | Designs exist; records/evidence do not yet | Record references record paths truthfully; statuses filled only from real records | A handoff that pre-claims evidence is a completion claim in disguise | W01–W09 owners produce records; W10 curates | Each record when created |
+| W01–W09 outcomes, evidence locations available (plan step 1) | W01/W02 records/evidence exist; W03–W09 do not yet | Record references record paths truthfully; statuses filled only from real records | A handoff that pre-claims evidence is a completion claim in disguise | W01–W09 owners produce records; W10 curates | Each record when created |
 | P3/P4 named as consumers without designing their content (plan scope) | P3/P4 plans exist | Consumer mapping by plan IDs only | The record routes, it does not design | W10 | P2-V12 review |
 
 No ledger row resolves P2-ACR-01, claims stage completion, or designs

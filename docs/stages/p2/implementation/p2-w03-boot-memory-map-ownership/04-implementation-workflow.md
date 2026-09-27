@@ -6,16 +6,18 @@
 ## 1. Preconditions and failure boundary
 
 Load the documents named in the [entry README](README.md); inspect the
-tracked tree. Expected state: no workspace; W01/W02 designed but not
-implemented; W03 develops host-first over injected fact records, with a
-fixture factory producing synthetic `PlatformInfo`-shaped inputs.
+tracked tree. W01/W02 and the P1 linker range now exist. Use the real typed
+facts and the current input table; build host fixtures through W01/W02 or a
+bounded internal fixture adapter. W03 has no implementation yet.
+
+
 
 Stop and obtain direction instead of guessing when:
 
-- the W02 fact record shapes differ from those assumed here — that is a
+- the W02 fact record shapes differ from the current input table — that is a
   W02 contract revision (design conflict), not a local adapter hack;
 - the P1 image range cannot be represented or is absent — blocked
-  prerequisite per [01 §3](01-scope-and-foundations.md) A3; protection
+  prerequisite per the image-input row in [01 §3](01-scope-and-foundations.md); protection
   must not be skipped or defaulted;
 - implementing the seal seems to require designing W04's metadata
   placement — stop; W03 validates plans, W04 chooses them;
@@ -32,7 +34,7 @@ Target: `bootmap::ranges`, contracts
 [03 §1](03-code-contracts-bootmap.md).
 
 Work: `PhysFrameNum`/`PageCount`/`PhysFrameRange` (or adapted P0
-primitives), `to_frames`, spatial predicates; fixture set for conversion
+primitives), `ram_to_frames`/`protect_to_frames`, spatial predicates; fixture set for conversion
 boundaries (unaligned base/len, overflow, adjacency).
 
 **Acceptance:** no raw integer can become a frame span outside the
@@ -76,7 +78,7 @@ Work: `allocatable_spans`, `protected_ranges`, `class_at` over sorted
 entries.
 
 **Acceptance:** binary-search queries correct over random span sets
-(property-style loop); the draft type has no sealing-capable surface.  
+(property-style loop); the draft type has no allocation-capable surface.\
 **Failure/blocker:** n/a beyond §1 rules.
 
 ### Step 5 — seal and sealed queries
@@ -88,7 +90,7 @@ Work: plan validation (R11), reclassification, final audit, summary,
 accounting equation.
 
 **Acceptance:** valid seals produce sealed maps whose protected superset
-equals protected + plan (audit independently recomputed in tests); each
+equals union(rounded protected + plan) intersect RAM (independently audited); each
 R11 violation class rejected; summary equation exact; sealed type offers
 `&self` methods only.  
 **Failure/blocker:** an audit that cannot be expressed without trusting

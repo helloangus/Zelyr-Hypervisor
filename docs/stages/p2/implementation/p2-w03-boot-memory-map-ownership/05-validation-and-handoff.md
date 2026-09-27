@@ -13,7 +13,7 @@ regression coverage is W08's harness over this package's policy table.
 
 ## 2. Error, security, and observability model
 
-- **Error model.** Six fatal classes
+- **Error model.** Fatal classes
   ([02 §9](02-architecture-and-state.md)) — boot stops with one diagnostic
   carrying source identities; five recorded anomaly classes (R4, R7, R8,
   R9, R10) plus clips. No input defect can produce a panic: interval
@@ -35,13 +35,13 @@ regression coverage is W08's harness over this package's policy table.
 
 | ID | Requirement | Test or review | Suggested technique | Passing condition | Proves / does not prove |
 |---|---|---|---|---|---|
-| W03-DV01 → P2-V05 (P2-D05) | Frame conversion | Host unit tests | Unaligned base/len, zero len, overflow boundary fixtures | Exact `MapFatal` classes; no wrap; empty ranges impossible | Conversion correctness; not firmware alignment behavior |
+| W03-DV01 → P2-V05 (P2-D05) | Frame conversion | Host unit tests | Unaligned RAM; outward-rounded protection; byte-end/rounded-end overflow; zero len | Exact `MapFatal` classes; no wrap; empty ranges impossible | Conversion correctness; not firmware alignment behavior |
 | W03-DV02 → P2-V05 (P2-D02) | Image protection | Host tests | Image range inside/at/outside RAM; absent image range | Protected in all in-RAM cases; absent → blocked-defect stop path exercised | Image gate; not P1's range authority |
-| W03-DV03 → P2-V05 (P2-D03) | DTB + rsvmap protection | Host tests | DTB in RAM, rsvmap entries incl. duplicates and out-of-RAM | `ActiveDtb` + `DtbReservation(i)` entries with R7/R10 outcomes | DTB-side protection; not DTB content validity (W01) |
-| W03-DV04 → P2-V05 (P2-D04) | Reserved-memory + artifacts | Host tests | no-map/reusable children, initrd artifact, malformed artifact | All recorded protected with sources and flags | Record fidelity; not release policies (Reserved) |
-| W03-DV05 → P2-V05 (P2-D05) | Conflict policy R1–R3, R6 | Host tests | Every fatal row of the policy table | Fatal class with correct identity detail; boot-stop path | Ambiguity is fatal, not guessed; not real-firmware behavior |
+| W03-DV03 → P2-V05 (P2-D03) | DTB + rsvmap protection | Host tests | DTB byte extent; W02 header/node reservations, single-ingestion and duplicate provenance cases | `ActiveDtb` and header source IDs retained with R7/R10 outcomes | DTB-side protection; not DTB content validity (W01) |
+| W03-DV04 → P2-V05 (P2-D04) | Reserved-memory + artifacts | Host tests | no-map/reusable children, initrd artifact, malformed artifact | Usable extents protected with sources and flags; any present non-usable fact rejects the map | Record fidelity; not release policies (Reserved) |
+| W03-DV05 → P2-V05 (P2-D05) | Conflict policy R1–R3, R6 | Host tests | Every fatal row, duplicate-before-overlap precedence and R12 | Fatal class with correct identity detail; boot-stop path | Ambiguity is fatal, not guessed; not real-firmware behavior |
 | W03-DV06 → P2-V05 (P2-D05) | Anomaly policy R4, R7–R10 | Host tests | Every anomaly row | Recorded with counters, never fatal, never protection-reducing | Anomaly containment; not downstream interpretation |
-| W03-DV07 → P2-V05 (P2-D06) | Normalization invariants | Host property test | Random bank/protected sets through the builder | Sorted, disjoint, full RAM coverage on every run | Normalization soundness; not exhaustive platform space |
+| W03-DV07 → P2-V05 (P2-D06) | Normalization invariants | Host property test | Random banks/protections, disjoint bytes sharing rounded pages, partial/outside-RAM extents | Sorted, disjoint, full RAM coverage on every run | Normalization soundness; not exhaustive platform space |
 | W03-DV08 → P2-V05 (P2-D07) | Hard-gate property | Host property test | Random sets; for each frame in RAM assert class; cross-check allocatable spans vs protected set | No frame both allocatable and protected; clip log explains every RAM shrink | The central P2 safety property at map level; not allocator behavior (W04) |
 | W03-DV09 → P2-V05 (P2-D08) | Seal contract | Host tests (with W04 for planner interplay) | Valid plans; each R11 violation; double seal attempt | Seal accepted only for plan-in-allocatable; metadata class present; re-seal impossible | Metadata-protected-before-allocation property; not W04's planner quality |
 | W03-DV10 → P2-V05/P2-V13 (P2-G01–G03) | Extension foundation + ACR | Design review | Simulate adding a future class/source; check fail-closed default; confirm no object design crept in; P2-ACR-01 restated | Unknown classes default protected; ledger identities stable; no `MemoryObject`/`MemoryRegion` anywhere | Extension readiness and ACR visibility; not P4 mechanisms |
@@ -62,8 +62,7 @@ Before handing W03 to review, provide:
   sealed authority), W06 (summary/clip/anomaly queries), W08 (policy
   table as regression oracle), W09 (accounting totals), W10 (ledger
   identities, extension protocol, under-declaration limit);
-- open items recorded, not resolved: P0/P1 assumed contracts, physical
-  placement (P0-W03), DTB copy/release Reserved, P2-ACR-01 unresolved and
+- open items recorded, not resolved: W04 joint-seal integration, target storage/stack fit, DTB copy/release Reserved, P2-ACR-01 unresolved and
   blocking any memory-object work;
 - explicit statement of the hard-gate division of responsibility: W03
   guarantees the map; W04 must derive allocation only from it.

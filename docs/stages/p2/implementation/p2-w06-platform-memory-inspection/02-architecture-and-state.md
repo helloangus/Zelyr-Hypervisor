@@ -13,7 +13,7 @@
 | `inspect::render` | Write the report to a `fmt::Write` sink in stable order | One line buffer (bounded) | `&InspectionReport`, sink | `Result<(), RenderError>` | No value recomputation — render reads stored fields only; this is what makes DV07 reviewable |
 
 Module names are stage-local design freedom owned by this design; physical
-placement awaits P0-W03 ([01 §5](01-scope-and-foundations.md)).
+placement follows the existing workspace ([01 §5](01-scope-and-foundations.md)).
 
 ## 2. Report model
 
@@ -40,8 +40,8 @@ Section content (authoritative enumeration; P2-H01–H03):
 - `MemoryMapSection` — per-class protected totals (by `ProtectedSourceId`
   class), allocatable span list (first frame, count), `MapSummary` totals,
   outside-RAM warning count, anomaly counts (clips, merges, dedupes).
-- `PageAllocatorSection` — managed/free/used/reserved frames total and per
-  region, region count.
+- `PageAllocatorSection` — managed/free/used per region and total; physical
+  metadata total separately, counted once from the sealed ledger, region count.
 - `HeapSection` — budget, pages used, headroom, per-class
   slabs/used/free-slot counts, large-allocation count.
 - Consistency outcomes are not stored as data: composition fails closed on
@@ -72,9 +72,9 @@ across boots; W08 asserts check failures under injected divergence.
 
 | ID | Assertion | Inputs | Failure meaning |
 |---|---|---|---|
-| C1 | `platform.ram_total_frames == memory_map.summary.ram_frames` | A1, A2 | The map was not built from the active platform facts — a construction-order or divergence defect |
+| C1 | `union_of_usable_RAM_frames == memory_map.summary.ram_frames` | A1, A2 | The map was not built from the active platform facts — a construction-order or divergence defect |
 | C2 | `summary.ram_frames == summary.allocatable_frames + summary.protected_total` (recomputed from section fields) | A2 | Map accounting equation broken (W03's audit should have caught this; C2 is the independent cross-render verification demanded by P2-H04) |
-| C3 | `pages.managed == memory_map allocatable frames − pages.reserved_meta` and `managed == free + used + reserved_meta` | A2, A3 | Allocator domain does not match the sealed map, or allocator conservation broke |
+| C3 | `pages.managed == memory_map sealed allocatable frames` and `managed == free + used` | A2, A3 | Allocator domain does not match the sealed map, or allocator conservation broke |
 | C4 | `heap.pages_used <= pages.used` and heap page count consistent with large + slab page counts from `HeapStats` | A3, A4 | Heap holds pages the page allocator does not account as used — ownership-chain break |
 
 Checks are O(small): sums over bounded lists, no full-table recounts (W04's
@@ -104,3 +104,11 @@ arithmetic checked; a checked-arithmetic failure inside a check is itself
   property values, blob bytes are excluded by [01 §3](01-scope-and-foundations.md)
   rule 4), so the report cannot become a log-injection channel. Ranges and
   counts render as typed values formatted by checked paths.
+
+C1 uses the checked union of usable aligned RAM banks, removing exact duplicate
+banks before counting; it does not rebuild protection or allocate memory. This
+prevents duplicated firmware declarations accepted by W03 from causing false
+inspection failures. C2 counts source-sharing pages once via map entries; C3
+also checks `reserved_meta` against the sealed metadata ledger. Report storage
+uses W03 map-entry/source-set bounds and W04 normalized-region bounds, not just
+the number of input RAM banks. Full source extents and page totals are separate.

@@ -12,8 +12,8 @@ fact state, plus a verdict ("P2-discoverable" / "not P2-discoverable")
 that follows deterministically from the rows and the fixture's binding
 expectations. The outcome in the strong sense: running the checker on a
 blob and booting the same blob exercise the *same* validation and discovery
-code, so a PASS row predicts the boot outcome for that fact, and a FAIL row
-predicts a boot stop — the offline check "exposes P2 platform-description
+code, so a PASS row describes the same decoding outcome for that fact; runtime
+placement and later W03 admission are separate — the offline check "exposes P2 platform-description
 gaps before EL2 boot" (plan goal).
 
 ## 2. Assumed prerequisite contracts and failure boundaries
@@ -22,7 +22,7 @@ gaps before EL2 boot" (plan goal).
 |---|---|---|---|---|
 | A1 | W01 intake validators and cursor are host-runnable over byte slices, with the diagnostic taxonomy of the W01 design | [W01 intake boundary](../p2-w01-boot-platform-description-intake/01-intake-boundary.md) (README Decision 8) | Reuse unmodified; placement rules parameterizable | If a placement rule is hard-wired to boot-only inputs, a W01 contract revision is required — sibling-design conflict; W07 must not fork the validator |
 | A2 | W02 `normalize` is host-runnable, deterministic, all-or-nothing, with the five-state fact model and fatal set | [W02 foundations §6–§7](../p2-w02-platform-discovery-normalization/01-scope-and-foundations.md) | Reuse unmodified; map outcomes to report classes | Same rule: divergence or a boot-only dependency is a sibling-design conflict, not a W07 workaround |
-| A3 | Host test entry, formatting/lint gates, and test organization from the P0 baselines | P0-W07/W08 plans (unimplemented) | Where the checker host target lives and how it runs | If absent, blocked upstream defect; W07 still fixes the artifact contracts |
+| A3 | Host test entry, formatting/lint gates, and test organization from the P0 baselines | Existing P0 host-test and quality-gate baselines | Where the checker host target lives and how it runs | If absent, blocked upstream defect; W07 still fixes the artifact contracts |
 | A4 | Dependency governance: no new crate without P0-W18 approval | P0-W18 plan | The checker adds zero dependencies (it reuses workspace code + `core`/`alloc`-free host logic) | A perceived need for a DT library offline is the same Reserved path as W01's Decision 2 |
 
 Fixture *provenance* inputs (a QEMU `virt` DTB dump; an RK3566 vendor DTB)
@@ -32,8 +32,19 @@ corresponding fixture step, not the mechanism.
 
 ## 3. Offline input model
 
-Boot intake consumes `(dtb_phys, dtb_len)` plus machine state (A2 window,
-A3 image range). Offline checking substitutes explicit parameters:
+The implemented pure entry is `intake::validate(bytes, physical, coverage,
+image)`, followed by `discovery::normalize(&handle)`. Boot obtains bytes through
+W01's owner; P1 supplies only the pointer and image bounds. There is no
+`intake_offline`, skip-rule switch or max-size override in the current API.
+
+**W07-ADAPTER — detailed design still required:** freeze how host parameters
+exercise the unchanged validator while honestly separating synthetic placement
+from runtime placement evidence. Do not add a second parser, pretend an offline
+success proves physical reachability, or call an API that does not exist. The
+table below is the intended reporting policy, not an implemented skip feature.
+Any required producer-interface change needs a W01 amendment before coding.
+
+Offline reporting treatment:
 
 | Boot rule | Offline treatment | Report class if violated |
 |---|---|---|
@@ -65,7 +76,7 @@ virtual image range is Reserved.
 
 The checker is host tooling: it compiles for the host under the P0-W08
 testing baseline and is never linked into the EL2 image. Physical crate
-placement is pending P0-W03's workspace (recorded open item); logically it
+placement follows the existing host-test workspace; logically it
 is a host-only consumer of the platform/discovery library code. It adds no
 dependency, no `unsafe` of its own, no filesystem walking (inputs are
 explicit byte images from the fixture directory listed in the manifest),
