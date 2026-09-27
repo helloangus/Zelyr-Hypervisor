@@ -6,7 +6,11 @@ claimed.
 failure and release behavior, backed by the safe page-allocation foundation,
 required by [P2-W05](../../plans/p2-w05-dynamic-small-allocation.md).  
 **Owner/change context:** P2-W05 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
+
+**Admission:** W05-MAP and W05-GLOBAL remain required design foundations. See the [owning gate](01-scope-and-foundations.md#4-the-alloc-interplay-precisely).
 
 ## Purpose and use
 
@@ -16,7 +20,7 @@ fixed-size-class slab heap layered exclusively on W04's frame allocator —
 eight size classes from 16 B to 2 KiB in one-page slabs with per-slab
 bitmaps, a bounded page-backed path for large or over-aligned requests, a
 slab directory for ownership checks, a heap budget for resource
-containment, a fallible checked API, and a `GlobalAlloc` adapter so
+containment, a fallible checked API, and a `GlobalAlloc` adapter (W05-GLOBAL design gate) so
 `alloc`-based dynamic allocation becomes available to later P2 consumers
 and to P3/P4 designs. It deliberately does **not** design VM/vCPU or
 scheduler objects (P4/P7), does not benchmark performance (explicitly out
@@ -89,14 +93,13 @@ are this design's reviewable enumeration from the plan's scope wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, no W01–W04
-implementation, and no target definition deciding `alloc` availability
-(P0-W03 owns the target and `build-std` decisions). W05 is designed against
-W04's frame API as an assumed prerequisite; the `GlobalAlloc` adapter is
-designed conditionally on the P0 target supplying `alloc` (assumed
-contract, explicit failure boundary in
-[01 §4](01-scope-and-foundations.md)).
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
@@ -104,10 +107,11 @@ contract, explicit failure boundary in
 | Backing capacity from W04's protected/OOM contract (plan step 1) | W04 designed, not implemented | Assumed W04 frame API with failure boundary | Heap pages must inherit the hard gate transitively | W04 owner; W05 consumer | W05-DV01 + joint tests when W04 lands |
 | Permanent dynamic model replacing fixed static arrays (plan step 4) | W01–W03 use bounded boot arrays by design | Documented temporary role + heap as the post-boot model | The prohibition targets permanence, not existence | W05 records the boundary; W01–W03 keep their boot-phase role | W05-DV08 review |
 | Stress validation basis distinct from performance claims (plan step 5) | Nothing | Invariant list + stress properties in the validation matrix | Correctness evidence must not leak into performance claims | W05 | W05-DV06/DV07 |
-| `alloc` availability for the adapter | Target undefined (P0-W03 pending) | Conditional design: adapter requires `alloc`; inner checked API is unconditional | The dynamic-allocation contract must not hinge on an unmade toolchain decision | P0-W03 owns target; W05 owns both layers | W05-DV04 (adapter) only if `alloc` lands; inner API always |
+| Global adapter integration | Target fixed; adapter absent | W05-GLOBAL safety and pinned-target integration contract | Shared-to-mutable access and allocation failure handling need explicit owners | W05 | W05-DV04 after gate closure; checked API evidence reported separately |
 
 No ledger row invents a crate, target, or performance target; upstream
-absence is handled with host fixtures and the conditional adapter.
+gaps are W03/W04 implementation plus W05-MAP/W05-GLOBAL; host fixtures do not
+close these runtime foundations.
 
 ## Resolved design decisions and their authority
 
@@ -116,7 +120,7 @@ absence is handled with host fixtures and the conditional adapter.
    (class, free count, allocation bitmap); per-class partial-slab lists.
    Rationale versus alternatives in
    [01 §5](01-scope-and-foundations.md): P2's dynamic needs are small
-   records and strings; fixed classes give O(1) alloc/free, deterministic
+   records and strings; fixed classes bound slot selection and give deterministic
    behavior for stress validation, tiny metadata, and full host
    testability — without the complexity of TLSF/buddy heaps or an
    external crate (P0-W18 has approved none).
@@ -131,8 +135,8 @@ absence is handled with host fixtures and the conditional adapter.
    property (ADR-018 direction), and exhaustion must be an explicit typed
    event, not an emergent one.
 4. **Two-layer API**: a total, checked inner API returning `Result` (the
-   P2-V07 validation surface), and a thin `GlobalAlloc` adapter that maps
-   failures to the `alloc` contract with a fatal allocation-error handler
+   P2-V07 validation surface), and a `GlobalAlloc` adapter pending W05-GLOBAL.
+   It returns null on failure; infallible callers use a separate fatal handler
    at P2 ([01 §7](01-scope-and-foundations.md)). Rationale: `GlobalAlloc`
    cannot return typed errors, and host tests need assertable failures;
    the split serves both.

@@ -10,3 +10,8 @@ This folder separates P2 planning, later implementation traceability, and
 verification evidence. P2 plans establish bounded outcomes and handoffs; they
 do not authorize implementation detail or assert that platform or memory
 functionality exists.
+
+Current implementation status is tracked in the [implementation index](implementation/README.md).
+W01/W02 have bounded reference evidence; W03–W10 remain unimplemented.
+The [contract reconciliation record](implementation/p2-contract-reconciliation-record.md)
+separates corrected documentation from remaining design and runtime foundations.

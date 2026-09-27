@@ -11,7 +11,7 @@
 | `heap::slab` | One slab's state: header, bitmap, alloc/free slot operations | Page buffer + class | Slot addresses, free counts | Page acquisition |
 | `heap::directory` | Ownership map: every heap page → slab or large record | Init + acquisitions | Lookup results for dealloc/audit | Byte-level allocation |
 | `heap::core` | Checked API: alloc/dealloc/stat routes, budget enforcement, invariants | `PageAllocator`, layouts | Typed results, `HeapStats` | `GlobalAlloc` mapping |
-| `heap::global` | `GlobalAlloc` adapter + failure policy (compiles only when `alloc` exists — [01 §4](01-scope-and-foundations.md)) | `heap::core` | `alloc`-contract behavior | Heap logic |
+| `heap::global` | `GlobalAlloc` adapter + failure policy (requires W05-GLOBAL closure — [01 §4](01-scope-and-foundations.md)) | `heap::core` | `alloc`-contract behavior | Heap logic |
 
 Module names are stage-local design freedom owned by this design; physical
 placement follows the P0-W03 workspace (platform layer; ADR §13 working
@@ -31,8 +31,8 @@ Heap {
 ClassState { partial_slabs: SlabList, full_count: usize }
 Slab (one 4 KiB page, in-band header at offset 0):
   SlabHeader { magic: u32, class: u8, free_count: u16, bitmap: [u8; 32] }
-  // bitmap covers up to 256 slots; slot 0..header slots are permanently
-  // marked allocated (header occupies the first 64 bytes)
+  // bitmap covers up to 256 slots; first ceil(64/class_size) slots are
+  // permanently reserved, including padding to the next class boundary
 Directory entry { first_frame: PhysFrameNum, pages: PageCount,
                   kind: Slab(ClassIdx) | Large, used: bool }
   // `pages`/range always record the FULL W04 block (allocate_contiguous
@@ -50,13 +50,19 @@ Constants (stage-local, reviewable):
 | `MAX_PAGE_ALIGN` | 4096 | Page-aligned allocations satisfy align ≤ 4096; beyond → `UnsupportedAlignment` |
 | `MAX_HEAP_ENTRIES` | 256 | Directory capacity: ≤ 256 concurrent slab/large records; exhaustion typed |
 | `HEAP_BUDGET_DEFAULT` | 256 pages (1 MiB) | Containment default; settable via `HeapBudget` at init |
-| Slab header size | 64 B | magic + class + count + 32 B bitmap; costs slots only in the 16 B class |
+| Slab header size | 64 B | 64-byte reserved envelope; every class loses ceil(64/class_size) slots |
 
-Ownership: one `Heap` value owned by the boot sequence; the slab headers
-and directory live in pages W04 allocated (in-band) — the heap has no
-static metadata arrays beyond the fixed `Heap` struct itself, whose
-`ClassState`/`directory` storage is part of the (bounded) struct. This is
-the reviewed containment boundary ([01 §6](01-scope-and-foundations.md)).
+Ownership: one `Heap` value owned by the boot sequence. Class heads and the
+fixed 256-entry directory live inside this bounded value; init allocates no
+directory pages. The complete value needs a boot storage/stack fit review.
+Slab headers live in W04-allocated backing pages. Directory entries retain the
+original non-Copy W04 allocation handle and W05 mapping owner until release.
+`pages_used` counts full slab/large blocks only; initial value is zero.
+
+For class size C, total slots = 4096/C, reserved header slots = ceil(64/C),
+usable slots = total - reserved. Reserved bits never become allocatable and
+`free_count` counts only usable slots. Returned offsets are multiples of C;
+unused padding after the 64-byte envelope stays protected from heap clients.
 
 ## 3. Address/pointer discipline
 
@@ -64,16 +70,17 @@ All slot addresses are computed from the page base (from W04's
 `AllocatedFrames`) plus bounded offsets, with checked arithmetic; the
 `Layout` route guarantees returned pointers satisfy size and alignment
 before they are handed out. The heap stores physical frames and produces
-addresses through the same A2-style window convention as W04 (on host,
-buffers). No pointer is ever fabricated from an integer not derived from
+virtual addresses through the W05-MAP backing adapter (on host,
+exclusive buffers). Physical frame ownership alone is not a writable pointer. No pointer is ever fabricated from an integer not derived from
 an owned page record — the directory is the only ownership map
 (README Decision 6).
 
 ## 4. Acquisition path (backing safety)
 
-New slab or large request → budget check (`pages_used + need ≤ max_pages`)
-→ `page_alloc.allocate_contiguous(pages)` → directory entry insert →
-slab header initialize or large record. Every heap byte therefore has a
+New slab or large request → compute the full rounded buddy count → budget
+and directory-capacity preflight → W04 allocation → W05-MAP acquisition →
+commit directory and initialized slab/large record. Mapping failure rolls back
+the allocation before publication; rollback failures are terminal invariants. Every heap byte therefore has a
 W04 allocation behind it, which has W03's sealed map behind it: the
 never-protected guarantee is inherited, and W05-DV01 asserts the chain by
 construction review plus tests ([05 §3](05-validation-and-handoff.md)).
@@ -112,22 +119,23 @@ explicitly out of scope ([README](README.md); plan step 5).
 PageAllocator ready (W04)
    |
    v  Heap::init(page_alloc, budget) -> Result<Heap, HeapError>
-   |    (directory storage acquired first via the page path)
+   |    (fixed directory and class state initialized in the owned Heap value)
    v
 [Ready] <== alloc / dealloc via core (checked) or global adapter
    |         exhaustion/invalid -> typed Err (core) / fatal policy (adapter)
    v  (no P2 shutdown path; P3/P4 evolve lifetime via their designs)
 ```
 
-Adapter rules ([01 §4](01-scope-and-foundations.md)):
-- `alloc(layout)`: route via `heap::layout`; `Ok(ptr)` or null (per the
-  `GlobalAlloc` contract) — with the fatal error handler firing on the
-  null path for boot-phase policy (README Decision 5).
-- `dealloc(ptr, layout)`: directory-validated release; invariant breach →
-  fatal halt (README Decision 6).
-- No `unsafe` beyond the adapter trait impls and the page-buffer view
-  fabrication, each with a `SAFETY` argument; all logic sits in `heap::core`
-  as safe code over raw page records.
+Adapter admission is governed by W05-GLOBAL in
+[01 §4](01-scope-and-foundations.md). Required behavior: allocation returns a
+pointer or null at the trait boundary; infallible callers have a separate fatal
+allocation-error path; invalid deallocation is terminal. Diagnostics must not
+re-enter allocation. No global registration, shared-to-mutable conversion or
+unsafe implementation is ready for coding until lifetime, interior mutability,
+exclusive access and reentrancy rules have a reviewed concrete design.
+
+The checked API remains a single-owner `&mut self` interface. That alone does
+not implement the global adapter's `&self` interface safely.
 
 ## 7. Concurrency, allocation, and interrupt context
 
@@ -136,7 +144,8 @@ atomics, no IRQ-context use (P3 boundary, same as W04: p3-w06 owns future
 synchronization; the value-shaped state with typed operations is the
 designed hand-off point). The heap performs no allocation except through
 W04 (it is the allocator of last resort above it); no call does long work
-(O(1) small paths, O(directory) only in audits).
+(slot selection is bounded; directory lookup, backing mapping and W04 costs
+are accounted separately rather than claimed O(1)).
 
 ## 8. Failure model summary
 

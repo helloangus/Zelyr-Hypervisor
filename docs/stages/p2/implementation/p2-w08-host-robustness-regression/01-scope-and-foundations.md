@@ -25,7 +25,7 @@ nothing about results.
 | A5 | W05 typed heap errors, `HeapStats`, `audit()` | [W05 contracts §3–§5](../p2-w05-dynamic-small-allocation/03-code-contracts-heap.md) | S4xx heap scenarios | Same rule |
 | A6 | W07 fixture format (`check` entry, manifest, class mapping) | [W07 fixtures](../p2-w07-offline-dtb-compatibility/03-fixture-and-expectation-matrix.md) | S1xx input construction and S5xx fixture reuse | W08 adds mutation fixtures in-format ([W07 §6](../p2-w07-offline-dtb-compatibility/03-fixture-and-expectation-matrix.md)) |
 | A7 | W06 render determinism and `ConsistencyBroken` check IDs | [W06 contracts §1, §5](../p2-w06-platform-memory-inspection/03-code-contracts-inspection.md) | S5xx render comparison and divergence-injection rows | Same rule |
-| A8 | Host test entry, execution, and gate integration from the P0 baseline | P0-W08 (planned) | Where/how the suite executes and how gates invoke it | If absent at implementation time, blocked upstream defect — build the harness code, record execution blocked |
+| A8 | Host test entry, execution, and gate integration from the P0 baseline | Existing P0-W08 host-test member | Where/how the suite executes and how gates invoke it | If absent at implementation time, blocked upstream defect — build the harness code, record execution blocked |
 
 Pseudo-random generation uses the P0 baseline's test-support generator if
 provided; otherwise a dependency-free seeded generator implemented inside
@@ -34,7 +34,7 @@ the test-support code (no new dependency; P0-W18 governance).
 ## 3. Harness placement and ownership
 
 - Harness and scenario code live with the host-test areas of the modules
-  they exercise (physical placement pending P0-W03's workspace); W08's own
+  they exercise (using the existing host-test workspace); W08's own
   artifacts are the matrices, the ID scheme, the evidence format, and the
   suite entry that orders scenario groups S1→S5.
 - W08 owns no production module. Where a scenario needs to construct

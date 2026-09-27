@@ -8,7 +8,9 @@ untrusted-input, memory-map, allocator, and determinism safety properties
 evidence locations — required by
 [P2-W08](../../plans/p2-w08-host-robustness-regression.md).  
 **Owner/change context:** P2-W08 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
 
 ## Purpose and use
 
@@ -97,22 +99,23 @@ wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, no test
-infrastructure, and no W01–W07 implementation or fixtures. W08 is designed
-against the siblings' published contracts (diagnostics, error enums,
-invariants, fixture format) as assumed prerequisites; the P0-W08 host-test
-baseline is likewise an assumed contract.
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
 | Reproducible evidence for every P2-J group (P2-V10) | No suite exists | Scenario matrices + automation contract + evidence format | Without per-scenario pass conditions, "reproducible" is unfalsifiable | W08 (this design); harness implemented against W01–W07 code | W08 evidence record rows when run |
 | Assertions under test (plan step 1) | Contracts exist only as designs | Each matrix row names the exact typed outcome from the owning design's contract file | Assertions must reference published behavior, not reimplemented logic | W01–W05/W07 own the contracts; W08 references them | DV review of assertion fidelity |
-| Malformed-input cases incl. structural/encoding/truncation/overflow (plan step 2) | Nothing | S1xx matrix over W07 fixture format | W01's taxonomy already names the classes; scenarios instantiate each | W08 | S1xx runs |
+| Malformed-input cases incl. structural/encoding/truncation/overflow (plan step 2) | Existing W01/W02 tests; W08 suite absent | S1xx matrix over W07 fixture format | W01's taxonomy already names the classes; scenarios instantiate each | W08 | S1xx runs |
 | Map-conflict and allocator-lifecycle cases (plan step 3) | Nothing | S2xx/S3xx matrices over W03/W04 typed errors | Conflict policy and free-validation are contract tables; scenarios instantiate them | W08 | S2xx/S3xx runs |
 | Protected-page safety (hard gate, plan step 3) | Nothing | S3xx soak with per-op audit | The gate is a universal property; it needs a randomized soak, not one example | W08 (host strength); W09 (integration) | S3xx soak run |
 | Deterministic repeated-input evidence (plan step 4) | Nothing | S5xx double-run comparisons incl. W06 render | Determinism is a designed property of W02/W03/W06; it must be exercised end-to-end | W08 | S5xx runs |
-| Host test entry points (P0-W08) | Planned, unimplemented | Assumed contract with blocked-boundary | Suite must hang off the baseline entry, not invent one | P0-W08 owner | Entry verification when it lands |
+| Host test entry points (P0-W08) | Existing host-test member and Cargo entry | Reuse current host-test baseline | Suite extends the existing entry | W08 | Suite evidence after scenario integration |
 
 No ledger row invents fuzzing infrastructure, CI, QEMU, or hardware scope.
 

@@ -6,7 +6,7 @@
 ## 1. Fixture contract
 
 A fixture is a triple, tracked in the W07 fixture area (physical location
-pending P0-W03's workspace; logical grouping is fixed here):
+to be selected within the existing host-test tree; logical grouping is fixed here):
 
 | Part | Form | Rules |
 |---|---|---|

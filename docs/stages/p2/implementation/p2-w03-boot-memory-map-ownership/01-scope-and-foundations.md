@@ -24,35 +24,38 @@ If an ADR clarification later authorizes P2 object work, that is a
 superseding design; nothing here may be silently reinterpreted as object
  groundwork. This restatement is reviewable under P2-V13.
 
-## 3. Assumed prerequisite contracts and failure boundaries
+## 3. Current prerequisite contracts and failure boundaries
 
-| # | Assumed contract | Source | W03 relies on | Failure boundary |
-|---|---|---|---|---|
-| A1 | W02 `PlatformInfo`: RAM banks, `/reserved-memory` ranges (with sources/flags), boot artifacts, all as decoded records | [W02 design](../p2-w02-platform-discovery-normalization/README.md) | Records are decoded, checked-composed, DT-order, capacity-bounded | A shape mismatch is a W02 contract revision — design conflict, recorded; W03 never re-walks the DTB |
-| A2 | W01 validated DTB range and reservation-block entries | [W01 design](../p2-w01-boot-platform-description-intake/README.md) | One DTB span; terminated, checked rsvmap list incl. zero-address flags | As A1 |
-| A3 | P1 hypervisor image physical range (authoritative, single) | P1-W01/P1-W08 (assumed, unimplemented) | One immutable span; absence is a blocked upstream defect (same rule as W01 A3) | No image-range fact → map cannot protect the image → blocked; skipping protection is forbidden |
-| A4 | P0 address newtypes and diagnostics channel | P0 plans (assumed) | `PhysAddr`, frame/page newtypes or the basis to define P2-local ones | Missing primitives → blocked upstream defect; no naked integers |
+| Input | Current provider | W03 obligation |
+|---|---|---|
+| RAM, reservations, boot artifacts | W02 `PlatformInfo`: `banks()`, `reserved()`, `artifacts()` contain `Fact<T>` | Validate every present entry; never silently filter to usable values |
+| Active DTB extent | W01 `ValidatedBootDtb::range()` | Protect the exact byte extent after outward rounding; do not ingest its reservation iterator again |
+| Image extent | P1 linker-owned image and stack bounds | Require one checked nonempty extent; missing/empty input is `MissingRequiredRange` |
+| Address types and diagnostics | Existing `boot::address::{PhysAddr, ByteSize}` and boot fatal path | Reuse these types; introduce only the missing frame/page newtypes |
 
-Host-side development: the whole map builder is pure logic over injected
-records; W03 fixtures construct synthetic fact sets. QEMU accounting checks
-are W09 evidence.
+W02 already combines header reservations and `/reserved-memory` records in
+`reserved()`. Retain `ReservationSource` and flags, plus the list ordinal as a
+stable source identity. W03 has no second DTB walk. An empty reservation or
+artifact list is allowed; a present `Unusable`, `Unsupported`, `NotDiscovered`
+or `Absent` list entry is `MapFatal::UnusableFact`, with list and ordinal.
+The same rule applies to RAM; at least one nonzero usable RAM bank is required.
+`Usable` zero-length entries are dropped and counted. W02's existing zero-range
+counter remains a separate upstream counter; do not claim W03 observed entries
+that W02 already omitted. Host tests use the real W01/W02 pipeline or a bounded
+internal fixture adapter, not a public constructor bypassing `PlatformInfo`.
 
 ## 4. Page size, representation, and arithmetic policy
 
-- **Granule:** 4 KiB (README Decision 1). All internal spans are
-  frame-based: `PhysFrameNum` (P2-owned newtype over u64, or the P0
-  equivalent when it exists — A4), `PageCount`, `PhysFrameRange { first,
-  count }`. `PhysAddr`/`ByteLen` appear only at the input boundary.
-- **Conversion:** `to_frames(base, len)` requires `base % 4096 == 0` and
-  `len % 4096 == 0`; violations are `MapFatal::UnalignedRange` (fatal) —
-  firmware describing unaligned RAM is a platform failure, and clipping
-  protected ranges could silently shrink protection, so no clipping at this
-  boundary.
-- **Arithmetic:** every end-address or span composition is
-  `checked_add`-based; overflow is `MapFatal::RangeOverflow` (fatal). The
-  map builder re-checks even though W02 composed values carefully — belt
-  and braces at the protection boundary, where the cost of a missed check
-  is the hard gate.
+- Granule is 4 KiB. Reuse `PhysAddr`/`ByteSize` at the boundary and define
+  checked `PhysFrameNum`, `PageCount`, `PhysFrameRange` internally.
+- RAM conversion requires page-aligned base and length. Nonempty protection
+  conversion checks `end = base + len`, rounds base down and end up, and checks
+  the rounding for overflow. Never round a protected span inward.
+- Keep original byte spans in the source ledger. Resolve ownership conflicts
+  there before rounding; page overlap caused only by outward rounding is a
+  protected union, not a new ownership conflict.
+- Zero lengths are handled before conversion. Overflow is always fatal.
+  Physical holes remain outside the map and are never an allocation domain.
 
 ## 5. Untrusted-input stance
 

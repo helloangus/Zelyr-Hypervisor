@@ -12,9 +12,8 @@ this design.
 
 ```text
 Name and stability: PhysFrameNum(u64), PageCount(u64), PhysFrameRange
-  { first: PhysFrameNum, count: PageCount }, P2-local newtypes unless the
-  P0 base crate delivers equivalents (assumed contract A4,
-  [01 §3](01-scope-and-foundations.md)); internal.
+  { first: PhysFrameNum, count: PageCount }, P2-local frame/page newtypes
+  over the existing address types; internal.
 Purpose and caller: frame-granular bookkeeping; used by all modules and by
   W04.
 Inputs / outputs: construction from checked operations only; public
@@ -32,32 +31,35 @@ Logic: plain newtypes + predicate functions.
 Validation: W03-DV01 predicate/conversion fixtures.
 ```
 
-### 1.2 `to_frames`
+### 1.2 Byte-to-frame conversion
+
+`ram_to_frames(base: PhysAddr, len: ByteSize)` requires nonempty aligned RAM;
+`protect_to_frames(base: PhysAddr, len: ByteSize)` rounds nonempty protection
+outward. Both return `Result<PhysFrameRange, MapFatal>`, allocate nothing and
+change no state. Callers drop/count zero lengths first.
 
 ```text
-Name and stability: bootmap::ranges::to_frames(base: PhysAddr, len:
-  ByteLen) -> Result<PhysFrameRange, MapFatal>. Internal.
-Purpose and caller: the single byte→frame conversion at the input
-  boundary; used by the builder for every record.
-Preconditions / postconditions: base % 4096 == 0 and len % 4096 == 0 and
-  len > 0 (zero handled by callers as R8/R9 before conversion); overflow
-  checked; else `UnalignedRange`/`RangeOverflow`.
-Logic (pseudocode):
-    if base % PAGE_SIZE != 0 or len % PAGE_SIZE != 0: Err(UnalignedRange)
-    first = base / PAGE_SIZE; count = len / PAGE_SIZE
-    if first.checked_add(count).is_none(): Err(RangeOverflow)
-    Ok(PhysFrameRange{ first, count })
-Validation: W03-DV01.
+end = base.checked_add(len) or RangeOverflow
+ram: require base and len multiples of 4096 or UnalignedRange
+protection: start = floor(base / 4096) * 4096
+            end = checked_align_up(end, 4096) or RangeOverflow
+first = start / 4096; count = (end - start) / 4096
+return checked nonempty PhysFrameRange(first, count)
 ```
+
+RAM uses `start = base`. Original byte ranges remain in the ledger for
+R6/R7; conversion never authorizes bytes or frames outside discovered RAM.
+Validation: W03-DV01, including byte-end overflow even when frame addition fits.
 
 ## 2. Types — classification and identity
 
 ```text
 Name and stability: RegionClass, ProtectedSourceId, MapEntry
-  { range: PhysFrameRange, class: RegionClass }, MapFatal (enum:
-  UnalignedRange, RangeOverflow, RamOverlap{detail}, ProtectionConflict{
+  { range: PhysFrameRange, class: RegionClass, sources: SourceSet }, MapFatal (enum:
+  MissingRequiredRange{source}, UnusableFact{list, ordinal}, UnalignedRange, RangeOverflow,
+  RamOverlap{detail}, ProtectionConflict{
   a, b}, SealRejected{detail}, CapacityExhausted{which}), MapAnomaly
-  (merged_banks, deduped_protections, dropped_zero_ram,
+  (merged_banks, deduped_banks, deduped_protections, dropped_zero_ram,
   dropped_zero_protection, outside_ram_warnings, clips: ClipRecord list).
   Internal; RegionClass/ProtectedSourceId are the P2-G01/G02 extension
   surface and are recorded for P4 via W10.
@@ -73,37 +75,39 @@ Logic: enums + small records; ClipRecord { protected: ProtectedSourceId,
 Validation: W03-DV10 extension review.
 ```
 
+`ProtectionSource` retains original bytes, rounded extent, class, flags and
+stable ordinal identity. `SourceSet` is a bounded set of ledger indices (at most
+38 input sources plus 46 metadata extents); equivalent geometry may share map
+entries without deleting ledger identities. `protected_ranges()` exposes
+normalized in-RAM entries and source sets; `source_ledger()` preserves complete
+input extents. Capacity overflow never truncates either view.
+
 ## 3. `ProtectedSet` assembly
 
+`bootmap::classify::assemble(platform, active_dtb_range, image)` returns a
+bounded ledger or `MapFatal`, with no partial publication or allocation.
+Inputs use the real W02 `Fact<T>` lists per [01 §3](01-scope-and-foundations.md).
+Only W02 supplies reservations. Each ledger item retains original bytes,
+rounded frames, class, flags and source IDs; ordinal identity includes whether
+the W02 reservation came from the header or a node.
+
 ```text
-Name and stability: bootmap::classify::assemble(inputs) -> Result<
-  ProtectedSet, MapFatal>. Internal; called by the builder.
-Purpose and caller: convert all protection statements into identified
-  frame ranges, enforcing R6/R7/R9/R10 at set level.
-Inputs / outputs: inputs = W02 PlatformInfo records (reserved ranges with
-  sources/flags, boot artifacts), W01 DTB range + rsvmap entries, P1 image
-  range (Option — None is a blocked prerequisite, see
-  [W01 A3](../p2-w01-boot-platform-description-intake/01-intake-boundary.md));
-  output: sorted, deduplicated set of (PhysFrameRange, ProtectedSourceId).
-Preconditions / postconditions: pre — records decoded by W01/W02; post —
-  sorted, R7-deduplicated, each entry identified; fixed capacity: entries
-  <= 2*MAX_RESERVED_RANGES + MAX_MEMORY_BANKS + MAX_BOOT_ARTIFACTS + 2
-  (image + DTB); overflow → CapacityExhausted (fatal).
-Concurrency/allocation context: no allocation; single-core boot.
-Errors: ProtectionConflict (R6), CapacityExhausted, conversion fatals.
-Security checks: zero-address rsvmap entries flagged by W01 that decode to
-  zero-base ranges are recorded as out-of-RAM warnings (R10), never
-  silently dropped and never treated as the null range.
-Logic (pseudocode):
-    add(image_range, HypervisorImage)?            # A3; None -> blocked-defect stop
-    add(dtb_range, ActiveDtb)?
-    for (i, r) in rsvmap.entries(): add(to_frames(r)?, DtbReservation(i))?
-    for (i, r) in platform.reserved(): add(to_frames(r)?, ReservedMemoryNode(i))?
-    for (i, a) in platform.artifacts(): add(to_frames(a)?, BootArtifact(i))?
-    sort + scan: overlap between distinct identities -> ProtectionConflict
-                 exact duplicates same class      -> dedupe + counter
-Validation: W03-DV02–DV04.
+require nonempty image and active_dtb_range or MissingRequiredRange{source}
+add_checked(image, HypervisorImage)
+add_checked(active_dtb_range, ActiveDtb)
+for (i, fact) in platform.reserved().iter():
+    r = require_usable(fact, Reserved, i)
+    add_checked(r.span, source=(r.source, i), flags=(r.no_map, r.reusable))
+for (i, fact) in platform.artifacts().iter():
+    add_checked(require_usable(fact, Artifact, i), BootArtifact(i))
+validate original-byte conflicts, applying R7 before R6
+round protection outward; retain page-sharing source sets
 ```
+
+Capacity is P=38 source slots, as derived in [02 §8](02-architecture-and-state.md).
+Zero-based reservations are normal ranges, not null markers; warn only if
+outside RAM. Exceeding any bound is `CapacityExhausted`. Validation:
+W03-DV02–DV04, including one header reservation ingested exactly once.
 
 ## 4. Draft construction
 
@@ -116,25 +120,24 @@ Inputs / outputs: as assemble(); output: sorted disjoint MapEntry array
   covering the RAM union, with clip log and counters.
 Preconditions / postconditions: pre — fact records; post — invariants of
   [02 §5](02-architecture-and-state.md) except metadata (not yet known);
-  R1–R5, R8, R10 enforced; capacity: entries <= banks + protected + clips
-  (bounded constant above).
+  R1–R5, R8, R10 enforced; capacity: endpoint bound in [02 §8](02-architecture-and-state.md).
 Concurrency/allocation context: no allocation.
-Errors: fatal classes per R1–R3; nothing published on error.
+Errors: R1–R3/R6/R12 and capacity errors; nothing published on error.
 Security checks: clipping is the only RAM shrink path; the builder cannot
   add RAM.
 Logic (pseudocode):
     protected = assemble(...)?                       # §3
     ram = [] 
-    for bank in platform.memory_banks:
-        fr = to_frames(bank.base, bank.len)?         # R1/R2 fatal here
-        insert fr into ram (sorted); overlap inside ram -> R3 fatal
-        adjacency/identity -> merge (R4)
-    entries = []
-    for bank_span in ram:
-        pieces = bank_span minus protected           # interval subtraction
-        if pieces lost anything: record ClipRecord
-        entries += (pieces, Allocatable)
-    for p in protected ∩ ram_union: entries += (p, class_of(p.source))
+    for (i, fact) in platform.banks().iter():
+        bank = require_usable(fact, Ram, i)          # R12
+        if bank.len == 0: count and continue        # R8
+        fr = ram_to_frames(bank.base, bank.len)     # R1/R2
+        insert sorted; dedupe exact banks first, reject other overlap
+    merge adjacent banks                           # R4
+    entries = partition ram_union at rounded protection endpoints
+    mark uncovered pieces Allocatable
+    mark covered pieces with class and complete SourceSet; count each once
+    record each bank/source intersection in the bounded clip log
     sort entries; assert disjoint + coverage(ram_union)
     return UnsealedMemoryMap { entries, protected, anomalies }
 Validation: W03-DV05–DV08.
@@ -144,8 +147,8 @@ Validation: W03-DV05–DV08.
 
 ```text
 Name and stability: UnsealedMemoryMap { allocatable_spans() ->
-  &[PhysFrameRange], protected_ranges() -> &[(PhysFrameRange,
-  ProtectedSourceId)], class_at(frame) -> ClassQuery }, internal;
+  &[PhysFrameRange], protected_ranges() -> &[MapEntry],
+  source_ledger() -> &[ProtectionSource], class_at(frame) -> ClassQuery }, internal;
   readable by W04's planner; NOT an allocation authority (type is distinct
   from BootMemoryMap precisely so the compiler can enforce that).
 Purpose and caller: planning input for W04; nothing else.
@@ -160,9 +163,11 @@ Validation: W03-DV08 (planner walkthrough).
 
 ```text
 Name and stability: MetadataPlan { ranges: BoundedList<(PhysFrameRange),
-  MAX_METADATA_RANGES> } — the *shape* W03 validates; its construction is
-  W04's design. MAX_METADATA_RANGES = MAX_MEMORY_BANKS + 4 (metadata may
-  sit at each region tail plus bookkeeping spans).
+  MAX_METADATA_RANGES>, region_bindings } — the shape W03 validates;
+  construction and exact storage layout belong to W04. Capacity is 46,
+  derived from normalized spans, not RAM banks. Bindings identify the draft
+  source span, resulting managed span(s), hosting metadata extent and
+  disjoint storage offsets; W03 seals physical extents, W04 audits bindings.
 Purpose: seal input; validated, then recorded.
 Validation: W03-DV09.
 ```
@@ -185,7 +190,8 @@ Errors and failure guarantee: SealRejected{violation} — map remains in
   partially mutated.
 Security checks: R11 enforcement; the sealed map's protected superset is
   re-derived from the entry array and compared against
-  protected + plan (equality required) — this is the audit that backs the
+  union(rounded protected + plan) intersect RAM (equality required) — this
+  is the audit that backs the
   hard gate.
 Logic (pseudocode):
     for r in plan.ranges:
@@ -204,6 +210,7 @@ Validation: W03-DV09.
 
 ```text
 Name and stability: BootMemoryMap { allocatable_spans, protected_ranges,
+  metadata_ledger, source_ledger,
   class_at, summary() -> MapSummary }, the W03 output; consumed by W04
   (authority), W06 (rendering), W09 (accounting), and recorded for P4 via
   W10.
@@ -217,10 +224,15 @@ MapSummary { ram_frames, allocatable_frames, protected_frames per class,
 Validation: W03-DV07/DV08/DV10.
 ```
 
+Per-class totals are disjoint: pages with differing protection classes use
+`SharedProtection`, not the sum of overlapping source lengths. Full source
+extents remain queryable even outside RAM; only their RAM intersection enters
+`protected_frames`. Metadata is already excluded from sealed allocatable.
+
 ## 8. Explicitly unauthorized interfaces
 
-No mutation or reclassification after seal; no `From<u64>`-style raw
-constructors for frame types outside `to_frames`; no iteration exposing
+No mutation or reclassification after seal; no raw frame constructors outside
+the checked range module; no iteration exposing
 interior arrays in a way that lets a caller reconstruct and allocate from
 protected spans (queries return borrow slices — W04's review must show it
 filters by `Allocatable` only); no memory objects, no Guest-memory

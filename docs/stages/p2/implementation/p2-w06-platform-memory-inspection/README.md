@@ -7,7 +7,9 @@ allocator/heap statistics, and active-state consistency checks — derived
 exclusively from the normalized state produced by W02–W05, required by
 [P2-W06](../../plans/p2-w06-platform-memory-inspection.md).  
 **Owner/change context:** P2-W06 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
 
 ## Purpose and use
 
@@ -99,20 +101,13 @@ wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, and no W01–W05
-implementation. W06 is designed against the sibling designs'
-[READMEs](../p2-w02-platform-discovery-normalization/README.md) and their
-published contracts as assumed prerequisites: `PlatformInfo`/`FactState`
-([W02 contracts](../p2-w02-platform-discovery-normalization/04-code-contracts-facts.md)),
-`BootMemoryMap`/`MapSummary`/`ProtectedSourceId`
-([W03 contracts](../p2-w03-boot-memory-map-ownership/03-code-contracts-bootmap.md)),
-`AllocationStats`
-([W04 contracts](../p2-w04-physical-page-allocation/03-code-contracts-pagealloc.md)),
-`HeapStats`/`audit`
-([W05 contracts](../p2-w05-dynamic-small-allocation/03-code-contracts-heap.md)).
-If any source lands differently, W06's composition adapters change but the
-projection policy does not.
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
@@ -124,8 +119,8 @@ projection policy does not.
 | W02–W05 outputs available (plan step 1) | Designed, not implemented | Assumed contracts with failure boundaries ([01 §2](01-scope-and-foundations.md)) | Task book §2 upstream-defect rule | W02–W05 owners; W06 consumer | Source verification records when they land; host fixtures meanwhile |
 
 No ledger row invents a crate, target, command surface, or telemetry policy;
-the absent upstream implementations are ordered prerequisites handled with
-host fixtures.
+W03–W05 implementations and the W06 boot-context adapter remain prerequisites;
+W02 and P1 already provide bounded facts.
 
 ## Resolved design decisions and their authority
 
@@ -150,7 +145,7 @@ host fixtures.
 4. **Cross-source consistency is a named check set, and a broken check is a
    fatal invariant stop.** C1 (platform RAM total == map `ram_frames`), C2
    (map equation `ram == allocatable + protected` re-verified from rendered
-   fields), C3 (allocator `managed == allocatable − metadata`, conservation
+   fields), C3 (allocator `managed == sealed allocatable`, conservation
    vs table recount already W04's), C4 (heap pages ⊆ allocator used
    frames). Rationale: P2-H04 requires detectable divergence; per P0-W14 a
    broken accounting invariant is fatal, and P2 has no recovery consumer.
@@ -202,7 +197,7 @@ serialization is forbidden by the Coding Guidelines); no mutation of any
 source (all inputs are shared references; stats queries are `&self`); no
 revalidation of the DTB, no map rebuild, no allocator calls with side
 effects; no platform/board names; no crate or workspace manifests (physical
-module placement is pending P0-W03's workspace, recorded as an open item).
+module placement follows the existing workspace; no new crate implied).
 Any consumer need beyond the contracts in
 [03](03-code-contracts-inspection.md) is a design change, not a local
 addition.

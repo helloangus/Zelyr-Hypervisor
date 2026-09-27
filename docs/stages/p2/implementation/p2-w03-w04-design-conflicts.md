@@ -1,8 +1,9 @@
 # P2-W03/W04 current-baseline design conflicts
 
-**Status:** Architecture Change Request / design conflict; unresolved.
+**Status:** Original audit retained; documentation contradictions revised.
+Detailed-design and runtime foundations remain open per the disposition below.
 **Scope:** Admission audit for W03/W04 implementation, not completion evidence.
-**Version:** v0.1
+**Version:** v0.2
 **Owner/change context:** P2-W03/W04 request, 2026-09-27.
 **Supersedes:** None; records issues without changing existing contracts.
 
@@ -15,7 +16,7 @@ The W03/W04 designs still describe a documentation-only September 18 baseline.
 The image bounds, address types, validated DTB and normalized facts now exist.
 No bootmap or page allocator implementation is present in the current source.
 
-## Blocking contracts
+## Original findings (historical audit at de57f0b)
 
 1. **Writable metadata access has no provider.**
    [W04 A2](p2-w04-physical-page-allocation/01-scope-and-foundations.md)
@@ -43,7 +44,8 @@ No bootmap or page allocator implementation is present in the current source.
    includes two bits per frame, list heads and less than 64 bytes of bookkeeping.
    [Architecture](p2-w04-physical-page-allocation/02-architecture-and-state.md)
    additionally requires linked block descriptors in metadata, potentially one
-   per free block. No node-size/capacity term exists in the formula. It also
+   per free block. The code-contract sketch includes `LIST_NODE_RESERVE`, but its size, capacity
+   and units were not defined and the prose formula omitted node storage. It also
    describes a table indexed from the minimum frame, while sizing is per-span;
    treatment of large physical holes needs an explicit indexing contract.
 4. **W04 free validation cannot enforce its stated invariant.**
@@ -61,26 +63,25 @@ No bootmap or page allocator implementation is present in the current source.
    Choose one definition and propagate it to stats, init, W06 and validation;
    metadata cannot be counted both outside and inside the same domain.
 
-## Proposed resolution for owner review
+## Resolution and remaining work (2026-09-27)
 
-Prefer a P2-owned, bounded writable metadata aperture, with a new detailed
-mapping contract: sealed metadata ranges only, exclusive storage lifetime,
-page-table capacity and placement, attributes, barriers/TLB ordering, alias
-exclusion and failure behavior. Keep the DTB aperture read-only and the
-completed P1 scope intact. An alternative is an explicit P1 contract extension.
-Neither alternative is authorized by this issue record.
+The user authorized documentation reconciliation after the audit. The
+[reconciliation record](p2-contract-reconciliation-record.md) links each revised
+owner contract. This is a detailed-design repair, not a blanket ADR-required
+change and not a new completion claim.
 
-Revise W03 against the actual W01/W02 types, settle duplicate precedence and
-byte-to-page protection, and preserve fatal rejection of unusable protection
-facts. Revise W04 metadata sizing/indexing, allocation identity and conservation
-before implementing the joint draft/plan/seal/init path. Preserve the existing
-buddy proposal unless its owning design review changes it; the ADR section 18
-pending freeze remains visible, as does unrelated P2-ACR-01.
+| Finding | Documentation disposition | Remaining work |
+|---|---|---|
+| Writable metadata provider | P2-W04 owns bounded metadata access; the stale P1 assumption is removed | W04-MAP concrete design, implementation and runtime evidence pending |
+| Normalization ambiguity | W03 defines duplicate precedence, one W02 reservation source, non-usable fact rejection and checked outward rounding with source-preserving page union | W03 implementation/tests and storage fit pending |
+| Metadata sizing/indexing | Full required sizing terms, worst-case nodes, local indices and normalized-span capacities replace incomplete assumptions | W04-LAYOUT must freeze representation and byte layout before allocator coding |
+| Free validation | Original head/order/continuation and allocator identity checks required; non-Copy private handles preserve ownership, including on failure | Concrete identity representation under W04-LAYOUT, then implementation/tests |
+| Accounting | Sealed allocatable equals managed equals free+used; metadata is protected and counted separately; init no longer searches for metadata in allocatable | Joint W03/W04 tests and W06/W09 integration pending |
 
-The repository AGENTS.md conflict rule and Coding Guidelines preflight require
-stopping affected implementation rather than silently choosing these contracts.
-No W03/W04 Rust, unsafe boundary, ABI, public API or dependency was added.
-Host fixture work alone would not discharge the missing runtime foundation.
+Subsequent audit also corrected W05 storage assumptions and propagated the
+remaining W05/W07/W09 admission gates. P2-ACR-01 and the ADR section 18 allocator
+freeze question remain visible; this revision does not settle either through
+an edit to an accepted ADR.
 
 ## Validation boundary
 

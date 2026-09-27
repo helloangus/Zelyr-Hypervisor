@@ -42,8 +42,8 @@ Name and stability: offline::check(image: &DtbImage, params:
 Purpose and caller: run W01 intake (offline parameterization per
   [01 §3](01-scope-and-foundations.md)) and, if intake yields a handle, W02
   normalize; map all outcomes to rows.
-Inputs / outputs: image bytes + offline params (max_dtb_size override;
-  skipped-rule markers). Output: report; `CheckerError` only for checker-
+Inputs / outputs: image bytes + offline placement/report parameters
+  to be frozen by W07-ADAPTER; W01 MAX_SIZE is not overridden. Output: report; `CheckerError` only for checker-
   internal misuse (capacity), never for blob content — bad blobs are FAIL
   rows, not errors.
 Preconditions / postconditions: pre — none beyond a byte image; post —
@@ -61,7 +61,8 @@ Security/authorization checks: the blob is untrusted exactly as at boot;
   (strings shorter than the W02 fact caps are still rendered only as
   presence/length/state).
 Logic (pseudocode):
-    intake_out = w01::intake_offline(image, params)
+    intake_out = invoke_unchanged_validate_via_W07_ADAPTER(image, params)
+                 # adapter design pending; not an existing W01 entry
     rows += map_intake(intake_out)            # §3 mapping incl. skipped rules
     match intake_out:
       Err(diag) -> facts_rows = []            # nothing else can run
@@ -102,8 +103,9 @@ GIC, timer, PSCI, chosen/console, bootargs — mapped from W02's model:
 | W02 fatal diagnostic (`CpuInventoryEmpty`, `BootCpuUnmatched`, `NoMemoryBanks`, `CapacityExhausted`) | FAIL | boot would stop here |
 | W02 skip/anomaly counters | WARN (aggregate) | observability of ignored content |
 
-Rationale anchor: FAIL ⇔ boot-fatal, WARN ⇔ boot-continues, PASS ⇔ usable,
-NOT-P2 ⇔ not examined — the mapping is total over W01/W02 outcomes, so
+Rationale anchor: FAIL ⇔ W01/W02-fatal, WARN ⇔ W02 records a nonfatal fact, PASS ⇔ usable,
+NOT-P2 ⇔ not examined — W03 may later reject a non-usable RAM/protection fact.
+This report does not certify allocator readiness. The mapping is total over W01/W02 outcomes, so
 "objective" (P2-I03) is mechanical, reviewable, and stable.
 
 ### 4.2 Binding expectations

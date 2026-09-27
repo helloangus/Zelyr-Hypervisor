@@ -6,15 +6,19 @@ claimed.
 capability required by
 [P2-W04](../../plans/p2-w04-physical-page-allocation.md).  
 **Owner/change context:** P2-W04 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
+
+**Admission:** W04-LAYOUT must close before allocator coding; W04-MAP before target integration. See the [owning gate](01-scope-and-foundations.md#6-metadata-sizing-and-design-admission).
 
 ## Purpose and use
 
 This is the implementation-level design for P2-W04. It converts the bounded
 work-package plan into a code-bearing design for one object system: a
 regioned buddy page allocator whose entire allocation domain is derived from
-W03's sealed map, with a two-bit frame-ownership table serving as both the
-debug/invalid-free detector and the accounting authority, a
+W03's sealed map, with frame states and allocation-head/order metadata as the
+debug/invalid-free detector and accounting authority, a
 metadata-planning handshake with W03 (draft → plan → seal), explicit typed
 OOM, and per-region plus total accounting. It deliberately does **not**
 design small-object allocation (W05 builds on this one), does not design SMP
@@ -58,7 +62,7 @@ Governing order: [ADR baseline](../../../../adr/adr-000-architecture-baseline-v0
   external contract (typed frame allocation, never-protected guarantee,
   accounting) is designed to survive the swap.
 - The task book requires allocation ownership debug metadata and accounting;
-  the two-bit frame table is that metadata and is load-bearing, not
+  the frame states and original-allocation metadata are load-bearing, not
   optional.
 - Single-core boot phase: the allocator has one owner and no interior
   synchronization; SMP rules are P3 scope and this design states the
@@ -93,32 +97,32 @@ are this design's reviewable enumeration from the plan's scope wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, no W01–W03
-implementation. W04 is designed against W03's sealed map and draft queries
-as assumed prerequisites; the physical-memory access window is the same
-assumed P1 contract as in
-[W01 §2](../p2-w01-boot-platform-description-intake/01-intake-boundary.md)
-(A2), extended to writes.
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
 | Safe allocation that never returns a protected range (P2-V06, hard gate) | No allocator code exists | Domain derived from sealed map only; structural seal-before-use ordering | Protection must precede capability | W04 consuming W03 | W04-DV01/DV08 property tests |
 | Allocation/free with alignment, multi-region, OOM (P2-E01–E05) | Nothing | Regioned buddy with typed errors | The plan's outcome needs all five behaviors in one contract | W04 | W04-DV02–DV06 |
-| Debug checks for invalid/duplicate/unmanaged free (P2-E06) | Nothing | Two-bit frame ownership table as allocator state | Detection requires per-frame state | W04 (task book mandates ownership debug metadata) | W04-DV07 |
+| Debug checks for invalid/duplicate/unmanaged free (P2-E06) | Nothing | Frame states plus original-allocation identity | Detection requires per-frame state | W04 (task book mandates ownership debug metadata) | W04-DV07 |
 | Managed/free/used/reserved accounting (P2-E08) | Nothing | Accounting derived from the same ownership table + free lists | Two bookkeeping systems would diverge | W04 | W04-DV09 |
 | W03 map available (plan step 1) | W03 designed, not implemented | Assumed W03 contracts with failure boundary | Allocator without the map has no safe domain | W03 owner; W04 consumer | Joint seal test (W03-DV09/W04-DV01) when both land |
 | Metadata needs a home before the allocator exists | Nothing | Bootstrap carve from region tails via W03's plan/seal | Metadata cannot be allocated from the not-yet-existing allocator | W04 plans; W03 seals | W04-DV01 |
 | P3 will add concurrency | No SMP exists | Stated boundary: single owner, no interior locks; P3 wraps | Task book requires the boundary explicit | P3 (p3-w06) owns the lock design | P3 reviews; nothing to run in P2 |
 
-No ledger row invents a crate, target, or runtime policy; upstream absence
-is handled with host fixtures and the joint-seal path.
+W04-LAYOUT and W04-MAP are explicit design gates in [01 §6](01-scope-and-foundations.md).
+Host fixtures do not discharge the target mapping foundation.
 
 ## Resolved design decisions and their authority
 
 1. **Allocator algorithm: per-region buddy with bounded maximum order**
-   (`MAX_ORDER = 18`, i.e. 2^18 frames = 256 MiB maximum single block;
-   larger requests are typed `OutOfFrames` until the Reserved extension
+   (`MAX_ORDER = 18`, i.e. 2^18 frames = 1 GiB maximum single block;
+   larger requests are typed `OrderTooLarge` until the Reserved extension
    adds a spanning path). Rationale and ADR-§18 reconciliation in
    [01 §5](01-scope-and-foundations.md). Swap-tolerance: W04's external
    contract is algorithm-independent.
@@ -127,17 +131,17 @@ is handled with host fixtures and the joint-seal path.
    keeps the surplus frames allocated until the block is freed); no
    separate first-fit machinery and no split-back in P2. Rationale: a
    split-back tail would make the truncated range unfreeable with its
-   original order without per-allocation size tags; holding the surplus
-   keeps `free` exact, stateless, and invariant-safe. The bounded
+   original order; holding the surplus keeps one original-allocation identity
+   and a predictable full-block release contract. The bounded
    fragmentation cost is explicit and stress-tested. P4's Guest RAM needs
    are expected to fit within `MAX_ORDER` blocks or use multiple
    allocations; its design decides ([01 §6](01-scope-and-foundations.md)).
-3. **Two-bit frame-state table** (`Unmanaged / Free / Allocated /
-   ReservedMeta`) as the single per-frame authority, doubling as debug
-   detector and accounting source. Rationale: the task book requires
-   ownership debug metadata; without per-frame state, duplicate-free and
-   foreign-free detection would be heuristic. Cost: 2 bits/frame (64 KiB
-   per GiB) — bounded and accounted as `HypervisorMetadata`.
+3. **Frame states plus original-allocation identity.** Keep head/order and
+   continuation information in metadata, with stable allocator identity;
+   reject partial, combined and wrong-order frees. State bits alone cannot
+   prove allocation boundaries. W04-LAYOUT freezes exact representation and
+   total storage cost before coding.
+
 4. **Metadata bootstrap by tail-carve with W03's plan/seal handshake.**
    W04 plans fixed-size metadata areas at the tail of allocatable spans
    against the draft map; W03 seals them as `HypervisorMetadata`; the

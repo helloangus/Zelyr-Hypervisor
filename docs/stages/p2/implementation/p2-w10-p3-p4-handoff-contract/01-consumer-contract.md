@@ -25,11 +25,11 @@ sources.
 
 | ID | Deliverable | Producer | Validation | Consumers |
 |---|---|---|---|---|
-| D-01 | Normalized platform facts: `PlatformInfo` — CPU inventory with boot-CPU relation, RAM banks, `/reserved-memory` ranges, boot artifacts, GIC/timer/PSCI/console facts; five-state `FactState` model (`NotDiscovered/Absent/Unsupported/Unusable/Usable`); determinism guarantee; no re-derivation from DTB by consumers | W02 → [design](../p2-w02-platform-discovery-normalization/README.md) | P2-V03, P2-V04 | P3 (p3-w01, p3-w02), P4 (p4-w01, p4-w02), W03/W06/W07 |
-| D-02 | Capability query surface: `PlatformCapabilities` with honest `NotDiscovered` for PCI/SMMU/ACPI; consumers decide by capability, never platform name | W02 → same | P2-V04 | P3 (p3-w01, p3-w02), P4 (p4-w01) |
+| D-01 | Normalized platform facts: `PlatformInfo` — CPU inventory with boot-CPU relation, RAM banks, `/reserved-memory` ranges, boot artifacts, GIC/timer/PSCI/console facts; five-state `Fact<T>` model (`NotDiscovered/Absent/Unsupported/Unusable/Usable`); determinism guarantee; no re-derivation from DTB by consumers | W02 → [design](../p2-w02-platform-discovery-normalization/README.md) | P2-V03, P2-V04 | P3 (p3-w01, p3-w02), P4 (p4-w01, p4-w02), W03/W06/W07 |
+| D-02 | Capability query surface: `Capabilities` with honest `NotDiscovered` for PCI/SMMU/ACPI; consumers decide by capability, never platform name | W02 → same | P2-V04 | P3 (p3-w01, p3-w02), P4 (p4-w01) |
 | D-03 | Boot memory map: sealed immutable `BootMemoryMap`; RAM partition sorted/disjoint; protected ranges with `ProtectedSourceId` ledger and `RegionClass` (default-protected extension rule); `MapSummary` equation `ram = allocatable + protected` exact | W03 → [design](../p2-w03-boot-memory-map-ownership/README.md) | P2-V05 | P4 (p4-w02, p4-w03), W04/W06/W09 |
 | D-04 | Page allocation: typed order/count allocation and exact free; hard gate — no protected frame returnable for any valid sequence; `AllocationStats` accounting; **single-owner, lock-free boot-phase concurrency boundary; P3 owns all locking/per-CPU design** | W04 → [design](../p2-w04-physical-page-allocation/README.md) | P2-V06 | P3 (p3-w04, p3-w06), P4 (p4-w02, p4-w03), W05/W06 |
-| D-05 | Dynamic small allocation: fixed size-class slab heap over W04; typed fallible API + `GlobalAlloc` adapter (target permitting); heap budget containment; **single-core ownership boundary; P3 owns locking**; W01–W03 boot arrays documented temporary | W05 → [design](../p2-w05-dynamic-small-allocation/README.md) | P2-V07 | P3 (p3-w04, p3-w06), P4 (p4-w02–p4-w05), W06 |
+| D-05 | Dynamic small allocation: fixed size-class slab heap over W04; typed fallible API + `GlobalAlloc` adapter (pending W05-GLOBAL safety/integration design); heap budget containment; **single-core ownership boundary; P3 owns locking**; W01–W03 boot arrays documented temporary | W05 → [design](../p2-w05-dynamic-small-allocation/README.md) | P2-V07 | P3 (p3-w04, p3-w06), P4 (p4-w02–p4-w05), W06 |
 | D-06 | Inspection: read-only `InspectionReport` over W02–W05 live state with consistency checks C1–C4 and deterministic render; a review input, **not a control API** | W06 → [design](../p2-w06-platform-memory-inspection/README.md) | P2-V08 | P3/P4 reviewers (via this record), W08/W09 |
 | D-07 | Offline compatibility corpus: fixture format, QEMU `virt` and RK3566 fixtures with binding expectations; readiness verdicts carry the fixed no-support disclaimer | W07 → [design](../p2-w07-offline-dtb-compatibility/README.md) | P2-V09 | Platform planners (P15 direction), W08, W09 |
 | D-08 | Host robustness regression: scenario matrices S1xx–S5xx, seeded reproducibility, evidence-row schema at `docs/stages/p2/verification/p2-w08-host-robustness-regression-verification.md` | W08 → [design](../p2-w08-host-robustness-regression/README.md) | P2-V10 | W09, P3 (p3-w12 pattern), P4 (p4-w08 pattern) |
@@ -83,8 +83,12 @@ limitations:
   capacity handling (W01/W02);
 - protected-source under-declaration inherited from firmware descriptions
   is detected only as far as described ranges conflict (W03 residual);
-- order-mismatched free detection has a documented limit; >`MAX_ORDER`
-  contiguous requests are typed failures (W04 residuals);
+- original-allocation/order validation is required, not a waived limitation;
+  >`MAX_ORDER=18` contiguous requests are typed failures (maximum block 1 GiB);
+- W04-LAYOUT/W04-MAP and W05-MAP/W05-GLOBAL are remaining design foundations;
+  the current W01 read-only aperture supplies none of these writable views;
+- W09 large-RAM success cells require reviewed DTB placement/access beyond the
+  current bootstrap envelope; they are not supplied by W01 smoke evidence;
 - no realloc/grow-in-place; alignment above page size rejected (W05);
 - inspection is a snapshot at composition time, not continuous monitoring
   (W06);
@@ -104,3 +108,8 @@ must restate this verbatim-in-substance and mark it **ADR Required**.
 The record carries a change-note section; any post-authoring edit adds a
 dated note describing what changed and why. Silent edits void the record's
 audit value for P3/P4 stage reviews.
+
+Accounting handoff: `managed = sealed allocatable = free + used`;
+`reserved_meta` is a separate subset of protected and never subtracted a second
+time. Source ledgers may overlap; map page totals count their union once.
+W03 obtains combined header/node reservations exclusively from W02.

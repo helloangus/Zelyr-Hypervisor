@@ -1,153 +1,110 @@
 # P2-W04 Architecture, State, and Lifecycle Design
 
-**Status:** Proposed detailed design; implementation not claimed.  
-**Parent:** [P2-W04 detailed design](README.md).
+**Status:** Proposed detailed design; W04-LAYOUT and W04-MAP remain admission gates.\
+**Parent:** [P2-W04 detailed design](README.md).\
+**Version:** v0.2; 2026-09-27 contract reconciliation; no implementation claimed.
 
 ## 1. Logical modules
 
-| Module (logical) | Responsibility | Inputs | Outputs | Non-responsibility |
-|---|---|---|---|---|
-| `pagealloc::plan` | Compute `MetadataPlan` from draft-map allocatable spans ([01 §6](01-scope-and-foundations.md)) | Draft-map queries | `MetadataPlan` for W03 seal | Sealing (W03) |
-| `pagealloc::table` | Frame-state table: construction over metadata storage, get/set, audit | Plan ranges, window storage | Per-frame state transitions | Free-list logic |
-| `pagealloc::buddy` | Per-region free lists, split/merge mechanics | Sealed allocatable spans, table | Allocate/free block operations | Policy (orders are fixed) |
-| `pagealloc::api` | Public operations: init from sealed map, allocate, allocate_contiguous, free, stats | Sealed map + plan | Typed results, `AllocationStats` | Metadata placement choice (plan module) |
-| `pagealloc::stats` | Accounting derivation and conservation checks | Table + lists | `AllocationStats` | Rendering (W06) |
-
-Module names are stage-local design freedom owned by this design; physical
-placement follows the P0-W03 workspace (platform layer next to `bootmap`;
-ADR §13 working name `hv-platform`; crate naming pending ADR-054).
+`pagealloc::plan` sizes and places metadata against the draft; `table` owns
+per-region frame states and allocation identity; `buddy` indexes free blocks;
+`api` validates operations; `stats` derives counts. The pure modules consume
+injected storage. The P2 architecture adapter owns writable metadata access,
+not generic allocation logic or a permanent physical direct map.
 
 ## 2. Core state
 
 ```text
 PageAllocator {
-  regions: BoundedList<BuddyRegion, MAX_MEMORY_BANKS>,
-  table: FrameStateTable,          // over metadata storage (via A2 window on target)
-  base_frame: PhysFrameNum,        // table index origin (min managed frame)
-  total_managed: PageCount,
+  regions: BoundedList<BuddyRegion, MAX_ALLOCATABLE_SPANS>,
+  metadata_ledger, allocator_identity, exclusive_metadata_storage,
 }
 BuddyRegion {
-  span: PhysFrameRange,            // one sealed allocatable span (post-metadata)
-  free_lists: [FreeList; MAX_ORDER + 1],   // chains of free block ranges
-  free_frames: PageCount,          // fast accounting copy, audited vs table
+  span: sealed allocatable span,
+  local_frame_states, allocation_heads_and_continuations,
+  free_lists[MAX_ORDER + 1], free_frames,
 }
-FrameState ::= Unmanaged | Free | Allocated | ReservedMeta
 ```
 
-Ownership: one `PageAllocator` value owned by the boot sequence. The table
-is the per-frame authority (I2/I3 of
-[01 §4](01-scope-and-foundations.md)); free lists are the allocation index.
-`free_frames` copies exist only for O(1) stats and OOM detail and are
-re-derived in audits — they may never disagree with the table.
-
-Free-list representation: singly linked chains of block descriptors stored
-*in the metadata area* (block range: first frame + order), not in the free
-frames themselves — writing into free frames would violate Decision 7 (the
-allocator never writes managed frames) and would corrupt any future
-debugging that inspects frame contents. List nodes are bounded: worst case
-one node per free block; node capacity is part of the metadata sizing rule
-([01 §6](01-scope-and-foundations.md)); node-space exhaustion is a typed
-`OutOfFrames` (with `MetadataFull` detail) rather than a silent corruption.
+Local table indices cover only the corresponding managed span. Free/Allocated
+state and allocation-head/order information are authoritative; lists are an
+index. Metadata and physical holes are not table entries. Allocated blocks have
+one head with order and allocator identity, and validated continuation markers.
+The exact representation and storage formula are W04-LAYOUT, not two-bit-only
+metadata. All nodes live in the reserved metadata storage. Worst-case capacity
+is preallocated so a valid release never needs fallible node allocation.
 
 ## 3. Metadata bootstrap and lifecycle
 
 ```text
-Sealed map exists?  NO ──> boot order: W03 draft ──> plan ──> seal ──> v
-                          (W03 owns this; W04 supplies the plan)
-Sealed map exists?  YES
-   |
-   v  PageAllocator::init(sealed_map, window)
-[derive per-span metadata needs] -> verify seal recorded exactly the plan
-[build FrameStateTable: allocatable spans minus metadata = managed]
-[seed free lists: all managed frames Free, split into buddies]
-   |
-   v
-[Ready] <== allocate / allocate_contiguous / free_contiguous / stats
-   |                    errors are typed; state unchanged on error
-   v  (P2 has no shutdown path; P3/P4 evolve lifetime via their designs)
+W03 draft -> W04 plan -> W03 seal -> P2 metadata mapping -> W04 init -> Ready
 ```
 
-Init-time audit (all fatal `AllocatorInitError` on failure): the sealed
-map's metadata ranges equal the plan; managed domain equals allocatable
-spans minus metadata; table initialization matches; the conservation
-equation holds (managed = free + reserved_meta). This is the structural
-realization of the hard gate: the allocator never sees a protected frame
-because its domain was subtracted before the first free list existed.
+`MetadataPlan` binds each original candidate to its resulting managed span and
+to a storage extent plus offset/length. Init checks plan/seal equality, obtains
+exclusive metadata storage through the adapter, and initializes each sealed
+allocatable span directly. Metadata cannot be found *inside* such a span.
 
-## 4. Allocation and free mechanics (overview; contracts in [03](03-code-contracts-pagealloc.md))
+Before publishing Ready, audit: domain equals sealed allocatable; metadata
+extents equal the sealed metadata ledger; bindings and storage slices are
+disjoint and adequate; every managed frame starts Free; free-list/table counts
+agree. At init `managed = free`, `used = 0`. `reserved_meta` is separate,
+protected memory, never part of managed. Failure publishes no allocator.
 
-- `allocate(order)`: find the smallest order ≥ requested with a non-empty
-  list in any region (region order fixed = sealed-map order for
-  determinism); split down to `order`, marking split halves `Free` and
-  list-inserting them; mark result `Allocated`. Exhaustion →
-  `Err(OutOfFrames{order, region_stats})`, state unchanged.
-- `allocate_contiguous(count)`: order = ceil_log2(count) (≤ `MAX_ORDER`
-  else `OutOfFrames`); allocate the block; the surplus frames above
-  `count` **remain part of the allocation** (held, not split back) and are
-  returned to the pool only when the whole block is freed; the returned
-  `AllocatedFrames` records the true block range/order plus the usable
-  prefix. Rationale: freeing a truncated range with its original order
-  would break buddy invariants (I2), and per-allocation size tags are out
-  of P2 scope — holding the surplus keeps `free` exact and stateless. The
-  fragmentation cost of the surplus is explicit, bounded by
-  `2^order - count`, and covered by stress tests.
-- `free_contiguous(range, order)`: validate (I4); mark `Free`; re-insert
-  with buddy coalescing upward while the buddy is free and same order;
-  stop at region boundary — coalescing never crosses regions (multi-region
-  rule, P2-E04).
-- Table transitions are the single points of state change; list edits and
-  table edits happen in a fixed order inside each operation so an
-  interrupted (host-test-injected) failure leaves the table consistent and
-  auditable.
+## 4. Allocation and free mechanics
+
+- `allocate(order)` selects a free block in deterministic region/order order,
+  splits to the requested order, then records exactly one allocated head and
+  its continuations. Check all fallible conditions before mutation.
+- `allocate_contiguous(count)` requires count > 0, checks ceil-log2 and maximum
+  order, and holds the full power-of-two block. `usable` records the requested
+  prefix; accounting and release always use the full block.
+- `free_contiguous` verifies owner identity, original head, exact range/order,
+  continuation state and region containment before changing anything. Then
+  clear allocation identity, mark Free and coalesce within that region only.
+- Metadata capacity is proven before Ready; no expected mid-operation failure
+  is permitted. Internal corruption is an invariant stop, not ordinary OOM.
+  Failure tests compare full logical state as well as stats; equal counts
+  alone cannot establish rollback of list topology or allocation identity.
 
 ## 5. Debug detection model (P2-E06)
 
-| Defect | Detection | Outcome |
-|---|---|---|
-| Free of unmanaged/protected frame | Table says `Unmanaged`/`ReservedMeta` or range outside domain | `Err(UnmanagedFree{range})` |
-| Duplicate free | Table says `Free` for any frame in range | `Err(DoubleFree{first_offending})` |
-| Free of never-allocated or partially-allocated span | Table says `Allocated` but boundary/order checks fail (I4) | `Err(BadFreeRange{reason})` |
-| Order mismatch (range allocated as different order) | Per-allocation order recorded in table? No — detection via I4 plus audit sampling | `Err(BadFreeRange{order_mismatch})` when detectable; documented limit below |
-| Accounting divergence | `stats()` recomputes from table and compares fast copies | `Err`-free; divergence is a fatal invariant stop (boot) |
+| Defect | Required detection |
+|---|---|
+| Foreign allocator handle | `ForeignAllocator`, before domain lookup/mutation |
+| Outside managed domain, metadata or physical hole | `UnmanagedFree` |
+| Free block presented again in internal negative fixtures | `DoubleFree` |
+| Wrong order, interior/partial range, two allocations combined | `BadFreeRange` via original head and continuation validation |
+| Misalignment or count/order mismatch | `BadFreeRange` |
 
-Documented limit: P2 stores no per-allocation order tag, so a caller who
-frees the right frames with the wrong order (both I4-valid) is not
-detectable at free time; it becomes visible at the next audit or via
-corruption in the field. The W05 heap and P4 consumers always pass the
-order they received, and host stress tests cover the misuse class. Adding
-an order tag is a Reserved extension if a later design requires it.
+`AllocatedFrames` has private fields, no public constructor, no Copy/Clone and
+no implicit Drop free. A failed consuming release returns the unchanged handle
+alongside the typed error. Production safe callers cannot fabricate duplicate
+handles; module-private test fixtures exercise corrupted descriptors. There is
+no residual exemption for order mismatch. Ownership identity must remain stable
+if the allocator value moves; freeze its representation under W04-LAYOUT.
 
 ## 6. Concurrency, allocation, and interrupt context
 
-- **Single-core boot phase, one owner** (README Decision 6): methods take
-  `&mut self`; no locks, no atomics, no IRQ context use. This is the
-  explicit stage boundary required by the task book: allocator locking,
-  per-CPU pooling, and SMP safety are P3 scope (p3-w06 owns the design;
-  p3-w04 consumes). The design constraint left for P3 is only that state
-  is one value with typed operations — wrapping it in a lock or moving it
-  per-CPU requires no P2 changes.
-- **No dynamic allocation** during allocator operation (it *is* the
-  allocator); all structures live in the metadata area.
-- **No long work in any call:** allocate/free are O(log n) in region size;
-  audits are O(managed) but run only at init and when explicitly invoked
-  by tests/diagnostics.
+Single boot CPU, one owner, `&mut self`, no IRQ use or interior locking. P3 owns
+SMP synchronization. Storage is reserved before Ready; operations never acquire
+heap memory. Buddy split/coalesce steps are order-bounded, but state/tag updates
+and audits may traverse frames; do not claim whole-call O(log n) before the
+representation and list lookup costs are frozen. No performance target is added.
 
 ## 7. Failure model
 
-Typed errors: `OutOfFrames{order, region_stats}`, `UnmanagedFree`,
-`DoubleFree`, `BadFreeRange`, `OrderTooLarge`, `MetadataFull`. All leave
-state unchanged (verified by before/after stats equality in tests). Boot-phase
-caller policy: any allocator `Err` during boot is a fatal stop with the
-typed diagnostic (P0-W14 resource-exhaustion/invariant classes); host tests
-consume the typed values directly. Init failures (`AllocatorInitError`) are
-always fatal — the system cannot run without a trustworthy allocator.
+Allocation returns typed `OrderTooLarge`, `InvalidCount` or `OutOfFrames` with
+per-region statistics. Release returns typed errors from §5 plus the unchanged
+handle. Planning/init errors include insufficient metadata, seal/domain/storage
+mismatch and conservation failure; all stop boot without a published allocator.
+Failed expected operations leave table, tags, lists and counters unchanged.
 
 ## 8. Security model summary
 
-Trust anchor: the sealed W03 map. Containment: domain subtraction before
-first use; audits at init; table-authority invariant; no writes to managed
-frames; checked arithmetic everywhere; fixed region iteration order for
-deterministic behavior under identical inputs (supports W09 repeated-boot
-accounting comparisons). Residual risk: the documented order-mismatch
-limit ([§5](02-architecture-and-state.md)) and under-declared firmware
-reservations (W03's limit, inherited) — both recorded for W10.
+Sealed domain authority, complete source protection, exclusive metadata storage,
+checked indexing and original-allocation validation enforce the boundary. No
+zeroing, poisoning, or writes to managed frame contents are performed by W04.
+W05 owns its separate backing-page mapping and initialization. Under-declared
+firmware protection remains an inherited limitation; W04-MAP and W04-LAYOUT
+remain design work, not runtime evidence.

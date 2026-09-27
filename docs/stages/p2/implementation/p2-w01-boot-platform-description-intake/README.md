@@ -1,7 +1,7 @@
 # P2-W01 Boot Platform-Description Intake — Detailed Implementation Design
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Original design with implemented current-baseline amendment;
+completion evidence remains in the linked verification record.\
 **Scope:** The validated, diagnosable intake boundary for the boot-supplied
 AArch64 device tree blob (DTB) required by
 [P2-W01](../../plans/p2-w01-boot-platform-description-intake.md).  

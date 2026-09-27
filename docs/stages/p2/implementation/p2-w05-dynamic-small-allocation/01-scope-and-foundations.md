@@ -34,22 +34,33 @@ capability, and repeated allocation/free stress validation"):
 | # | Assumed contract | Source | W05 relies on | Failure boundary |
 |---|---|---|---|---|
 | A1 | W04 frame API: `allocate(order)`, `allocate_contiguous(count)`, `free_contiguous`, typed errors, `AllocationStats` | [W04 design](../p2-w04-physical-page-allocation/README.md) | Exclusive backing; `AllocatedFrames` values as capabilities | A mismatch is a W04 contract revision — design conflict, recorded; W05 never pages around W04 |
-| A2 | P0 target supplies the `alloc` crate (core/alloc build path) when the adapter is compiled | P0-W03 (target/build-std decision; pending) | `core::alloc::GlobalAlloc`, `Layout` | If the target lands without `alloc`, the inner checked API still stands; the adapter is deferred with the gap recorded — the dynamic-allocation contract does not silently vanish |
-| A3 | P0 diagnostics/failure-class channel; alloc-error handler site | P0-W12/W14 (assumed) | Fatal halt path for the adapter's failure policy | Missing → blocked upstream defect |
-| A4 | Host test environment (P0-W08) | P0 plan | All slab/directory logic host-testable with buffer-backed "pages" | n/a — structural requirement of this design |
+| A2 | Existing `aarch64-unknown-none-softfloat` target and core allocation types | P0 build-target baseline; no build-std path | `core::alloc::{GlobalAlloc, Layout}`; eventual alloc integration | W05-GLOBAL must freeze registration, safety and failure handling before adapter coding; target choice is not pending |
+| A3 | Existing P0/P1 fatal diagnostic path | Current boot implementation | Non-allocating terminal diagnostics | W05 still owns allocation-error integration; do not assume it exists |
+| A4 | Existing host-test member | `crates/host-test-baseline` | Buffer-backed pages and source-shared logic | Real target backing remains W05-MAP |
 
 ## 4. The `alloc` interplay, precisely
 
-`no_std` dynamic allocation needs (a) a global allocator implementation,
-(b) an allocation-error handler, both target-dependent. Because P0-W03 has
-not fixed the target or `build-std`, this design *requires* the layering of
-[02 §6](02-architecture-and-state.md): the entire heap logic is
-`core`-only and target-independent; the adapter is an isolated module that
-compiles only when A2 holds. This is a designed dependency, not an
-accident: it keeps P2-V07 (the package's validation) satisfiable on host
-regardless of the toolchain decision, and it isolates the eventual
-`alloc_error_handler` policy decision (fatal per
-[README Decision 5](README.md)) in one auditable place.
+The target is already fixed; its selection is not a W05 prerequisite defect.
+The checked heap remains `core`-only. An `alloc` consumer needs global allocator
+registration and a toolchain-supported allocation-failure path in addition to
+heap logic. Verify the pinned target integration without adding nightly features
+or changing the build target. `GlobalAlloc`/`Layout` themselves are core types.
+
+**W05-GLOBAL — open detailed-design gate:** freeze publication/unpublication,
+interior mutability with exclusive access, stable storage lifetime, boot-CPU/IRQ
+restriction, reentrancy detection and non-allocating error reporting. A shared
+`&Heap` and single-core execution are not sufficient safety arguments. Define
+null-return versus fatal caller behavior explicitly; null does not itself invoke
+a handler. Global adapter implementation and claims of readiness remain blocked.
+
+**W05-MAP — open detailed-design gate:** W05 owns a backing adapter that retains
+the W04 allocation handle and establishes exclusive writable, non-executable
+views of ordinary allocated pages. W04's metadata aperture cannot supply these
+views. Specify aperture capacity, attributes, alias exclusion, publication/TLB
+ordering, mapping failures and rollback. Release must end every byte borrow and
+remove/invalidate the mapping before returning the original handle to W04;
+unmap failure cannot return the pages to the pool. This is required for a live
+heap, not merely an optional hardware test.
 
 ## 5. Shape selection rationale (stage-local decisions)
 
@@ -99,7 +110,7 @@ re-checked at W05 closure (W05-DV08).
 |---|---|---|
 | Inner checked API | Class/slab/page/budget/directory exhaustion | `Err(HeapError::OutOfMemory{which, stats})`; state unchanged |
 | Inner checked API | Invalid/double/foreign free; null or misaligned pointer | `Err(HeapError::InvalidFree{reason})`; state unchanged |
-| `GlobalAlloc` adapter | Underlying `alloc`-contract failure (null return path) | Fatal halt with diagnostic (P0-W14 resource exhaustion; README Decision 5) |
+| `GlobalAlloc` adapter | Allocation failure | Null return at trait boundary; infallible allocation callers use a separately registered non-allocating fatal path; W05-GLOBAL must freeze integration |
 | `GlobalAlloc` adapter | Dealloc invariant breach detected | Fatal halt with diagnostic (invariant violation; README Decision 6) |
 | Any layer | Internal consistency check fails (audit) | Fatal halt (invariant violation) |
 
@@ -114,4 +125,4 @@ The heap is platform-layer logic next to `pagealloc`: no arch code, no
 board names, no locking (P3 boundary), no allocation during its own
 operation other than through W04. Host testability is structural: pages
 are injected buffers; the whole invariant list is exercisable on host
-(O4). Physical-memory specifics live only in the W04 window below it.
+(O4). Physical-memory specifics live in W05-MAP, separate from W04 metadata access.

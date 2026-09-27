@@ -7,7 +7,11 @@ readiness-report model, and objective per-fact outcomes for the QEMU `virt`
 and Orange Pi 3B/RK3566 fixtures — required by
 [P2-W07](../../plans/p2-w07-offline-dtb-compatibility.md).  
 **Owner/change context:** P2-W07 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2\
+**Supersedes:** Conflicting September 18 assumptions and contracts in this
+package; reconciled on 2026-09-27. Implementation is not claimed.
+
+**Admission:** W07-ADAPTER must define the real validator invocation before checker coding. See the [owning gate](01-scope-and-foundations.md#3-offline-input-model).
 
 ## Purpose and use
 
@@ -98,13 +102,13 @@ wording.
 
 ## Current-state findings and goal-to-baseline ledger
 
-Observed tracked state (2026-09-18, branch `docs/p2-implementation-designs`):
-documentation scaffold only — no workspace, no Rust sources, no W01/W02
-implementation, and no tracked DTB fixture of any kind. W07 is designed
-against W01's intake contracts and W02's normalization contracts as assumed
-prerequisites; both are host-runnable by construction (W01 README Decision 8,
-W02 assumed contract A4), which is the property that makes offline checking
-possible at all.
+Current tracked baseline: `main@ecae09f` (2026-09-27). The Cargo workspace,
+`aarch64-unknown-none-softfloat` target, host-test member, completed P1 image
+bounds and bounded W01/W02 implementation exist. W03–W10 remain unimplemented.
+The [reconciliation record](../p2-contract-reconciliation-record.md) identifies
+available inputs, corrected contracts and remaining design admission gates.
+Do not infer a writable RAM window or completed downstream consumer from the
+presence of the workspace or W01's read-only DTB aperture.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
@@ -115,8 +119,8 @@ possible at all.
 | Warning for unsupported unrelated devices without board-support claims (task book §6) | n/a | Aggregate WARN row + fixed report disclaimer ([02 §5](02-readiness-report-model.md)) | Honesty boundary is a report-design property, not a wording afterthought | W07 | W07-DV05 |
 | W01/W02 pipeline available (plan step 1) | Designed, not implemented | Assumed contracts with failure boundaries ([01 §2](01-scope-and-foundations.md)) | Task book §2 upstream-defect rule | W01/W02 owners; W07 consumer | Source verification records when they land; synthetic fixtures meanwhile |
 
-No ledger row invents a crate, target, CLI, or CI decision. The absent
-upstream implementations are ordered prerequisites; the fixture images are
+No ledger row invents a crate, target, CLI, or CI decision. W01/W02 are implemented; W07 still needs the offline adapter described below.
+The fixture images are
 implementation-time artifacts with provenance, not design-time inventions.
 
 ## Resolved design decisions and their authority
