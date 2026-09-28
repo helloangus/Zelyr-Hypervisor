@@ -15,3 +15,6 @@ Informative continuation notes (not governing contracts):
 
 - [Repository documentation audit handoff](documentation-audit-handoff.md)
   — incomplete coverage, findings, baseline inventories, and remaining work.
+
+- [Documentation audit phase 1](documentation-audit-phase1.md)
+  — pinned baseline, classified document ledger, authority exceptions, and next review step.

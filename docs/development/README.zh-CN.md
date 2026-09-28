@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `154c21c58622d1b3fc693df5c8ab483a126052dc`
+**Source blob:** `3b276a2cd9b5bd8dfcd33f598a5a603799e7a3f3`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 **状态类别：** 规范性，见[文档基线](documentation-baseline.zh-CN.md)。
@@ -15,3 +15,6 @@
 
 - [全仓文档审计交接](documentation-audit-handoff.zh-CN.md)
   ——尚未完成的覆盖、发现、基线清单及剩余工作。
+
+- [文档审计第一阶段](documentation-audit-phase1.zh-CN.md)
+  — 固定基线、文档分类台账、权威例外及下一步审阅入口。
