@@ -3,6 +3,7 @@
 **Stage ID:** P5
 **Stage name:** Hypercall, object handles, and Capability v0
 **Status:** Planning baseline; implementation and validation are not claimed
+**Version:** v0.1
 **Owner/change context:** P5 planning reorganization from the root-source task book
 **Supersedes:** the root-level `Rust Type-1 Hypervisor — P5 Stage Task Book v0.1.md` source layout
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), [ABI contract index](../../abi/README.md), [security index](../../security/README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)

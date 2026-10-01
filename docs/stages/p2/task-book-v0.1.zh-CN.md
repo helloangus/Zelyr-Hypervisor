@@ -2,12 +2,13 @@
 
 **Translation status:** Current
 **Translation source:** [English source](task-book-v0.1.md)
-**Source blob:** `fff16cafdca4d2410c9e278d2c4e3c66e27b9057`
+**Source blob:** `cb186b6667f31705f33702fe089cb4cd873c21dd`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](task-book-v0.1.md)具有权威性。
 
 **阶段 ID：** P2
 **阶段名称：** 平台发现与 Host 内存基础
 **状态：** 已定义的规划基线；不声明实施或验证完成。
+**版本：** v0.1
 **所有者／变更背景：** 从根目录源任务书重组 P2 规划。
 **替代：** 根目录 `Rust Type-1 Hypervisor — P2 Stage Task Book v0.1.md` 的布局。
 **主管文档：** [架构基线 ADR](../../adr/adr-000-architecture-baseline-v0.1.md)、

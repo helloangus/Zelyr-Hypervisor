@@ -2,6 +2,7 @@
 
 **Stage ID:** P8
 **Status:** Implementation-planning baseline; work, ABI freezing, and evidence are not claimed
+**Version:** v0.1
 **Scope:** AArch64-first, host-independent versioned Guest machine and minimum custom Linux boot on QEMU `virt`
 **Owner/change context:** P8 planning set reconstructed from the root-level P8 Stage Task Book v0.1 input
 **Supersedes:** the relocated root-level `Rust Type-1 Hypervisor — P8 Stage Task Book v0.1.md` input

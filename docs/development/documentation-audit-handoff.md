@@ -2,21 +2,25 @@
 
 Chinese readers can use the [Chinese edition](documentation-audit-handoff.zh-CN.md).
 
-**Status:** Informative, incomplete audit handoff; not an approved design or stage-completion decision.
+**Status:** Informative historical handoff; its initial partial-audit state is superseded by the [phase-7 closure reconciliation](documentation-audit-phase7.md) and [consolidated report](documentation-audit-final.md). Owner decisions and remediation remain open; this is not an approved design or stage-completion decision.
 **Scope:** Preserve the repository-wide documentation audit's findings, actual coverage, evidence checks, and remaining work.
 **Version:** v0.1
 **Owner/change context:** User-requested continuation branch, 2026-09-28; successor agent owns the remaining audit.
 **Supersedes:** None; persists the preceding session's partial report without changing its proof boundary.
 
+## Current disposition (2026-09-28 follow-up)
+
+The declared current-tree audit scope is now covered: 981 Markdown paths, all 125 P0–P8 work-package maps, and 217 reconciled cross-stage package relationships. The unambiguous documentation findings AUD-007 (plans/design navigation), DOC-MECH-01 (stale anchor), and DOC-META-01 (current task-book version headers) were repaired and rechecked. The owner has selected the AUD-001 W06 shared atomic handshake direction, now recorded in the proposed detailed design; implementation, W06-DV04/P7-V14/P7-V25 evidence, and the related W08 idle-interlock gap remain open. AUD-002–006, AUTH-01 provenance, asymmetric handoff records, and stage-specific evidence/admission blockers also remain with their owning stages. No runtime closure is claimed. See phase 7 and the consolidated report for scope and validation.
+
 ## 1. Resume here
 
 - Audit baseline: `b317b88ad6f78f82143ec6af2cf2b41a143ae741` (`main`, clean at audit start).
 - Continuation branch: `docs/documentation-audit-handoff`.
-- The audit is **not complete**. There are 963 tracked Markdown documents, 130,759 lines, and 125 source work-package plans at that baseline. Mechanical scanning is not full-text semantic review.
-- This branch records state; it does not repair AUD-001–007, approve proposed designs, change accepted ADRs, or implement later-stage mechanisms.
-- The original authorization is a read-only audit with a Chinese report and dependency-ordered repair roadmap. This follow-up authorizes saving the handoff on a new branch. Repair implementation remains separate work; no repair PR is requested.
+- At this original baseline, the audit was **not complete**: it contained 963 tracked Markdown documents, 130,759 lines, and 125 source work-package plans. The later phase reports supersede this initial coverage status; mechanical scanning alone remains distinct from full-text semantic review.
+- The original handoff branch recorded state without repairing AUD-001–007. The follow-up repaired the unambiguous documentation findings listed above; it did not approve proposed designs, change accepted ADRs, or implement later-stage mechanisms.
+- The original authorization established the audit and a Chinese report with a dependency-ordered repair roadmap. Subsequent work completed the declared audit and routine documentation repairs on the current branch; no PR merge was requested.
 - Read `AGENTS.md`, [documentation routing](../README.md), and the governing documents for the next area. Compare the successor checkout with the baseline before carrying findings forward.
-- Start with the two ledgers below, then section 5's queue. There is no active subagent, background test, or unfinished edit to recover.
+- The original baseline ledgers below remain historical snapshots. Current coverage and owner actions are summarized above and in section 5. There is no active subagent or background test to recover.
 
 Supporting ledgers:
 
@@ -35,7 +39,7 @@ Evidence: [block/wakeup protocol](../stages/p7/implementation/p7-w06-block-wakeu
 
 The blocker reads no pending event before committing `Blocked`; the waker records the event but returns if it still sees `Running`. `block_intent` is not consumed by the waker. Counterexample: intent → empty poll → event publication → waker observes Running → blocker commits Blocked. A sequentially consistent model enumerated 10 legal interleavings of these five steps and found this one stranded-event trace; weak memory is unnecessary.
 
-Impact: a vCPU can remain blocked with an eligible event pending, affecting P7-V13/V14/V25 and P8 consumers. Repair direction: specify the shared synchronization protocol and linearization point for event check/block commit/wake, including lock scopes; extra acquire/release prose alone does not remove the interleaving. Synchronize W02/W06/W08/W11. Acceptance: before/during/after-block races, remote wake, repeated wake, pause race, and no duplicate execution. Normally no ADR; design correction before implementation.
+Impact: a vCPU can remain blocked with an eligible event pending, affecting P7-V13/V14/V25 and P8 consumers. Original repair direction: specify the shared synchronization protocol and linearization point for event check/block commit/wake; extra acquire/release prose alone does not remove the interleaving. **Current disposition (2026-09-28):** the owner selected the shared atomic phase/event-word direction, recorded in [P7-W06 detailed design](../stages/p7/implementation/p7-w06-block-wakeup/README.md). Implementation and W06-DV04/P7-V14/P7-V25 evidence remain outstanding, and the related W08 idle-interlock gap is separate. AUD-001 remains open pending those deliverables. Synchronize W02/W06/W08/W11. Normally no ADR; design correction before implementation.
 
 ### AUD-002 — P3-W08 timeout reuse contradicts receiver ownership (implementation blocker)
 
@@ -109,15 +113,15 @@ Not run: QEMU, full Rust build/tests, hardware, online branch-protection audit, 
 
 ## 5. Remaining audit queue and completion criteria
 
-1. **Re-establish baseline and ledgers.** Record changed blobs since this baseline. Keep historic rows; add new documents separately. Classify authority, actual version/status, historical/proposed/translation/placeholder status and owner, rather than treating pathname/header as approval. Read English sources and authoritative Chinese ADR-000 under the language rules.
-2. **Complete full-text coverage.** Read every inventory row without truncation, including root files, both skills and references, templates, governance, public-contract stubs, task books, every plan/design/record/verification and translations. Record reviewer/date, covered sections, authority source, findings and counterevidence. No baseline row currently certifies this completion.
-3. **Complete 125 package mappings.** For every plan, inspect upstream inputs, downstream outputs and requirement→acceptance→evidence. Build a producer/consumer matrix covering type/unit, ownership, lifetime, failure/rollback, availability and verification owner. Check actual edges for cycles; index assertions of acyclicity alone are not proof.
-4. **Deepen priority boundaries.** P2→P3/P4 mapping; P3 notification/transport→P6 carrier; P4–P7 object/VMID/timer/IRQ lifecycle; P8 machine compatibility and P9–P21 future constraints; P1→P6 NC6. Revisit AUD-001–007 against amendments and counterevidence. Also inspect W07 notification coalescing versus W08 consumption and P7 deadline-fold failure guarantees; these are unconfirmed questions.
-5. **Verify implemented claims selectively.** Follow P0/P1/P2 records into code, tests, CI and accessible retained artifacts. Keep source review, host tests, finite runtime fixtures and hardware proof distinct. No whole runtime rerun was authorized by the audit plan.
-6. **Complete mechanical checks.** Rerun existing documentation checks; add read-only anchor/version/requirement-ID checks and inspect exemptions. Record inaccessible external evidence explicitly. A mechanically passing tree is not a semantic pass.
-7. **Deliver the final Chinese report.** Include complete per-document review records, every package's mappings, all explicit cross-stage handoffs checked in both directions, severity-ranked findings with paired evidence/counterexamples, existing blockers, reasonable deferrals, unverified questions, repair batches and limitations. Do not label the audit complete while these records are missing.
+1. **Re-establish baseline and ledgers — complete.** The pinned input and current-tree delta are reconciled; all 34 added/changed rows carry current blobs and complete line ranges. Historical source rows remain intact.
+2. **Complete full-text coverage — complete for the declared current tree.** All 967 pinned inputs were reviewed; the 14 added reports and 20 changed current versions are recorded in the delta ledger. The current tree contains 981 Markdown documents. Future edits require a new delta review.
+3. **Complete 125 package mappings — complete for the declared P0–P8 scope.** The package ledgers cover inputs, outputs, edges, and acceptance/evidence; phase 7 reconciles 217 directed cross-stage relations and explicitly retains asymmetric or missing status records.
+4. **Deepen priority boundaries — complete for this pass.** See [phase 4 boundary review](documentation-audit-phase4.md) and its [evidence ledger](documentation-audit-phase4-boundaries.csv). P2→P3/P4, P3→P6, P4–P7 lifecycle, P8→P9–P21 constraints, P1 NC6→P6-V29, AUD-001–007, W07/W08 coalescing, and P7 deadline-fold failure have been re-reviewed. This closes only the queued review pass; identified contract and evidence blockers remain unresolved.
+5. **Verify implemented claims selectively — complete for this pass.** See [phase 5 review](documentation-audit-phase5.md) and its [evidence ledger](documentation-audit-phase5-evidence.csv). Current P0 CI configuration and host tests, P1 exception source/tests and local archive custody, and P2-W03 adapter/tests/111-file manifest were cross-checked. Source review, host tests, finite runtime evidence and hardware proof remain distinct; no QEMU or hardware rerun was performed. This pass does not independently revalidate every P0–P2 package claim or online branch protection.
+6. **Complete mechanical checks — complete for this pass.** See [phase 6 report](documentation-audit-phase6.md) and [mechanical ledger](documentation-audit-phase6-mechanical.csv). Existing QG-DOCS and translation checks passed; supplemental scans found two stale fragments; both are repaired. Explicit Version metadata is now present in the nine current task books and matching current Chinese editions. The five exercised forward-reference exemptions are documented future P8 artifacts. Mechanical checks do not establish semantic correctness; semantic contract and owner-level findings remain open.
+7. **Deliver the consolidated report and close the documentary audit — complete for the declared current-tree P0–P8 scope.** See the [consolidated report](documentation-audit-final.md), [phase-7 closure reconciliation](documentation-audit-phase7.md), [current-tree delta ledger](documentation-audit-current-tree-delta.csv), and [cross-stage bidirectional ledger](documentation-audit-crossstage-bidirectional.csv). All 981 current Markdown paths and 125 package plans are covered; 217 identified directed cross-stage package relations have both endpoint views or an explicit missing-side record. This closes audit coverage, not remediation: findings, asymmetric mappings, owner decisions, and runtime blockers remain open and must not be reported as fixed.
 
-Suggested repair ordering (proposal, not authorization): first resolve authority/ownership (AUD-006/007 and producers for AUD-003/004), then upstream lifecycle/mapping/transport contracts (AUD-002–004), then consumer synchronization/accounting (AUD-001/005), then validation traceability/navigation/translations. Architecture questions go to their owning decision process; this handoff selects no new architecture.
+Suggested repair ordering (proposal, not authorization): resolve owner decisions first (AUD-006, AUTH-01 and producers for AUD-003/004), then upstream lifecycle/mapping/transport contracts (AUD-002–004), then consumer synchronization/accounting (AUD-001/005), then gather the stage-owned validation evidence. Navigation, anchors, and current task-book metadata are repaired. Architecture questions go to their owning decision process; this handoff selects no new architecture.
 
 ## 6. Coverage snapshot
 
@@ -136,8 +140,8 @@ Suggested repair ordering (proposal, not authorization): first resolve authority
 
 All rows received mechanical inventory/scanning; none of these area totals denotes full semantic coverage. Source plan counts: P0 22, P1 12, P2 10, P3 15, P4 9, P5 10, P6 13, P7 14, P8 20. P2 additionally has ten translated plans, not ten extra work packages.
 
-## 7. Handoff-only change boundary
+## 7. Change boundary and cumulative delivery
 
-The handoff adds this note, its Chinese edition and the two baseline ledgers, with development-index links. No code, accepted ADR, stage contract, unsafe, public API/ABI, dependency, toolchain or runtime behavior changes. Handoff documentation validation and delivery identity are recorded in its commit/PR; those checks do not close the audit or any finding. The branch is retained for continuation rather than treated as a completed repair series.
+The initial handoff added this note, its Chinese edition and the two baseline ledgers. Subsequent phases add audit reports and ledgers, all linked from the development index. The [phase-7 closure record](documentation-audit-phase7.md) closes the declared documentary coverage for the current checkout and P0–P8 package-handoff census. No code, accepted ADR, stage contract, unsafe, public API/ABI, dependency, toolchain or runtime behavior changed. This remains an audit record, not a repair series.
 
-Handoff-local checks on 2026-09-28 passed: the CI documentation block, translation checker (34 valid pairs / 927 eligible sources after adding this pair), seven translation-checker tests, and whitespace review. Ledger consistency was also checked against `git ls-tree` at the baseline: exactly 963 unique document paths with matching blobs, 125 unique source package IDs, and all listed design entries present. Every full-text/authority review remains pending. No runtime verification was rerun for this handoff.
+The original handoff checks on 2026-09-28 passed: the CI documentation block, translation checker (34 valid pairs / 927 eligible sources after adding that edition), seven translation-checker tests, and whitespace review. Baseline ledger consistency was checked against `git ls-tree`: 963 unique document paths with matching blobs, 125 unique source package IDs, and all listed design entries present. Later phase ledgers extend those records; see phase 7 for current coverage and checks. No new QEMU, target, hardware, or runtime verification was run for the documentation closure.

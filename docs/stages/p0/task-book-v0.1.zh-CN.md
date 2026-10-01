@@ -2,12 +2,13 @@
 
 **Translation status:** Current
 **Translation source:** [English source](task-book-v0.1.md)
-**Source blob:** `4ee371a779d15af0277d00e294a7db733c652fa1`
+**Source blob:** `201198eff8597168f8a11a455293ad4706e49db6`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](task-book-v0.1.md)具有权威性。
 
 **阶段 ID：** P0
 **阶段名称：** 仓库、规范与工具链基线
 **状态：** 已定义；不声明实施完成。
+**版本：** v0.1
 **所有者／变更背景：** P0 工程基线。
 **替代：** 此路径中此前未结构化的 P0 任务书布局。
 **主管文档：** [架构基线 ADR](../../adr/adr-000-architecture-baseline-v0.1.md)、[文档索引](../../README.zh-CN.md)及 [Plan Agent 指南](../../development/plan-agent-guidelines.md)。

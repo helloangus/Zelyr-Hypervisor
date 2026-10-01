@@ -2,6 +2,7 @@
 
 **Stage ID:** P7
 **Status:** Implementation-planning baseline; work and evidence are not claimed
+**Version:** v0.1
 **Scope:** AArch64-first scheduler-controlled vCPU execution on QEMU `virt`
 **Owner/change context:** P7 planning set reconstructed from the root-level P7 Stage Task Book v0.1 input
 **Supersedes:** the relocated root-level `Rust Type-1 Hypervisor — P7 Stage Task Book v0.1.md` input

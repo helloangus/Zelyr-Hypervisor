@@ -3,6 +3,7 @@
 **Stage ID:** P6
 **Stage name:** Timer, GICv3, and Virtual Interrupt v0
 **Status:** Current amended planning baseline; implementation and validation are not claimed
+**Version:** v0.2
 **Owner/change context:** P6 acceptance of deferred P1 NC6 execution under ADR-061, 2026-09-26
 **Supersedes:** [P6 task book v0.1](task-book-v0.1.md)
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)

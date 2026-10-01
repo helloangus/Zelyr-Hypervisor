@@ -3,6 +3,7 @@
 **Stage ID:** P4
 **Stage name:** Stage-2 与 Rust Validation Guest v0
 **Status:** Planning baseline; implementation and validation are not claimed
+**Version:** v0.1
 **Owner/change context:** P4 first controlled Guest-EL1 execution loop
 **Supersedes:** the root-level `Rust Type-1 Hypervisor — P4 Stage Task Book v0.1.md` source document
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)

@@ -5,6 +5,7 @@ Chinese readers can use the [Chinese edition](task-book-v0.1.zh-CN.md).
 **Stage ID:** P2
 **Stage name:** Platform Discovery & Host Memory Foundation
 **Status:** Defined planning baseline; implementation and validation are not claimed
+**Version:** v0.1
 **Owner/change context:** P2 planning reorganization from the root-source task book
 **Supersedes:** the root-level `Rust Type-1 Hypervisor — P2 Stage Task Book v0.1.md` source layout
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)
