@@ -4,7 +4,9 @@
 claimed.  
 **Scope:** The root-level repository contract and clone-safe entry points
 required by [P0-W01](../../plans/p0-w01-repository-baseline.md).  
-**Owner/change context:** P0-W01 implementation handoff.  
+**Version:** v0.2
+**Owner/change context:** P0-W01 implementation handoff; approval-provenance
+clarification confirmed by the project owner on 2026-10-02.
 **Supersedes:** None.
 
 ## Purpose and use
@@ -20,8 +22,11 @@ An implementing agent starts with this file and the mandatory
 loads only the linked section needed for its assigned step.  Before editing it
 must also follow the Coding Guidelines preflight, including the repository
 `AGENTS.md`, documentation index, ADR baseline, P0 task book, and P0-W01 plan.
-This document is the approved detailed design for those changes; it is not a
-completion record.
+This document remains a proposed detailed design: the project owner confirmed
+on 2026-10-02 that no separate design-approval record exists. Historical W01
+implementation and verification are recorded separately; neither the
+owner-approved license nor package completion retroactively approves this
+design.
 
 ## Authority, constraints, and traceability
 

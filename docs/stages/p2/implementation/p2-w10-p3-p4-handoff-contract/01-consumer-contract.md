@@ -18,6 +18,14 @@ index).
 
 ## 2. Deliverable catalog
 
+**AUD-003 owner direction (2026-10-02):** P2 owns ordinary allocated-frame
+Host mapping under [P2-ACR-02 / P2-HOST-MAP](../p2-contract-reconciliation-record.md#p2-acr-02--ordinary-allocated-frame-host-mapping-aud-003).
+W10 records the assigned producer package, contract and evidence before any
+P3/P4 consumer admission. The producer is [P2-W11](../../plans/p2-w11-host-allocated-frame-mapping.md);
+approved design, implementation and evidence are still pending;
+the catalog's physical-allocation rows do not supply mapped access. Metadata
+W04-MAP and heap-backing W05-MAP retain their narrower scopes.
+
 Each entry: producer (package + authoritative design path), one-paragraph
 semantic contract, validation IDs, consumers (named plan IDs). The
 paragraphs summarize; the linked designs remain the only normative

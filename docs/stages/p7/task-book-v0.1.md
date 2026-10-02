@@ -30,7 +30,7 @@ This table records implementation dependencies only; it does not claim P0–P6 c
 | P1 | stable AArch64 Non-secure EL2 runtime and exception/fatal-diagnostic boundary | regain EL2 control without redefining bring-up |
 | P2 | normalized platform CPU/memory facts, allocatable-memory and capability inputs | eligible host resources without platform-name branches |
 | P3 | online pCPU identities, per-CPU state, synchronization rules, cross-CPU notification, TLB transport | pCPU scheduling and remote reschedule/pause; no SMP redesign |
-| P4 | independent VM/vCPU, context save/restore, Stage-2 identity and exit/fault boundary | context switching and containment; no Stage-2 redesign |
+| P4 | base VM/vCPU/context/exit contract plus separately evidenced [P4-W10](../p4/plans/p4-w10-multivm-stage2-handoff.md) installed-context, residency and retirement extension | multi-VM/placement admission only within evidenced producer capabilities; P7 owns dispatch unwind, no Stage-2 redesign |
 | P5 | handle/capability and Guest-failure classification boundary | explicit invalid-control handling; no management ABI or authority-policy design |
 | P6 | per-pCPU EL2 deadline timer, vCPU timer, pending vIRQ/event delivery, GIC maintenance behavior, timer/IRQ telemetry | preemption and wakeup; no timer/vIRQ/GIC/LR redesign |
 

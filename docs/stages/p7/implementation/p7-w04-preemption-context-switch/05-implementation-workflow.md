@@ -97,7 +97,7 @@ contract-faithful fakes for P4/P6 seams; host-test the ordering (steps
 marks.
 
 **Acceptance:** host tests prove: quiesce-before-gate ordering; single
-`Running` handover; all-or-nothing candidate activation; per-class trace
+`Running` handover; verified safe failure recovery and explicit post-gate unwind (AUD-004); per-class trace
 marks; no step writes an unowned class (review checklist).  
 **Failure/blocker:** needing to write an unowned class means the sequence
 or a predecessor seam is wrong — stop and redesign; never take a shortcut

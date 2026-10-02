@@ -1,7 +1,6 @@
 # P4-W03 Validation, Error/Security Model, and Handoff
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Approved detailed design (project owner) v0.2, 2026-10-02; implementation and runtime evidence are not claimed.
 **Parent:** [P4-W03 detailed design](README.md).
 
 ## 1. Validation matrix
@@ -13,19 +12,27 @@ The matrix defines what W03's evidence must show.
 
 | ID | Requirement | Test or review | Suggested technique | Passing condition | Proves / does not prove |
 |---|---|---|---|---|---|
-| W03-DV01 | P4-B01 RAM origin | allocation-path review + unit tests | trace every page of the region to an allocator call; protected-range exclusion inherited from the allocator contract (M2) | every byte of Guest RAM is covered by allocator-derived, Guest-marked pages; zero direct physical-address sources | the origin discipline of the code; not the allocator's own correctness (P2's evidence) |
+| W03-DV01 | P4-B01 RAM origin | allocation-path review + unit tests | trace every page of the region to an allocator call; protected-range exclusion inherited from the allocator contract (M2) | every byte of Guest RAM is covered by allocator-derived W12 objects and retained region leases; zero direct physical-address sources | the origin discipline of the code; not the allocator's own correctness (P2's evidence) |
 | W03-DV02 | P4-B02 layout as test contract | record review | inspect `GuestLayout` record, version tag, and consumer citations (W02/W04/W05) | one authoritative record; all consumers cite it; values documented as P4 facts, not ABI | layout consistency; not fitness for any future machine |
 | W03-DV03 | P4-B04 negative image inputs | negative unit suite | empty, oversize, misaligned, overlapping-destination cases; property-style classification of arbitrary sizes | every case rejected with the named error before any write; zero partial writes | loader rejection behavior; not Guest execution |
 | W03-DV04 | P4-B04 prohibited overwrite | bounds-proof review | verify `validate_image_plan` + write-view bound checks jointly cover every store path | no store path exists without a prior in-bounds proof | overwrite impossibility in W03 paths; not Stage-2 enforcement (W02's) |
 | W03-DV05 | P4-B05 deterministic initialization | determinism tests | two full constructions compared byte-wise; re-init equivalence; boot-info field scan for varying content | byte-identical results across constructions; no timestamps/randomness in Guest-visible memory | construction determinism; not whole-boot determinism (W07's declared scenarios) |
 | W03-DV06 → P4-V03 | integrated construction | on-target construction via W08 automation | build → embed → boot → construct → Guest runs (W05 marker) | Guest executes from the loaded image; construction repeats cleanly in the same session | end-to-end load works on target; not hardware generality |
-| W03-DV07 | release sequencing | lifecycle test | destroy-space-then-release ordering (D8) incl. attempted wrong-order call | wrong order rejected by API shape; correct order restores accounting exactly | ownership hand-off soundness; not allocator internals |
-| W03-DV08 | unsafe and layering review | static review | audit the write view and module dependencies | single `unsafe` writer with three-point SAFETY notes; no board/QEMU names; no Arch registers in W03 modules | controlled-unsafe and layering compliance; not functional correctness |
+| W03-DV07 | release sequencing | lifecycle test | destroy-space-then-release ordering (D8) incl. attempted wrong-order call | W12 rejects take_back while any view/pin remains; actual completed free restores accounting | ownership hand-off soundness; not allocator internals |
+| W03-DV08 | unsafe and layering review | static review | audit the write view and module dependencies | W11 scoped byte access, P4 code-visibility backend review and no W03 raw-pointer writer; no board/QEMU names; no Arch registers in W03 modules | controlled-unsafe and layering compliance; not functional correctness |
 | W03-DV09 | guest-untrusted readiness | design review | confirm no Guest-reachable input exists in W03 paths and Guest-side validation duty is assigned (W05) | documented; boot-info validated Guest-side | the package does not create Guest-input surfaces; not P5's copy framework |
 
 Record each as **passed / failed / blocked / not run** with command or review
 input, environment, date, and reason. QEMU rows prove the stated reference
 environment only. Rows are plans until the verification record exists.
+
+Additional revision cases (required, not executed here): foreign/stale W12
+leases; Host-writer/Guest-executable alias rejection; in-flight and quarantined
+release rejection; failed W04 free preserving its handle; table unlink followed
+by delayed TLBI; protection change with a conflicting read-only alias; token loss;
+base-console rejection from the W10 profile; re-init only after complete retirement;
+and mid-copy failure never producing successful Guest input. Test masks, CPU
+sets and capacity are recorded explicitly. W10 cross-CPU evidence stays separate.
 
 ## 2. Error model
 
@@ -50,11 +57,11 @@ failures disjoint (W01 A2) even in a package the Guest never talks to.
   semi-trusted block) is assigned to [P4-W05](../p4-w05-validation-guest/README.md)
   and exists to keep the test asset itself honest, not because the block is
   Guest-controlled in P4.
-- Standing conflict kept visible: **P2-ACR-01 (`ADR Required`)** — `GuestRam`
-  is a stage-local handle, not the ADR `MemoryObject`; the Reserved
-  re-entry point records where the ADR-conformant model supersedes it.
-- `unsafe` surface: one bounded write view; growth beyond it is a review
-  failure.
+- **Common ownership:** ADR-062 owner option A is reflected in W12 object/region
+  consumption. Formal integration remains pending; no competing raw-range
+  backing authority or gap-degraded free path is permitted.
+- `unsafe` surface: W11 access and architecture instruction visibility are
+  reviewed producer boundaries; W03 does not manufacture raw references.
 
 ## 4. Observability model
 
@@ -72,13 +79,13 @@ Before handing W03 work to a reviewer:
   (`../p4-w03-guest-memory-image-record.md`);
 - DV01–DV09 statuses with explicit not-run/blocked entries and the upstream
   rows (W01 R07–R12, R04) each blocked item waits on;
-- new `unsafe` list (write view) with SAFETY note locations and inventory
+- new `unsafe` list (producer/backend adapters) with SAFETY note locations and inventory
   delta;
 - confirmation that layout values are recorded as test contracts and that no
   consumer hard-codes them;
 - factual notes for [P4-W09](../p4-w09-closeout-p5-handoff/README.md):
-  selected route, layout version, accounting degradation status (if M3
-  gap-degraded), console-page convention;
+  selected route, layout version, exact W12 accounting/retained failures and
+  separate console-page convention;
 - handoff to consumers: entry/stack/boot-info inputs to
   [P4-W04](../p4-w04-vcpu-entry-exit/README.md), image route and boot-info
   format to [P4-W05](../p4-w05-validation-guest/README.md), mapping grants
@@ -87,5 +94,5 @@ Before handing W03 work to a reviewer:
   [P4-W06](../p4-w06-fault-isolation-diagnostics/README.md),
   [P4-W07](../p4-w07-repeatability-telemetry/README.md), and
   [P4-W08](../p4-w08-qemu-integration-regression/README.md);
-- open items: P2-ACR-01 unchanged; any Specification Investigation or
+- open items: ADR-062 formal integration, producer implementation and target evidence pending; any Specification Investigation or
   upstream-mismatch records cited.

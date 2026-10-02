@@ -224,3 +224,13 @@ HVC/security set, and the P6-W11 VG-TIMER/VG-IRQ sets — run **unchanged** on
 Every scenario row also carries the global boundary: QEMU success does not
 prove hardware behavior; RK3566 evidence is a later-stage responsibility
 (README decision 7).
+
+## AUD-004 address-space acceptance inputs (2026-10-02)
+
+[Producer obligations](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+require A→B→A using the same IPA with different frame canaries, inactive-space
+mutation before re-entry, and destroying inactive A while B stays installed.
+Observe actual root/VMID selection and Guest results, not only activation-call
+counts. Add pre-/post-hardware-change failures and post-gate unwind to Host
+protocol cases; retain distinct Host versus QEMU evidence. P7-V09/V11 and
+cross-pCPU P7-V17 cells stay blocked/not-run until their producer gates close.

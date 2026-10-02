@@ -266,3 +266,6 @@ Per the [P7 plan index](../../plans/README.md) consumer map:
 
 W14 consumes the accepted-boundary record as part of the P8 handoff; P8 may
 rely only on evidenced semantics per the task book §7.
+
+The [post-admission pre-entry abort contract](06-pre-entry-abort.md) specifies
+P7-DISPATCH-UNWIND; its implementation and real producer cleanup evidence remain pending.

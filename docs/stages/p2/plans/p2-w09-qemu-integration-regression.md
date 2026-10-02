@@ -48,3 +48,16 @@ not claim their execution.
 
 W10 may cite the evidence location and distinguish run/not-run results. P3/P4
 receive a reference-platform input baseline, not a proof of real hardware.
+
+## P2-ACR-02 planning amendment
+
+W11 is an additional prerequisite. Include actual allocated-frame Host access and cleanup/reuse for representative stack, table and image-buffer fixtures in the supported reference matrix under P2-V11/P2-V14. Preserve P1 boot continuity and distinguish these fixtures from P3/P4 execution; do not infer SMP or hardware evidence.
+
+Owner-selected ADR-062 follow-up (2026-10-02): consume the
+[W12 common ownership/view foundation](p2-w12-minimal-memory-objects.md) and
+P2-V15 evidence at the corresponding lifetime/acceptance boundary. W08 owns
+Host negative/lifetime scenarios, W09 owns actual integrated Host access, W10
+owns condition-specific handoff, and W11 owns the translation adapter. W12
+Host modeling precedes W11 and does not require its hardware; W04-MAP remains
+independent. Formal ADR integration and approved detailed designs are still
+required before affected coding; no object or runtime delivery is inferred.

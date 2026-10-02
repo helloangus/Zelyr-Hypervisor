@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `f379a3cc30e06ad0f2cc5e1d728bd761c57b4528`
+**Source blob:** `a0e0db5f0b02282be8f539404f00c7d1fd0d64b2`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 **状态：** 规范性的 ADR 治理（状态、转换、门槛、冲突流程、历史规则、编号／索引）。
@@ -93,6 +93,7 @@ adr-000 内部登记表的状态词由原文定义，本文不重新定义（大
 |---|---|---|
 | [ADR-000](adr-000-architecture-baseline-v0.1.md)（[英文译文](adr-000-architecture-baseline-v0.1.en.md)） | 架构基线 v0.1 | 已接受 |
 | [ADR-061](adr-061-defer-p1-asynchronous-vector-validation-to-p6.zh-CN.md)（[英文原文](adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)） | 将已执行的 EL2 异步向量验证从 P1 延至 P6 | 已接受 |
+| [ADR-062](adr-062-p2-minimal-memory-object-foundation.zh-CN.md)（[英文原文](adr-062-p2-minimal-memory-object-foundation.md)） | 明确 P2 最小内存对象基础 | Proposed |
 
 新的独立 ADR 到 Accepted 状态时，应在此添加索引行；Proposed ADR 可有标为 Proposed 的索引行。
 

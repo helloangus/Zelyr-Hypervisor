@@ -294,3 +294,13 @@ are P6-stage validation assets. They freeze no machine ABI, no Guest DTB
 binding, no vCPU count requirement, and no P7/P8 test contract. P7/P8
 regression users extend the maintained asset under their own approved designs
 and may reshape suite internals without versioning.
+
+## AUD-005 SGI evidence qualification (2026-10-02)
+
+Consume [W04 accounting amendment](../p6-w04-smp-interrupt-routing-sgi/07-accounting-units-remediation.md):
+accepted calls, register writes, intended per-target attempts, W03 acknowledgements
+and completions have distinct units. Live/coalesced samples cannot establish
+loss or exact message delivery. Per-target exact deltas require exclusive,
+serialized, quiesced validation epochs with no overflow; no failed-target
+allowance manufactures equality. Guest-tail evidence does not prove those Host
+premises. Final schema stays W13-owned; no execution is claimed here.

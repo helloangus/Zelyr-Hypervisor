@@ -53,21 +53,22 @@ not guessed.
 **Failure/blocker:** an absent record is recorded `missing` with the owner
 named.
 
-### Step 2 — assemble and publish factual documents
+### Step 2 — verify authoritative contracts and assemble closure references
 
-Target: factual machine specification, boot specification, compatibility
-policy ([01](01-closure-artifact-contract.md) §1 locations).
+Target: the W02 machine specification, W03 boot contract, and W14 compatibility
+policy at the [authoritative locations](01-closure-artifact-contract.md) §1;
+stage-local closure references to their approved versions.
 
-Work: assemble each factual document strictly from approved decisions and
-linked evidence, per the §2 publication rule. Each document carries a status
-header (status, scope, version, owner/change context, supersedes) per
-`docs/README.md`, and cites its evidence.
+Work: verify each contract was published through its owning approval route,
+has the required status header, and cites its governing decisions. Assemble
+stage-local links to those versions, implementation records, verification
+records, and documented deviations. W20 requests missing owner publications;
+it does not create a second specification.
 
-**Acceptance:** every published factual statement traceable to an approved
-decision and a linked record; nothing published ahead of its approval.  
-**Failure/blocker:** a missing approval blocks publication; the gate stays
-`blocked`. Under no condition is a candidate value published to unblock a
-gate.
+**Acceptance:** each contract has one approved normative home and every
+closure statement links its owning decision and factual evidence.
+**Failure/blocker:** a missing owner approval or contract leaves the gate
+`blocked` or `missing`; W20 records it without publishing a candidate value.
 
 ### Step 3 — evaluate the gate matrix
 
@@ -169,7 +170,7 @@ environment, timestamp, and reason.
 | ID | Test or review | Suggested technique | Passing condition | Proves / does not prove |
 |---|---|---|---|---|
 | W20-DV01 → prerequisites | inventory review | inspect §1 assumed contracts and the Step 1 inventory | every package's record status known; gaps listed with owners | inventory completeness; not that evidence exists |
-| W20-DV02 → P8-V26 | document-kind and publication review | audit §2–§3 of [01](01-closure-artifact-contract.md) against the published set | no factual document published ahead of approval+evidence; no kind mixing; headers present | publication discipline; not document correctness |
+| W20-DV02 → P8-V26 | document-kind and publication review | audit §1–§3 of [01](01-closure-artifact-contract.md) against the owner-published contracts and closure links | each normative contract has one approved home and header; closure statements link actual evidence; no kind mixing or duplicate stage-local specification | authority and publication discipline; not runtime correctness |
 | W20-DV03 → P8-V26 | gate-matrix audit | evaluate all P8-V01–V26 rows; sample-verify `evidenced` links against actual verification content | all gates classified; every `evidenced` link resolves to real evidence; no planned work counted as evidence | the exit-criterion map is real; not that every gate passed |
 | W20-DV04 → P8-V26 | register and delta review | review the limitations register and unsafe/dependency deltas against package records | complete, sourced, with classes and effects; inherited `ADR Required`/`Architecture Change Request` items visible | factual limits/deltas; not their resolution |
 | W20-DV05 → P8-V26 | handoff-statement review | read the P9 statement against task book §7 and the evidence links | every statement evidenced or an explicit exclusion; a P9 planner can act on it | handoff readiness; not P9's design |

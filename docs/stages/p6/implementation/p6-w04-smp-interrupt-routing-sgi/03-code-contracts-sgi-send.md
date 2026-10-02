@@ -49,18 +49,21 @@ Purpose and caller: send a Host SGI with target attribution; callers are
   routes its primitive through this surface (its choice; the transport
   semantics remain P3's)
 Inputs / outputs: validated target + SGI ID + sender identity →
-  SendReceipt { writes: count, encoding summary } | SendError
+  SendReceipt { writes: count, intended_targets: bounded set,
+    target_attempts: count, encoding summary } | SendError
 Preconditions / postconditions:
   - executing at EL2 on `sender`, which is LocalReady (Group 1 enabled)
   - `sgi` is an assigned partition row (unassigned rows are rejected —
     UnassignedSgi — so accidental sends on reserved IDs are impossible)
   - success: every encoding written to ICC_SGI1R_EL1 in decomposition
-    order; send counter incremented per write; no read-back required
+    order; separately account one accepted call, encoding writes and intended
+    target attempts; this receipt does not prove remote delivery or completion;
+    no read-back required
     (architectural fire-and-forget)
   - failure: zero writes occurred (validation precedes emission)
-State and ownership change: hardware SGIs become pending at the targeted
-  GICRs (or delivered to the sending pCPU for self-target, looping
-  through the same path per [README decision 2](README.md))
+State and ownership change: emit the validated SGI requests; remote pending,
+  acknowledgement and completion are not certified by this return. Self-target
+  uses the same emission path per [README decision 2](README.md)
 Concurrency/allocation context: no lock; single volatile sysreg write per
   encoding; fixed-capacity encoding buffer (no allocation); callable from
   thread and (documented) IRQ contexts of consumers that the W03
@@ -82,8 +85,14 @@ Logic:
                                                       # dsb() if the caller
                                                       # needs send-before-
                                                       # flag publication
-  send_counters[sender][sgi] += encodings.len()
-  Ok(SendReceipt { writes: encodings.len() })
+  accepted_calls[sender][sgi] += 1
+  register_writes[sender][sgi] += encodings.len()
+  for t in validated_target_set: target_attempts[sender][sgi][t] += 1
+  Ok(SendReceipt { writes: encodings.len(),
+                  intended_targets: validated_target_set,
+                  target_attempts: validated_target_set.len() })
+  # Independent bounded atomic telemetry updates per W13; not a coherent snapshot.
+  # Counter overflow is flagged, never wrapped into an exact-count assertion.
 Validation: W04-DV04 (CPU0→CPU1), DV05 (reverse + multi-target), DV02
   (form/decomposition review)
 ```
@@ -112,28 +121,41 @@ Validation: registration evidence in W04-DV04; unassigned-row rejection
 ## 4. Accounting contracts
 
 ```text
-Name and stability: SendCounters (per sending pCPU, per SGI ID; monotone)
-  fn accounting_view() -> DriftReport (P6-internal; sampled, non-IRQ
-  context; reads send totals and W03 per-pCPU receipt counters)
-Purpose and caller: make P6-V04/V05 target attribution determinate and
-  inspectable; W13 consumes the view for evidence
-Preconditions / postconditions: view reflects a quiescent sample (no
-  concurrent-send fence is attempted; sampling semantics documented as
-  eventually-consistent across repeated samples)
-Errors: none; divergence is data (DriftReport rows), not failure
-Logic:
-  for each assigned sgi row:
-    sent    = Σ sender counters (per decomposition write)
-    receipts= Σ pCPU W03 acked counters for that SGI ID
-    expected_drift = Σ over failed-target events recorded since boot
-    if sent != receipts + expected_drift -> DriftRow { labeled unexpected }
-Validation: W04-DV05 accounting review; synthetic drift unit test
+Name and stability: SgiAccountingView (internal diagnostic value), produced by
+  accounting_view(); replaces the mixed-unit DriftReport proposal.
+Purpose and caller: expose units and target attribution for W11/W13 and
+  P6-V04/V05 without inventing message reliability.
+Inputs / outputs: per-sender accepted_calls, register_writes, per-target
+  target_attempts, validation_rejections, and W03 per-target acked/completed;
+  output labels units, run/epoch, target set, sampling mode and overflow status.
+Preconditions / postconditions: normal sampling is concurrent/approximate;
+  it is not called quiescent without an external scenario handshake. No
+  subtraction across unlike units, automatic loss count or coalescing estimate.
+State and ownership: sender counters belong to W04; receiver ack/completion
+  counters remain W03-owned. No second receipt mirror becomes authoritative.
+Concurrency/allocation context: non-IRQ sampling over bounded tables; send-side
+  accounting supports thread/IRQ preemption through the W13 atomic-counter
+  contract. Per-pCPU placement alone does not prevent interrupted updates.
+Errors and failure guarantee: rejected preflight publishes zero writes/attempts;
+  concurrent sampling, overflow or failed targets make exact reconciliation
+  unavailable, not automatic hardware-failure evidence. Never erase a discrepancy
+  by adding an invented expected_drift allowance.
+Security/authorization: diagnostics do not authorize retry, target removal or
+  resource release; no Guest-visible or frozen ABI is added.
+Logic: copy unit-tagged samples from the authoritative counters. By default
+  report ObservedOnly. A separate controlled scenario may evaluate per-target
+  target_attempt deltas against ack/completion deltas only under amendment 07's
+  exclusive, serialized and quiesced conditions; otherwise ExactUnavailable.
+Validation: W04-DV02/DV05 with unequal encoding/target counts, concurrent same-ID
+  sends, sampling races, failed targets and counter exhaustion.
 ```
 
-Rationale (recorded): no timeout or retransmission is defined. An SGI to
-a ready target is delivered by the GIC or the platform is broken; a broken
-platform is a diagnostic, not a retry policy. This keeps W04 free of
-message-layer semantics the plan excludes.
+[Amendment 07](07-accounting-units-remediation.md) defines the counter units,
+controlled comparison premises and source basis. An SGI is a signal, not one
+queued message per write. A send return is neither remote acknowledgement nor
+consumer-work completion. No timeout/retransmission is added to send_sgi;
+validation harnesses use bounded observation and report failed/inconclusive
+scenarios rather than asserting that any discrepancy proves broken hardware.
 
 ## 5. Explicitly not authorized here
 

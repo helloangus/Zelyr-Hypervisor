@@ -78,13 +78,14 @@ diagnostic path per the P0-W14 classification, not a recoverable error.
 
 - No consumer may implement a private lock, a second flag word, or a
   "usually uncontended so let's skip it" path: any mutual exclusion on
-  shared state goes through these flavors, citably tagged with its ladder
-  class.
+  shared payload goes through these flavors, citably tagged with its ladder
+  class. W08 BW-6 separately classifies atomic admission protocol state; it
+  grants no data borrow and permits no waiter spinning or generic private lock.
 - No consumer may widen a critical section to include a wait (WFE, poll of
-  another CPU, notification `wait`) — the reactive-wait rule in
-  [04 §5](04-code-contracts-atomic-and-ordering-policy.md) names the one
-  structured exception pattern (reception-duty interleaving in bounded
-  initiation waits, designed by W08).
+  another CPU, notification wait). BW-4 receiver service is not an exception.
+  W08 BW-6 admission holds no data-lock guard; collection and any caller retry
+  must remain bounded and reception-responsive.
+
 - No consumer may alias the payload outside the guard (raw-pointer
   shenanigans to "borrow early") — that is `unsafe` outside the audited
   boundary and fails the P0-W10 review.
@@ -97,7 +98,7 @@ diagnostic path per the P0-W14 classification, not a recoverable error.
 | Consumer | Rule surface consumed | Contract point |
 |---|---|---|
 | W07 (notification) | atomic policy (single-variable publication for the slot word), busy-wait rules (WFE/SEV ownership, bounds, no wait under lock), misuse checklist | [04](04-code-contracts-atomic-and-ordering-policy.md) §3, §5, §6 |
-| W08 (TLB transport) | `SpinLock` (single-flight initiation), ladder class `Infrastructure`, reactive-wait rule, bounded completion poll | [03](03-code-contracts-lock-primitives.md) §2; [04](04-code-contracts-atomic-and-ordering-policy.md) §4–§5 |
+| W08 (TLB transport) | BW-6 admission protocol, no held data-lock guard, reactive collection and bounded caller retry | [03](03-code-contracts-lock-primitives.md) §2; [04](04-code-contracts-atomic-and-ordering-policy.md) §4–§5 |
 | W09 (exception/interrupt) | Diagnostics class rules, fatal-path no-lock rule, irq-save flavor for any interrupt-sensitive future surface | [03](03-code-contracts-lock-primitives.md) §3; [04](04-code-contracts-atomic-and-ordering-policy.md) §4, §6 |
 | W10 (audit) | misuse checklist + ladder + atomic policy as classification evidence requirements | [04](04-code-contracts-atomic-and-ordering-policy.md) §3–§6 |
 | W11 (observability) | Statistics class, Relaxed counter rule, contention hooks (content only) | [04](04-code-contracts-atomic-and-ordering-policy.md) §3–§4 |

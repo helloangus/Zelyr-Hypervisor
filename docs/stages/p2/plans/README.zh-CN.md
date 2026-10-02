@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `945d81a708001911212595b3421f48c089561b3e`
+**Source blob:** `c9313792914993da6c5884ef657667b83ae4b384`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 **状态：** 规划索引。各计划是有界工作包计划，而不是实施完成记录。
@@ -28,14 +28,21 @@
 | [W01](p2-w01-boot-platform-description-intake.zh-CN.md) | P0 Host 测试／诊断／unsafe 基线；P1 DTB 移交及镜像范围 | W02、W07、W08、W09 |
 | [W02](p2-w02-platform-discovery-normalization.zh-CN.md) | W01 | W03、W06、W07、W09、P3、P4 |
 | [W03](p2-w03-boot-memory-map-ownership.zh-CN.md) | W02；P1 Hypervisor 镜像范围 | W04、W06、W08、W09、P4 |
-| [W04](p2-w04-physical-page-allocation.zh-CN.md) | W03 | W05、W06、W08、W09、P3、P4 |
+| [W04](p2-w04-physical-page-allocation.zh-CN.md) | W03 | W11、W05、W06、W08、W09、P3、P4 |
 | [W05](p2-w05-dynamic-small-allocation.zh-CN.md) | W04 | W06、W08、W09、P3、P4 |
 | [W06](p2-w06-platform-memory-inspection.zh-CN.md) | W02–W05 | W09、W10、P3／P4 评审者 |
 | [W07](p2-w07-offline-dtb-compatibility.zh-CN.md) | W01、W02 | W08、W10、平台规划者 |
-| [W08](p2-w08-host-robustness-regression.zh-CN.md) | W01–W05、W07 | W09、W10 |
-| [W09](p2-w09-qemu-integration-regression.zh-CN.md) | W01–W06、W08；P0 QEMU runner 入口 | W10、P3／P4 规划 |
-| [W10](p2-w10-p3-p4-handoff-contract.zh-CN.md) | W01–W09 | P3、P4、P2 完成评审 |
+| [W08](p2-w08-host-robustness-regression.zh-CN.md) | W01–W05、W07、W11 | W09、W10 |
+| [W09](p2-w09-qemu-integration-regression.zh-CN.md) | W01–W06、W08、W11；P0 QEMU runner 入口 | W10、P3／P4 规划 |
+| [W10](p2-w10-p3-p4-handoff-contract.zh-CN.md) | W01–W09、W11 | P3、P4、P2 完成评审 |
+| [W11](p2-w11-host-allocated-frame-mapping.zh-CN.md) | W03、W04、W12；P1 引导／访问证据 | W08、W09、W10、P3-W02/W04、P4-W01/W02/W03 |
+| [W12](p2-w12-minimal-memory-objects.zh-CN.md) | W04 所有权；地址类型；责任方已选 ADR-062 方向 | W11 生命周期集成、W08／W09／W10、P4-W02／W03／W10；P3 SMP 审阅 |
 
 该图有意保持无环。W01–W05 建立基础链；W06、W07 提供可观测性与离线兼容性检查；
 W08 测试 Host 侧稳健性；W09 提供参考平台集成证据；W10 记录消费者契约，
 不声称阶段已经完成。
+
+W11 是 P2-ACR-02 的规划生产者，先于 W08／W09／W10 执行。W04-MAP 与 W05-MAP 保持独立；W11 不是分配器引导前提。P2-M01–M05 与 P2-V14 见任务书第 10 节。
+
+W12 在 W11 生命周期集成前提供通用所有权／视图基础；Host 模型使用注入后端，不依赖 W11 硬件。
+W04-MAP 保持独立。责任方方向已记录，正式 ADR 集成及详细设计批准仍是独立门禁，见任务书第 11 节。

@@ -1,5 +1,11 @@
 # P7-W04 Architecture and State
 
+**AUD-004 admission:** [Producer handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+are required before multi-VM address-space switching. P4 single-space activate
+does not establish this capability. S2-MULTIVM-SCOPE/INSTALL/RETIRE and
+P7-DISPATCH-UNWIND remain pending; no implementation or execution is claimed.
+
+
 **Status:** Proposed detailed design; implementation not claimed.  
 **Parent:** [P7-W04 detailed design](README.md).
 
@@ -112,8 +118,8 @@ stresses the interleavings. W04 claims none of the evidence.
 |---|---|---|
 | Deadline IRQ with no running Guest (spurious/late) | recoverable, expected race | record expiry; intent set; loop consumes and idles or dispatches; no error surface |
 | Gate rejects the switch candidate (`NotDispatchable` etc.) | recoverable | requeue/re-pick per W05; idle allowed (W08); bounded by picker progress rules |
-| P4 address-space activation error | internal error, Guest-unrelated | candidate undispatched this round + diagnostic; repeat escalation to invariant investigation; never marked `Faulted`; fatal only if classified an invariant violation per P0 policy |
-| P6 timer/vIRQ restore error | internal error | same containment as above for the timer/vIRQ class |
+| P4 address-space activation error | producer-classified, Guest-unrelated | retry only after verified safe installed context and W02 admission unwind; indeterminate hardware context blocks entry and retains resources (AUD-004) |
+| P6 timer/vIRQ restore error | internal error | same verified-cleanup and admission-unwind requirements, including already installed Stage-2 state |
 | Deadline arm fails (P6 error) | recoverable with degraded property | dispatch proceeds without preemption deadline is NOT permitted for shared pCPUs (a CPU-bound Guest could monopolize): arm failure on a shared dispatch is a recorded error and the dispatch aborts (candidate requeued); on a pinned/dedicated dispatch, arm failure degrades to no-preemption and is recorded — equivalence to static binding makes this safe |
 | Invariant violation during switch (slot mismatch, state disagreement) | fatal | P0 panic policy; P1 diagnostics |
 

@@ -130,13 +130,16 @@ construct(input, scenario):
 ```text
 run_entry(vcpu, space):
     assert vcpu.state == Ready else InvariantViolation
-    space.activate(current_pcpu())?                // W02 §3.6
-    emit vcpu.enter
-    vcpu.state = Running
+    installed = space.activate(current_pcpu())?    // W02 §3.6 exact CPU tuple
     loop:                                          // bounded by budget (D7/D8)
-        ws_guest_enter(host_area(), &vcpu.ctx)     // [03 §3]; no return
+        entry = space.acquire_entry(current_pcpu(), installed)? // still Ready on refusal
+        emit vcpu.enter
+        vcpu.state = Running
+        ws_guest_enter(host_area(), &vcpu.ctx, entry) // Arch boundary retains lease
         // — control resumes here via the exit stub —
         frame = take_exit_frame()                  // [03 §4]
+        space.complete_actual_exit(entry_receipt(frame)) // no Guest access remains
+        vcpu.state = Ready                         // captured, eligible for action
         info = classify_minimal(frame)             // §3.2
         emit vcpu.exit(info.class, info.guest_pc)
         action = decide(info)                      // §3.2 policy
@@ -196,7 +199,7 @@ run_entry(vcpu, space):
 
 - **Name and stability:** the P4 stop path = `Stop(cause)` → `Stopped` state
   → diagnostics retained → coordinated teardown: `vcpu.destroy()` →
-  `space.destroy()` (W02 §3.8) → `GuestRam::release()` (W03 §3.4).
+  `space.select_idle()` then `space.destroy()` (W02 §3.8) → `GuestRam::release()` (W03 §3.4).
 - **Purpose and caller:** P4-E05 defined stop; the ordering is the W02/W03
   sequencing duties applied from this side; the setup/teardown coordinator
   (W07 repeat driver, W09 record) executes it.
@@ -218,3 +221,14 @@ run_entry(vcpu, space):
 `TeardownOrderViolation`. All Guest-caused conditions arrive as outcomes
 (`ExitInfo`/`StopCause`), never as errors — the type split itself documents
 the W01 A2 boundary.
+
+## W12/W10 execution-lifetime binding
+
+W02's installation receipt is not a Guest execution lease. Every entry/re-entry
+acquires a fresh matching lease; actual exit retires it after context save.
+Pre-entry rejection cancels an unused lease explicitly and restores a known
+context; indeterminate hardware state retains resources and stops the path.
+The pseudocode's `?` at lease acquisition denotes this classified pre-entry
+failure handling, never a return leaving an unexamined Running state. Before
+space destruction explicitly detach its installed context. Base console use
+remains exclusive under this run loop; W10 fixtures have no console grant.

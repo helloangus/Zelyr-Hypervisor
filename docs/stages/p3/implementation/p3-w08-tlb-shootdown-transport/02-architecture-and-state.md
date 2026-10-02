@@ -1,5 +1,7 @@
 # P3-W08 Architecture and State
 
+**Current admission (2026-10-02):** [Amendment 07](07-timeout-ownership-remediation.md) removes Pending supersession. The owner selected W08-SYNC option A on 2026-10-02: single-attempt protocol admission, TransportBusy on contention, no SpinLock across collection. W06/W08 contracts are reconciled below; final design admission, implementation and execution evidence remain pending.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Parent:** [P3-W08 detailed design](README.md).
@@ -9,21 +11,23 @@ claimed.
 ```text
 INITIATOR (any online CPU, thread context)        TARGET (each mask member)
 ------------------------------------------        -------------------------
-acquire initiation SpinLock (single-flight)       idle / poll point
-validate + reduce mask vs OnlineSet (W03)             |
-for each target:                                      | wake (W07 kind 1)
-  write descriptor (plain store)                      v
-  CAS control Empty->Pending{seq} (release)       consume_request():
+validate + reduce mask vs OnlineSet (W03)          idle / poll point
+try admission once; busy => TransportBusy             |
+preflight ALL slots; Pending => release admission + TargetsBusy
+for each ready target:                               | wake (W07 kind 1)
+  write descriptor (atomic relaxed store)                      v
+  CAS exact Empty/Completed->Pending{seq} (release)       consume_request():
   notify(target, kind 1)                            acquire control; read desc
 collect: bounded acquire-poll of all                execute bound operation
   target control words                               (P3: TransportNoop)
   until Completed or bound exhausted                 CAS Pending->Completed
-release initiation lock                             (release)
+latch result; release admission                             (release)
 return Completed / TimedOut{unacked}
 ```
 
-Exactly one transport operation is in flight system-wide at any time
-(single-flight, README decision 2). Targets are stateless beyond their own
+Exactly one initiation/collection call owns serialization at a time.
+Older target operations may remain Pending after timeout; no selected Pending
+slot is overwritten (README decision 5). Targets are stateless beyond their own
 slot: they need no lock, no queue, and no knowledge of other targets.
 
 ## 2. Logical modules
@@ -32,7 +36,7 @@ slot: they need no lock, no queue, and no knowledge of other targets.
 |---|---|---|---|---|---|
 | A. Target selection | `TargetMask`, validation, exclusion reporting, broadcast expansion | requested mask, W03 `OnlineSet`, W05 gate | effective target set + excluded set, or errors | none (derived) | lifecycle authority (W03) |
 | B. Target consumption | slot state machine, descriptor read, bound-operation dispatch, completion | own slot, wake events | Completed transitions; consumption counts | own slot's state fields | what the bound operation does (P4) |
-| C. Initiation and collection | single-flight lock, publish, wake, bounded collect, timeout, results | requested mask + descriptor | transport result with per-target accounting | initiation lock; initiator-side counters | bound-operation content; Stage-2 semantics (P4) |
+| C. Initiation and collection | single-attempt admission, publish, wake, bounded collect, timeout, results | requested mask + descriptor | transport result with per-target accounting | admission state; initiator-side counters | bound-operation content; Stage-2 semantics (P4) |
 | D. Boundary and evidence | opaque-descriptor rule, no-op placeholder, scenario definitions | this design | citable contract statements; W12/W13 inputs | none | catalog (W11) |
 
 ## 3. Objects and ownership
@@ -40,21 +44,21 @@ slot: they need no lock, no queue, and no knowledge of other targets.
 | Object | Count | Owner | Writers | Readers |
 |---|---|---|---|---|
 | `TlbReceptionSlot` (control + descriptor) | one per CPU (in `PerCpuArea`) | W08 (contents); W04 (placement) | control: initiator CAS then target CAS; descriptor: initiator (stable while Pending) | the owning target (acquire); initiator (acquire poll) |
-| Initiation lock | one per boot | W08 | any online CPU (short critical sections) | nobody (lock, not data) |
+| Admission state: Idle / Active(cpu) | one per boot | W08 | strong CAS by an online CPU; checked release by token owner only | contender (one attempt), diagnostics |
 | Transport counters (initiated/completed/timed-out per CPU) | per CPU | W08 (W11 owns catalog) | owning CPU (its own initiations); per-target completion count target-private | diagnostics read-only |
 | Bound-operation binding | one per stage | W08 at P3 (`TransportNoop`); replaced by P4's design via W14 | design change only | targets (dispatch) |
 
-Sequence tags make stale state detectable: every Pending carries the
-request's global sequence; a target completing a superseded request is
-impossible under single-flight, and the tag still guards the
-post-timeout supersession path (README decision 5).
+Sequence tags pair publication and completion; they do not cancel receivers.
+Descriptors stay stable throughout Pending, even after timeout. No receiver
+access to old descriptor/resources follows Completed publication.
+See [amendment 07](07-timeout-ownership-remediation.md) for wrap/lifetime reasoning.
 
 ## 4. Slot state machine (per target)
 
 ```text
 Empty --initiator CAS--> Pending{seq, descriptor stable}
 Pending --target CAS (after bound op)--> Completed{seq}
-Completed --next request CAS--> Pending{seq+1}      (supersession)
+Completed --next request CAS--> Pending{seq+1}      (reuse after completion)
 ```
 
 - Transitions are single CAS operations; no other state exists.
@@ -65,40 +69,41 @@ Completed --next request CAS--> Pending{seq+1}      (supersession)
 - Reserved/illegal encodings in the control word are corruption — fatal
   diagnostic path (P0-W14 class), never "fixed up".
 
-## 5. The single-flight argument (why the only wait cannot deadlock)
+## 5. Single-flight admission and progress limits
 
-The protocol's only blocking wait is an initiator's completion collection
-(bounded) and the initiation lock (unbounded in principle). The hazard:
-CPU A holds the initiation lock and waits for CPU B's completion, while B
-spins on the initiation lock and never consumes its own request.
+Owner-selected A uses one strong atomic compare-exchange from Idle to Active(cpu).
+Failure returns TransportBusy, with no publication or sequence change. A private
+non-Copy token permits only that call to release admission; targets never acquire
+it. Successful Acquire admission and Release retirement serialize initiators.
+Slot release/acquire edges separately order descriptors and target completion.
 
-The hazard is removed by W06's BW-4 reactive-wait rule, made binding for
-W08: **a CPU waiting for the initiation lock must interleave
-`consume_pending_requests()` (its own target duty) into its wait loop.**
-Then B remains a functioning target while waiting, A's collection
-completes, the lock is released, and B proceeds. Formally: the wait graph
-has no cycle because every waiter either (a) holds the lock and waits on
-targets that never hold it, or (b) holds nothing and remains
-target-responsive. Targets never wait on initiators. This argument is the
-reason the reactive-wait rule is a Required contract item, not advice.
+The admitted call preflights all targets, publishes, then collects with no
+SpinLock or data-lock guard held. It services its own reception under BW-4.
+TargetsBusy releases admission before return; Completed/TimedOut copy their
+result before release and perform no subsequent slot reads. Fatal partial
+publication retains admission, slots and resources; neither Drop nor a retry
+may reset them. These are the W06 BW-6 protocol constraints; BW-2 is unchanged.
 
-Bounds: collection is bounded (BW-1 constant, recorded); the initiation
-lock's hold time is bounded by the collection bound; therefore lock
-waiters are also bounded in practice, though the bound is the collection
-bound, not a lock-specific constant (recorded).
+There is no admission wait or fairness guarantee. Explicit caller retries need
+bounds and reception service. A halted initiator may strand admission; a halted
+target may remain Pending after timeout. Collection bounds poll count, not
+scheduling or wall-clock latency. P3 TransportNoop is non-reentrant and never
+waits; future P4 operations must establish their own bounded execution context.
+See [amendment 07](07-timeout-ownership-remediation.md) for decision and scope.
 
 ## 6. Failure model
 
 - **Refused initiation** (`NotReady`, `UnknownTarget`, `TargetNotOnline`,
-  `EmptyMask`) is side-effect-free and diagnosable; no slot is touched.
+  `EmptyMask`, `TransportBusy { excluded }`, `TargetsBusy { busy, excluded }`) makes no new-request publication/sequence writes; refusal diagnostics and
+  independent old-reception progress remain possible.
 - **Excluded CPUs** (requested but not online) are reported in the
   result; the request proceeds for the effective set.
-- **Timeout**: `TimedOut { unacked: TargetMask }` after the bound; slot
-  states stay readable for CPU-by-CPU diagnosis (Pending = no progress,
-  Completed = accounting lag). The transport remains usable: a later
-  request supersedes by sequence. A target that repeatedly never
-  completes is a suspect-CPU diagnostic for W11/W12 surfaces — at P3 it
-  is not a lifecycle event (W03 has no post-admission failure edge).
+- **Timeout** returns collected acked/unacked masks. Pending may mean not
+  started or executing; it remains immutable to initiators. A late target
+  completes normally. Only acquire-observed Completed permits reuse.
+  A retry selecting any Pending target returns TargetsBusy before all writes.
+  A stalled CPU stays occupied; timeout neither changes lifecycle nor releases
+  descriptor-referenced resources.
 - **Slot/control corruption** (illegal encodings, sequence regressions
   under single-flight): fatal invariant path with CPU attribution.
 - **Bound-operation misbehavior** (P4's future content) is outside this

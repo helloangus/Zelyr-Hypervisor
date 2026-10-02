@@ -77,7 +77,7 @@ Guest-visible SGI.
 
 **Required:** `SgiTarget` forms and decomposition; eligibility predicate;
 ICC_SGI1R emission with barrier/sequencing rules; send/receipt accounting
-and drift reporting; the SGI ID partition; the validation-scenario SGI; SPI
+with explicit unit/sample-mode labeling; the SGI ID partition; the validation-scenario SGI; SPI
 route-change protocol with quiesce checks and IRM=0-only targets; route
 change events; failure outcomes (ineligible target, quiesce conflict).
 
@@ -108,12 +108,11 @@ mechanics; Orange Pi hardware tier (P15).
   recovery (P3 vocabulary owns the consequence of an offline target).
 - Self-target is eligible if the sending pCPU is itself ready (it is,
   since it is executing).
-- A target that becomes ineligible *after* validation but before hardware
-  consumption cannot cause loss: its GICR holds the SGI pending while
-  disabled (W02 baseline), and a `LocalFailed` pCPU is by definition
-  excluded from later consumption — the accounting drift report makes
-  this visible rather than silent (drift is expected only in the
-  failed-target case and is reported, not treated as corruption).
+- If readiness changes after validation, retain the original intended-target
+  observation and record the readiness change; do not relabel it successful
+  delivery. Such a run cannot support exact accounting or a loss conclusion.
+  GIC pending-state behavior is not a one-write/one-receipt queue. See
+  [amendment 07](07-accounting-units-remediation.md).
 
 ## 5. Non-policy commitments (Required review points)
 

@@ -222,13 +222,15 @@ Logic:
               match switch_to(pcpu, from = current_exit_or_idle(),
                               to = cand, reason = triggers.reason()) {
                   Ok(outcome)  => {}         # Guest window happened inside switch
-                  Err(GateRejected(_)) => { requeue_tail(cand); continue }  # bounded
-                  Err(ActivationFailed(stage)) => { requeue_tail(cand);
+                  Err(GateRejected(_)) => { reconsider_owner_candidate(cand); continue } # bounded
+                  # ActivationFailed is recoverable only after producer cleanup
+                  # and W02 admission unwind; missing proof blocks this branch.
+                  Err(ActivationFailed(stage, aborted_candidate)) => { reconsider_owner_candidate(aborted_candidate);
                           record_activation_failure(cand, stage);
                           # sustained failures escalate per W04 containment §3
                           continue }
                   Err(DeadlineArmFailed(_)) => { /* per W04 asymmetry:
-                          shared -> abort dispatch (requeue); pinned -> degrade */ }
+                          shared -> verified cleanup + W02 unwind before requeue; pinned -> degrade */ }
                   Err(InvariantViolation) => fatal()   # P0 policy
               }
           }
@@ -267,3 +269,14 @@ Logic: window bookkeeping per the §5 formula; constants recorded at
   implementation.
 Validation: W05-DV04 host simulations; W05-DV05/06 target scenarios.
 ```
+
+## Post-gate abort candidate handling
+
+`reconsider_owner_candidate` uses the existing owner queue protocol: service
+pending control requests, recheck lifecycle/eligibility/mode and insert at most
+once. It is not unconditional requeue. ActivationFailed may carry a candidate
+only after the [W02 abort contract](../p7-w02-scheduler-admission-lifecycle/06-pre-entry-abort.md)
+returns AbortedCandidate with all P4/P6 cleanup proven; indeterminate results
+carry retained identities and never reach this branch. GateRejected likewise
+cannot enqueue a candidate whose lifecycle changed during admission. The owner
+retains or transfers every non-enqueued candidate through its normal control path.

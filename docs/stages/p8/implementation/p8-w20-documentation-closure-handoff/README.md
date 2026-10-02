@@ -86,35 +86,33 @@ assumed contract of its owning package.
 
 | Plan outcome / acceptance wording | Current observable state | Required foundation deliverable | Why it follows from the outcome | Authority / owner | Evidence needed |
 |---|---|---|---|---|---|
-| P8-V26: factual machine specification exists | Absent; concrete v1 values are `ADR Required` (task book §8) via [W02](../p8-w02-machine-contract-governance/README.md) | Factual machine specification, published only after W02-governed approval and implementation evidence | The plan forbids writing factual specs before approvals/evidence; the spec's existence is the exit criterion | Spec content: the approved W02 route and owning implementation designs; publication route: W20 (this design) | gate-matrix row; **failure boundary:** unapproved values ⇒ spec stays unwritten and P8 stays open |
-| P8-V26: Linux boot specification and compatibility policy | Absent | Factual boot specification ([W03](../p8-w03-linux-boot-contract/README.md) route) and compatibility policy ([W14](../p8-w14-machine-abi-compatibility/README.md) route), published only with evidence | Same prohibition; both are named task-book §7 closure outputs | W03/W14 fact sources; W20 publication route | gate-matrix rows |
+| P8-V26: approved machine specification exists | Absent; concrete v1 values are `ADR Required` (task book §8) via [W02](../p8-w02-machine-contract-governance/README.md) | W02-governed `docs/machine-types/rusthv-arm-virt-v1-spec-v0.1.md`, approved under its freeze gate; W20 checks the version and linked evidence | A closure report needs the approved machine contract it cites | W02 governance and routed approval publish; W20 reviews and links | gate-matrix row; **failure boundary:** unapproved values ⇒ spec stays unpublished and P8 stays open |
+| P8-V26: Linux boot contract and compatibility policy | Absent | W03-owned `docs/machine-types/linux-boot-contract-v0.1.md` and W14-owned `docs/abi/` compatibility matrix, with approved versions and evidence links | Both are named task-book §7 closure outputs | W03/W14 publish through their routes; W20 reviews and links | gate-matrix rows |
 | P8-V26: evidence index over P8-V01–V26 | No index exists | Gate matrix with per-gate evidence location and status enum ([01](01-closure-artifact-contract.md) §4) | "Closes only with real evidence for P8-V01–V26" is checkable only via an explicit per-gate map | W20 (this design); evidence: each owning package | W20-DV03 audit |
 | P8-V26: known limits, unsafe/dependency deltas | No register exists | Limitations register and delta record as factual artifacts ([01](01-closure-artifact-contract.md) §5) | ADR-006 unsafe governance and P0 dependency governance require deltas to be reported, and task book §7 requires limits | W20 (register); content: owning packages' records | W20-DV04 review |
 | P8-V26: P9 consumer statement | Absent | Evidenced-facts-only handoff statement ([02](02-closure-workflow-and-handoff.md) §4) | Task book §7 bounds what P9 may rely on; the bound must be written as a consumable statement | W20; facts: evidenced packages | W20-DV05 review |
 | Document-kind separation enforced | Layering exists by convention (`docs/README.md`) | Per-artifact status discipline: plan vs design vs implementation vs verification never merge ([01](01-closure-artifact-contract.md) §3) | Mixing kinds is how planned evidence becomes "evidence" — the exact P8-V26 failure | W20 | W20-DV02 review |
 
-No row above requires inventing content: W20 owns routes, structures, and
-reviews; every factual sentence it will later publish must be traceable to
-an owning package's record.
+No row above requires inventing content: W20 owns closure structures and
+reviews; every factual closure sentence it writes must cite an owning
+contract or package record.
 
 ## Resolved design decisions and their authority
 
-1. **Closure is a review act, not an authoring act.** W20 authors only:
-   the gate matrix, the register/record *structures*, and the handoff
-   statement skeleton. Every factual specification, validation report, and
-   evidence index entry is assembled from owning-package records. Rationale:
-   the plan forbids manufacturing specifications or evidence; authoring
-   factual content from primary records is assembly, inventing it is
-   fabrication. Stage-local design freedom owned here.
-2. **Factual documents live in the implementation area; evidence stays in
-   `verification/`.** The factual machine specification, boot specification,
-   and compatibility policy are published under
-   `docs/stages/p8/implementation/` only after their governing decisions and
-   evidence exist (per the stage implementation index's own rule); the
-   validation report, evidence index, and all raw evidence stay under
-   `docs/stages/p8/verification/`. Rationale: `docs/README.md` layering;
-   keeps the W02-preserved plan/design/implementation/verification
-   separation mechanical rather than judgment-based.
+1. **Closure reviews owner publications.** W20 authors the gate matrix,
+   register/record structures, evidence index, and bounded handoff. W02/W03/W14
+   publish their own normative contracts after their approval gates; W20 cites
+   the approved versions and checks supporting evidence. Rationale: the plan
+   forbids manufacturing specifications or evidence. Stage-local design
+   freedom owned here.
+2. **Contracts keep their owning homes; evidence stays in `verification/`.**
+   W02 governs the versioned machine specification in `docs/machine-types/`;
+   W03 owns the Linux boot contract there; W14 owns the compatibility matrix
+   and policy in `docs/abi/`. W20 links those approved versions and records
+   any deviations in stage-local closure material. The validation report,
+   evidence index, and raw evidence stay under `docs/stages/p8/verification/`.
+   Rationale: the document classes in `docs/README.md` and the single-home
+   rule in the documentation baseline.
 3. **Gate statuses are a closed enum.** `evidenced / missing / blocked /
    failed / superseded`, with `evidenced` requiring a link to real
    verification material. No fifth state ("basically done") may be

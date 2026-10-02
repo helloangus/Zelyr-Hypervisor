@@ -79,15 +79,11 @@ on-target evidence requires M2–M6 delivered; the
   No contract conflict exists; the `ExitClass` enum remains W04-owned and W06
   reuses it as a field, adding detail around it. This design records the
   boundary rather than moving it.
-- **P2-ACR-01 (ADR Required, unresolved).** W06 consumes W02's ledger-derived
-  `QueryResult` and asserts nothing about ADR-level `MemoryObject`/
-  `MemoryRegion` semantics. The stage-local `MappingGrant`/`QueryResult`
-  shapes remain W02/W03-owned; P2-ACR-01 stays visible and unresolved and is
-  carried to [P4-W09](../p4-w09-closeout-p5-handoff/README.md) in the
-  unresolved-conflict list. W06's decisions create no new pressure on it.
+- **P2-ACR-01:** W06 consumes W02 query snapshots; W12 owns backing/regions.
+  ADR-062 owner option A is recorded; formal integration and delivery gates
+  pass to W09. A query snapshot cannot mint a MappingGrant.
 - **Hypervisor-owned-range probes without new Guest mechanisms.** P4-V07
-  requires a "selected Hypervisor-owned-range" negative. In P4's identity
-  mapping, any IPA outside the W02-granted ranges is unmapped, so a
+  requires a "selected Hypervisor-owned-range" negative. In the temporary P4 layout, any IPA outside the W02-granted ranges is unmapped, so a
   Hypervisor-owned-range access produces the same fault class as a gap probe;
   the isolation property proven is "not mapped, therefore blocked, therefore
   diagnosable." W06 therefore defines probe *classes* with class-membership

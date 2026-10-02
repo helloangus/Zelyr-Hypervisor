@@ -102,3 +102,18 @@ and (if review finds gaps) updates to its own design here — never upstream
 documents, never P5 documents, never verification evidence for other
 packages. If executing the review appears to require any of those, the
 requirement is itself a gap to record per [02](02-review-workflow.md) §1.
+
+## AUD-004 downstream capability limits (2026-10-02)
+
+The [Stage-2 handoff requirements](../p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+must travel with the P4 capability/limitation record. Single-space activation
+and current-path invalidation do not establish multi-VM switch selection,
+inactive-space teardown, or cross-pCPU resident-translation safety.
+S2-MULTIVM-SCOPE / S2-INSTALL / S2-RETIRE remain producer-owned pending
+deliverables; P7-DISPATCH-UNWIND belongs to P7 lifecycle/switch owners.
+Do not promote P4 single-path evidence into P7 multi-VM admission.
+
+Owner update (2026-10-02): [W10](../../plans/p4-w10-multivm-stage2-handoff.md)
+is now scope-authorized and separately planned. Record its later V17–V22 evidence
+as a P7 producer addendum; base W09/P5 closure neither depends on nor proves it.
+S2-MULTIVM-SCOPE design/consumer acceptance and INSTALL/RETIRE evidence remain open.

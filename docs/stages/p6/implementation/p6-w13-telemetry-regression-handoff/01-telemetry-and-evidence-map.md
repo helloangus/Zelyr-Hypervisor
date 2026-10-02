@@ -129,3 +129,13 @@ environment, and proof boundary. P6-DOC-05 additionally carries the §2
 method statement and the collected baseline tables; P6-DOC-04 the P6-V01–
 P6-V28 rows composed from the owning records. Neither record may contain a
 fact without an evidence link or an explicit limitation statement.
+
+## AUD-005 SGI evidence qualification (2026-10-02)
+
+Consume [W04 accounting amendment](../p6-w04-smp-interrupt-routing-sgi/07-accounting-units-remediation.md):
+accepted calls, register writes, intended per-target attempts, W03 acknowledgements
+and completions have distinct units. Live/coalesced samples cannot establish
+loss or exact message delivery. Per-target exact deltas require exclusive,
+serialized, quiesced validation epochs with no overflow; no failed-target
+allowance manufactures equality. Guest-tail evidence does not prove those Host
+premises. Final schema stays W13-owned; no execution is claimed here.

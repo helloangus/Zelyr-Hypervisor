@@ -1,197 +1,131 @@
 # P4-W02 Architecture, Objects, and State Model
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
-**Parent:** [P4-W02 detailed design](README.md).
+**Status:** Approved detailed design (project owner) v0.2, 2026-10-02; implementation and runtime evidence are not claimed.
+**Parent:** [W02](README.md). Common backing/view rules come from
+[W12](../../../p2/implementation/p2-w12-minimal-memory-objects/README.md);
+multi-CPU extension comes from [W10](../p4-w10-multivm-stage2-handoff/README.md).
 
 ## 1. Logical modules
 
-Placement rule: Stage-2 is an AArch64 architecture mechanism (ADR-041), so the
-first three modules live in the Arch layer; the vocabulary module is the
-Core-visible surface. Crate/file placement follows the P0 workspace design
-(assumed contract M8 in [01 §2](01-scope-and-foundations.md)); this design
-fixes logical modules and their boundaries, not file paths.
-
-| Module | Responsibility | Owned state | Inputs | Outputs | Non-responsibility |
-|---|---|---|---|---|---|
-| `s2-table` | Descriptor encoding/decoding, root/table frame management, walk-for-mutation and walk-for-read over P4's descriptor representation | none persistent; operates on frames owned by `s2-space` | IPA ranges, flags, frame references | descriptor mutations, walk results | allocation policy, TLB invalidation, Guest entry |
-| `s2-space` | Address-space object: lifecycle, mapping ledger, VMID, lock, public map/unmap/protect/query/activate/invalidate operations | root frame, table frames, ledger, VMID, state | `MappingGrant`s, IPA ranges, flags | success/error, query snapshots, activation effects | Guest RAM contents, image loading, fault diagnosis |
-| `s2-vmid` | Minimal VMID allocator (distinct VMIDs, no recycling) | free/reserved VMID set | allocation/release requests | VMID values or exhaustion error | VMID programming into sysregs (done by `s2-space` activate) |
-| `s2-tlb` | Invalidation backend + seam: encode and apply invalidation operations for the current path; barriers | none | operations from `s2-space` | applied invalidations, ordering guarantees | shootdown policy, transport internals (P3 seam) |
-| `s2-vocab` (Core-visible) | Stage-2-neutral vocabulary: mapping flags value object, memory-type value object, error type, query result type | none | — | types consumed by W03/W04/W06 | descriptor bits, VMIDs, sysregs (never appear here) |
-
-Layering check: `s2-vocab` depends only on Core-level address newtypes (M1)
-and error conventions; `s2-table`/`s2-space`/`s2-tlb`/`s2-vmid` are
-Arch-internal. No board, SoC, or QEMU name appears in any module; QEMU
-behavior differences are recorded as Specification Investigation items, never
-as branches.
+| Module | Owns | Does not own |
+|---|---|---|
+| s2-space | Space identity, root/table object capabilities, Guest region leases, mutation journal | Guest backing allocation or loader policy |
+| s2-table | Descriptor encoders, bounded walks and architecture table-use pins | W04 allocation accounting |
+| s2-vmid | Monotone VMID issuance and permanent consumed set | Reusable VMID pool |
+| s2-context | Per-CPU installed tuple and Guest execution leases | P7 current_vcpu or scheduler lifecycle |
+| s2-tlb | Identity-bound ordering and completion receipts | Transport acknowledgment semantics or caller-owned raw proofs |
 
 ## 2. Core objects and ownership
 
-### 2.1 `GuestAddressSpace` (one per Guest address space; P4 expects exactly one live instance at a time, enforced by scope, not by a global)
+### 2.1 `GuestAddressSpace`
 
-- **Owned state:** root table frame; table frames; VMID (from `s2-vmid`);
-  mapping ledger (sorted map of mapped IPA page ranges → frame base, flags,
-  memory type); lifecycle state; the space lock (D5).
-- **Immutable after create:** root frame, VMID, IPA span bounds.
-- **Not owned:** mapped Guest frames' data content (owned by the Guest RAM
-  object from P4-W03), the allocator's global accounting, any pCPU.
-- **Destruction:** legal only from the quiescent state; unmaps all ranges,
-  invalidates (all-current), releases table frames and the VMID, then returns
-  everything to the allocator. Guest frames themselves are returned by W03's
-  Guest RAM teardown, which must be sequenced after address-space destroy
-  (see [03 §3.8](03-code-contracts-stage2-core.md)).
+A space holds a W12 object capability for each table allocation, a W11 mapped
+region and architecture-use pin for table access, and W12 Guest-region leases
+for RAM mappings. The W12 store retains actual W04 handles. GuestRam retains
+its object control capability; a mapping never duplicates that backing owner.
+Table handles are returned to W04 only after table-use, Host mapping and object
+retention have all ended. There is no automatic Drop reclamation.
 
-### 2.2 `MappingGrant` (stage-local transfer value, decision D8)
+### 2.2 `MappingGrant`
 
-A validated (frame base, page count, flags) tuple produced by P4-W03's Guest
-RAM construction. `map` consumes it and the ledger records the mapping. It is
-not the ADR `MemoryObject`; it carries no sharing, pinning, or DMA state.
+`MappingGrant` is a non-Copy enum: `Ram(MemoryRegion)` or
+`Console(ConsoleWindowGrant)`. RAM is W12-authorized and bound to this SpaceId;
+HPA/count/flags snapshots cannot construct it. The console case is separately
+minted once by the P4 base console authority from verified P2 platform facts:
+one exact PL011 Device RW/XN page, no allocator ownership or generic MMIO import.
+It requires W04's exclusive base-console execution convention; W10 rejects
+console-bearing spaces. No console page is ever returned to W04 as RAM.
 
-### 2.3 `Vmid` (newtype)
+### 2.3 `Vmid`
 
-Arch-internal numeric identity for TLB tagging. Never exposed through
-`s2-vocab`. Uniqueness invariant: at most one live address space holds a given
-VMID (no recycling makes this trivially true in P4).
+Validate a supported 8-bit VMID profile; reserve 0 and monotonically consume
+1–255. Exhaustion is permanent for this boot. Failed construction after mint
+burns the value. Destroy tombstones it; no release makes it allocatable again.
 
-### 2.4 Per-pCPU activation register (conceptual)
+### 2.4 Per-pCPU activation register
 
-P4 has no persistent "current space" object; activation is an operation on the
-pCPU's `VTTBR_EL2`/`VTCR_EL2` state. The pCPU's current-space identity is
-tracked by P4-W04's per-pCPU world-switch state (which owns the Guest run
-context); `s2-space` records only whether the space believes it is active and
-on which pCPU identity, to make deactivate-on-destroy verifiable. This avoids
-a second owner for "current vCPU" (Plan Agent guardrail: registries are not
-implicit owners).
+The sole authority is `s2-context`: Idle, Stable(space/root/VMID/epoch),
+Switching, or Unknown. Space lifecycle does not encode which context happens
+to be installed. W04 owns Guest entry/exit and must hold a matching execution
+lease while Guest may run. The single-CPU base has one such record; W10 extends
+its storage and synchronization, not the meaning of an Active flag.
 
 ## 3. Address-space lifecycle state machine
 
-```text
-             create()                 activate()                (Guest runs; W04 owns run state)
-  [absent] -----------> Constructed ---------> Active ------------> (concurrent path)
-                          |  ^                   |  ^
-                    map/unmap/protect         mutations with BBM
-                          |  |                   |  |
-                          v  |                   v  |
-                       Constructed (quiescent mutation, no TLBI needed
-                                    for non-current spaces)
- Active ---deactivate/destroy--> Destroying --> Destroyed (absent)
-```
+`Open -> Frozen(transaction) -> Open`; destruction uses
+`Open -> Retiring -> Destroyed`. Uncertain publication/invalidation enters
+Quarantined and retains leases/tables. Freeze requires zero Guest execution
+leases and no in-flight selection involving the space. Installed-but-idle is
+not running. No new entry, selection or mutation may start while Frozen.
 
-Rules:
-
-- `Constructed` (quiescent): all mutations are ledger+descriptor updates; no
-  TLB operation is required because no CPU translates through it.
-- `Active`: the space is installed on one pCPU (P4: the Guest pCPU). Mutations
-  remain legal (D6) and must follow BBM + invalidation
-  ([§6](#6-stage-2-ordering-barrier-and-invalidation-semantics)).
-- `Destroying`: transient; the lock is held, no new mutations are accepted;
-  unmap-all, invalidate-all-current, page release, VMID release.
-- Illegal transitions (destroy while active without deactivation is *handled*
-  by performing deactivation inside destroy; use of a destroyed space is an
-  internal-invariant violation → fatal per D10) are enumerated in the
-  contracts.
-- The ADR vCPU/VM lifecycle machines are **not** implemented here; W04 owns
-  the P4 vCPU run states and P7+ owns the full lifecycle. This machine is
-  strictly the translation-context lifecycle.
+An `ever_resident` CPU history survives detachment. A never-selected space can
+avoid TLBI when no hardware exposure occurred; an inactive but previously used
+space cannot. Losing a handle leaks resources instead of freeing reachable RAM.
 
 ## 4. Activation and register programming
 
-Activation writes, in order: `VTCR_EL2` (Stage-2 translation control: T0SZ,
-SL0, granule, shareability/normal-memory attributes for the P4 temporary
-layout), `VTTBR_EL2` (VMID + root table HPA), then a context-synchronization
-`ISB`. The values are computed from the space's immutable create parameters;
-they are not runtime-tunable policy. Deactivation on destroy restores a
-defined disabled context (Stage-2 disabled for the current path) before
-releasing frames, so no translation can reference freed tables.
-
-Register-programming exactness: the field layouts follow the pinned Arm
-architecture reference; reserved-bit preservation (read-modify-write with
-reserved bits kept) is mandatory (Coding Guidelines). QEMU acceptance of a
-particular encoding never substitutes for the architectural check (W01 A7).
+`activate` checks the authoritative CPU tuple and installs root/VMID/profile
+with ordered architecture operations. Same-space return is allowed only after
+checking that tuple, epoch and exclusive register ownership; an old stored CPU
+number is not evidence. Failure before writes is Rejected; a proved restoration
+is Restored; unknown register state is Indeterminate and retains roots.
+W04 may acquire an entry lease only for Open and matching installed epoch.
+Explicit `select_idle` detaches the context; destroy does not disable an
+unrelated currently installed space. W10 specifies A→B→A and remote behavior.
 
 ## 5. Permission and memory-type model (P4 subset)
 
-Stage-2 permission vocabulary exposed via `s2-vocab`:
-
-- `S2Access`: combinations of Read / Write (Stage-2 has no user/kernel split;
-  execute is separate).
-- `S2Execute`: Executable / ExecuteNever (XN).
-- `S2MemType`: NormalCacheable / NormalNonCacheable / Device (P4 uses
-  NormalCacheable for Guest RAM, Device for the console page mapped by W03).
-
-Mapping from this vocabulary to descriptor S2AP/XN/MemAttr fields happens
-only in `s2-table`. Core code (W03 loader, W04 run loop, W06 diagnostics)
-never sees S2AP/XN bit values. Permission faults produced by the hardware are
-*observed* as Stage-2 fault information (W06/W04); they are never simulated by
-this module.
+Normal WB RAM views use R, RW/XN or RX; W+X is rejected. Bounds and ceilings
+are validated against W12, including Host aliases. Guest code is loaded through
+a Host RW region which is fully retired before publishing RX. RAM memory type
+is immutable in this profile; unsupported changes return InvalidFlags before
+mutation. Base console is Device RW/XN under its separate authority.
+Query results are snapshots, never handles or permissions to dereference HPA.
 
 ## 6. Stage-2 ordering, barrier, and invalidation semantics
 
 ### 6.1 Break-before-make (BBM)
 
-Every transition of an existing IPA page between mappings (unmap, protect
-change, remap) performs: (1) clear/replace the descriptor to an invalid entry,
-(2) ensure visibility to the page-table walker (`DSB ISHST`), (3) invalidate
-the affected translation for the current path, (4) write the new valid
-descriptor. For a protect change on a mapped page, P4 uses the two-step
-(invalidate old, then set new) sequence rather than an in-place valid-entry
-flag update, so no intermediate state can produce a stale permission
-translation (P4-V08's "does not rely on stale translations" condition).
+Prepare all records, tables and journal capacity before PTE publication. Clear
+old valid entries; DSB ISHST; perform identity-bound old-translation invalidation;
+DSB ISH and ISB before replacing entries or releasing anything. Permission
+replacement then publishes new descriptors and completes publication ordering
+and required invalidation before reopening. Detached intermediate tables remain
+retained until the full walk/translation completion, never merely until unlink.
 
 ### 6.2 First-time map
 
-A first map of an IPA that was never valid does not require a pre-invalidate
-for the current path (there is no stale entry to remove), but P4 performs the
-uniform sequence anyway when the space is active, because "never valid" is a
-ledger property, not a hardware guarantee, under future recycling. Uniformity
-is reviewable; per-case optimization is out of scope.
+Only invalid-to-valid insertion is supported. Prevalidate all leaf slots and
+W12 leases, prepare zeroed tables while unpublished, publish with ordering, then
+commit. Any post-publication failure requires completed rollback or quarantine.
 
 ### 6.3 Invalidation operations and seam
 
-Operations (decision D7): `InvalidateAll` (current VMID, all IPsas) and
-`InvalidateRange(ipa_range)` (current VMID). P4 implements both against the
-current pCPU only; the backend is a small trait/object seam so the P3
-transport can later provide masked-broadcast without changing `s2-space` call
-sites. After any invalidation for entry-affecting mutations, ordering is:
-`DSB` (completion of invalidation) then `ISB` (context sync) before Guest
-(re-)entry; the world-switch (W04) performs its own `ISB` after context
-installation, and both are retained (redundant barriers are cheap; missing
-ones are unsound).
+The base backend targets the one admitted CPU and exact VMID, including after
+detachment. It saves/restores the currently installed tuple when selecting the
+retiring target for TLBI. It emits a private retirement receipt only after
+invalidation and restoration both complete. Never-resident unpublished mappings
+can use an absence-of-publication receipt from this same trusted backend.
+A public bool, a Stage2Released value without identities or transport ACK is
+not a receipt. W10 §5 defines the resident-set extension and architecture sequence.
 
 ### 6.4 Cross-pCPU reservation
 
-P4 records as a factual limitation: invalidation covers the current pCPU
-only. The single-Guest/single-vCPU P4 run model (W04) means the Guest path
-translates on one pCPU; if a second translating context ever existed, the
-seam must be extended **before** that context runs, not after. This statement
-is the W02 contribution to "must not preclude multi-pCPU handling."
+Base W02 rejects other-CPU exposure. Cross-pCPU consumers require the separate
+W10 implementation and V20 evidence. Local tests do not discharge that gate.
 
 ## 7. Concurrency model
 
-- One address-space lock per space (D5). Lock hold times are bounded: no
-  allocation of unbounded size, no invalidation broadcast (none exists in P4),
-  no Guest execution under lock.
-- Table frames are exclusively owned by the space once allocated; no other
-  module writes descriptor memory. All descriptor memory writes happen in
-  `s2-table` under the space lock (enforced by API shape: the writer takes
-  locked access tokens, not raw pointers, outside `unsafe`).
-- The ledger is the authoritative mapping state; it is mutated under the same
-  lock as the descriptors, so query snapshots (D9) are consistent with
-  hardware-visible state as of lock release plus completed invalidation.
-- pCPU activation: P4 has one Guest execution path; concurrent `activate` from
-  a second pCPU is rejected as a programming error (fatal invariant, D10),
-  because P4 defines no legitimate second caller. The rejection is explicit,
-  not an accidental data race.
-- Interrupt context: `s2-space` operations are never called from interrupt
-  context in P4 (EL2 IRQ handling is minimal and does not touch Stage-2);
-  the lock is a plain non-recursive spin lock per P3-W06 semantics (assumed
-  M6-era primitives) with the IRQ rules P3 documents.
+Bounded short state-lock operations reserve and commit transactions. Hardware
+work, W12 transitions, frees and transport waits occur outside the lock. The
+Frozen owner token authorizes table writes without holding a data guard through
+TLBI or remote collection. Queries during mutation return Busy or an explicitly
+versioned snapshot; they never present a half-updated ledger as committed.
+No IRQ allocation, recursive mapping or nested Guest entry is authorized.
 
 ## 8. Telemetry points (W02-scope)
 
-Per event-namespace routing (W01 A8), `s2-space` emits: `s2.space.create`,
-`s2.space.destroy`, `s2.map`, `s2.unmap`, `s2.protect`, `s2.activate`,
-`s2.invalidate` (with operation kind). W07 consumes counts; W06 consumes
-correlation fields (space identity, IPA range). Events carry no Guest data
-beyond addresses already exposed by fault paths.
+Creation, map/protect/unmap, selection and retirement events include SpaceId,
+ObjectId/RegionId where applicable, transaction/epoch, CPU, range and outcome.
+Retained failures are distinguishable from returned backing and successful frees.
+P0 owns trace transport; W02 never adds ad-hoc console writes while Guest owns it.

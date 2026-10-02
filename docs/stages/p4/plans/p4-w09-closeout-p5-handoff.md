@@ -48,3 +48,7 @@ completion-review package; it cannot manufacture successful runtime evidence.
 P5 can consume an evidenced single-Guest Stage-2 and EL1 execution foundation,
 Validation Guest asset, fault diagnostics, and QEMU regression. Formal HVC,
 capability, and management behavior remain P5 work.
+
+The owner-authorized [W10 extension](p4-w10-multivm-stage2-handoff.md) has separate
+P4-V17–V22 acceptance for P7. Record its later evidence as an addendum; it is
+not a prerequisite for base W09/P5 closure and cannot be inferred from it.

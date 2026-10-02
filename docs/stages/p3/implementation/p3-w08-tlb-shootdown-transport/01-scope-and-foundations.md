@@ -1,5 +1,7 @@
 # P3-W08 Scope, Foundations, and Decisions
 
+**Current admission (2026-10-02):** [Amendment 07](07-timeout-ownership-remediation.md) removes Pending supersession. The owner selected W08-SYNC option A on 2026-10-02: single-attempt protocol admission, TransportBusy on contention, no SpinLock across collection. W06/W08 contracts are reconciled below; final design admission, implementation and execution evidence remain pending.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Parent:** [P3-W08 detailed design](README.md).
@@ -25,8 +27,8 @@ physical CPUs" requires five concrete artifacts:
 3. The **initiator protocol**: initiation under single-flight, wake,
    bounded collection, timeout with unacked diagnostics —
    [04](04-code-contracts-transport-initiator.md) §2–§5.
-4. The **deadlock-safety argument**: the single-flight + reactive-wait
-   analysis that makes the protocol's only wait non-deadlocking —
+4. The **admission and progress argument**: single-attempt admission,
+   responsive bounded collection and explicit liveness limits —
    [02-architecture-and-state.md](02-architecture-and-state.md) §5.
 5. **Evidence**: request/ack, mask/exclusion, concurrency, timeout, and
    consumption behaviors demonstrated within declared limits —
@@ -42,7 +44,7 @@ asserted rather than argued; without (5) P3-V08 has nothing to review.
 | `TlbReceptionSlot` reserved per CPU | [P3-W04](../p3-w04-per-cpu-runtime/README.md) 03 §5.2 | Cache-line aligned, fixed capacity, zeroed at allocation; W08 owns contents from its init point | If absent/undersized: cross-design conflict with the W04 owner; W08 does not invent second storage |
 | Notification primitive, kind 1 reservation | [P3-W07](../p3-w07-cross-cpu-notification/README.md) | `notify`/`poll` with gates and accounting; kind space with 1 reserved for this design | If W07's kind space lands differently, re-point the claim by recorded change; W08 does not build a second wake mechanism |
 | Targeting universe | [P3-W03](../p3-w03-physical-cpu-lifecycle/README.md) 04 §4–§5 | `OnlineSet` snapshot; no post-admission `Failed` at P3 | Different shape → re-point by recorded change; no W08-private online-set copy |
-| Lock and wait rules | [P3-W06](../p3-w06-concurrency-synchronization/README.md) | `SpinLock` + `LadderClass::Infrastructure`; BW-1 bounds; BW-4 reactive wait; BW-2 no-wait-under-lock (the initiation lock's *waiters* hold nothing) | Conflicts are raised with the W06 owner; W08 does not bend the ladder locally |
+| Lock and wait rules | [P3-W06](../p3-w06-concurrency-synchronization/README.md) | BW-6 single-attempt protocol admission; BW-1 bounds; BW-4 responsive collection/retry; BW-2 no held data-lock guard | Conflicts are raised with the W06 owner; W08 does not bend the ladder locally |
 | Availability gate | [P3-W05](../p3-w05-smp-boot-synchronization/README.md) | `BootPhase::SmpReady` acquire-read | Different phase vocabulary → resolve with W05's owner |
 | TLB/VMID semantics | P4 (future; via [P3-W14](../p3-w14-p4-smp-handoff/README.md)) | Not assumed at P3 — the descriptor is opaque and the bound operation is the recorded no-op | If P4 requires transport changes (pipelining, richer descriptors), that is a W08 design change with P4, not a P4-local fork |
 
@@ -72,10 +74,10 @@ asserted rather than argued; without (5) P3-V08 has nothing to review.
   sequence tags, Empty→Pending→Completed state machine.
 - Target consumption contract (lock-free, wake- or poll-driven,
   `TransportNoop` bound operation at P3, release-stored completion).
-- Initiator protocol: single-flight `SpinLock`, publish + wake, bounded
+- Initiator protocol: single-attempt admission with TransportBusy, publish + wake, bounded
   acquire-poll collection, `Completed`/`TimedOut{unacked}`/error results.
-- Timeout bound constant with recorded limitation; superseding-by-sequence
-  recovery.
+- Timeout bound with retained Pending ownership; all-target TargetsBusy
+  preflight; reuse only after acquire-observed completion (amendment 07).
 - Transport boundary statements (opaque descriptor; no Stage-2 semantics).
 - Host-side evidence within declared limits.
 

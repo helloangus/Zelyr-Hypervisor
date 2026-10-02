@@ -34,7 +34,13 @@ real evidence under `../verification/`.
 | [W07](p4-w07-repeatability-telemetry.md) | W04, W06 | W08–W09, P5 |
 | [W08](p4-w08-qemu-integration-regression.md) | W05–W07; P0 QEMU automation contract | W09, P5 regression users |
 | [W09](p4-w09-closeout-p5-handoff.md) | W01–W08 and their actual implementation/verification records | P5 planning and stage review |
+| [W10](p4-w10-multivm-stage2-handoff.md) | evidenced W01–W09; P2 backing/Host access and P3 synchronization/completion | P7-W01/W02/W04/W05/W08/W10/W11; W09 extension addendum |
 
 The table is acyclic. W02 and W03 may progress after W01 only when their
 detailed designs agree on the P2 ownership boundary. A plan is not complete
 until its linked validation has real evidence in `../verification/`.
+
+W10 is the owner-authorized, separately accepted P7 producer extension. W09 base
+closure precedes it; the later W09 addendum records W10 evidence and creates no
+reverse implementation dependency. P7 requirements review is not a dependency
+on P7 runtime. W10 does not expand the base P4/P5 acceptance.

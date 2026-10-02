@@ -1,5 +1,11 @@
 # P7-W04 Preemption and Context-Switch Correctness — Detailed Implementation Design
 
+**AUD-004 admission:** [Producer handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+are required before multi-VM address-space switching. P4 single-space activate
+does not establish this capability. S2-MULTIVM-SCOPE/INSTALL/RETIRE and
+P7-DISPATCH-UNWIND remain pending; no implementation or execution is claimed.
+
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** P6-timer-driven scheduler deadlines, time-slice behavior, return
@@ -162,13 +168,12 @@ recorded decisions.
    W04 arm/cancel. Lifecycle: W02 engine. Every step names its owner in
    [the switch contracts](04-code-contracts-context-switch.md) §1; a step
    with two owners is a design violation.
-6. **Requeue-on-activation-failure, bounded.** If activating the next
-   candidate fails (P4 address-space or P6 restore error), the candidate is
-   requeued undispatched-this-round with a diagnostic; the loop returns to
-   the picker or idles (W08). A candidate failing repeatedly is escalated
-   to an invariant investigation record, not silently retried forever and
-   not marked `Faulted` (the failure is not Guest-caused). Authority: P0
-   panic policy boundary (fatal only for invariant violations).
+6. **Retry requires a verified safe context and lifecycle unwind.** A
+   pre-change refusal or producer-verified safe failure may be retried only
+   after W02 unwinds its committed admission and all installed state is known.
+   Partially changed/indeterminate hardware state blocks Guest entry and
+   retains resources under the governing failure policy. Unconditional
+   requeue is not a valid contract. AUD-004 and P7-DISPATCH-UNWIND gate this path.
 7. **`DescheduleReason` semantics owned here.**
    `{ SliceExpired, Voluntary, Blocked, Paused, Stopped, Faulted,
    RescheduleRequest }` is the mechanism-side taxonomy every deschedule

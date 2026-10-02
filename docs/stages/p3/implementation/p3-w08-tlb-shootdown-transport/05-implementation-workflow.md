@@ -1,5 +1,7 @@
 # P3-W08 Implementation Workflow
 
+**Current admission (2026-10-02):** [Amendment 07](07-timeout-ownership-remediation.md) removes Pending supersession. The owner selected W08-SYNC option A on 2026-10-02: single-attempt protocol admission, TransportBusy on contention, no SpinLock across collection. W06/W08 contracts are reconciled below; final design admission, implementation and execution evidence remain pending.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Parent:** [P3-W08 detailed design](README.md).
@@ -67,37 +69,37 @@ violation — stop (README decision 1).
 
 Evidence: verification record (W08-DV03 partial).
 
-### Step 3 — initiation lock and request publication
+### Step 3 — admission and request publication
 
 Target: same module.
 
-Work: implement the single-flight `SpinLock` (constructed with
-`LadderClass::Infrastructure`) and the publish loop of
-`initiate_transport` per
-[04-code-contracts-transport-initiator.md](04-code-contracts-transport-initiator.md)
-§3, including the W07 wake per target.
+Work: implement Idle/Active(cpu), strong single-attempt admission, private
+non-Copy token and checked release from [04](04-code-contracts-transport-initiator.md)
+§3. Resolve fallible prerequisites before admission; preflight every target
+before sequence advance or descriptor publication. Wake each published target.
 
-Acceptance: validation errors are side-effect-free; publication under the
-lock sets Pending{seq} with the descriptor stable-before-pending (order
-asserted in tests); two concurrent initiators serialize.
+Acceptance: competitors return TransportBusy without publication/sequence writes;
+TargetsBusy releases admission with no publication; no SpinLock/data guard spans
+collection. Completed/TimedOut latch results before checked release. Receiver
+progress never needs admission. Test all ordinary release paths and terminal
+retention; forbid hidden admission loops and Drop/unwind unlocking.
 
-Failure/blocker: a CAS failure on Empty→Pending means slot-state
-corruption or a double-publication bug — fatal per contract; do not
-retry.
+Failure/blocker: illegal control, failed publication CAS or impossible post-write
+notification failure is terminal; retain admission, slots and referenced resources.
 
-Evidence: verification record (W08-DV01, DV05 partial).
+Evidence: verification record (W08-DV01, DV05 partial); no execution claimed here.
 
-### Step 4 — collection, timeout, supersession
+### Step 4 — collection, timeout, retained ownership
 
 Target: same module.
 
 Work: implement the bounded collection loop with the BW-4 interleaving,
 `COLLECT_BOUND`, the `TimedOut{acked, unacked, excluded}` result, and the
-supersession path (a fresh request after timeout).
+retained-Pending / TargetsBusy path (reuse only after late completion).
 
-Acceptance: a non-consuming target yields TimedOut with the exact unacked
-set and a diagnosable slot state; a superseding request completes
-normally afterward; accounting invariants
+Acceptance: a non-consuming target yields TimedOut with the sampled unacked
+set and a diagnosable slot state; mixed-mask retries publish nothing while
+any target is Pending, then reuse succeeds after late completion; accounting invariants
 ([04 §6](04-code-contracts-transport-initiator.md)) hold in every test.
 
 Failure/blocker: a hang (bound not effective) is a contract violation —
