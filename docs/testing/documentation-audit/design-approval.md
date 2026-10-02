@@ -14,8 +14,11 @@ statements for the exact scope below. Other stage approvals are unchanged.
 **Approver:** Project owner (the user). **Date:** 2026-10-02.
 **Decision:** “我确认批准” following the explanation that detailed-design approval
 makes this version the basis for subsequent implementation.
-**Recording:** Local working tree, under the standing instruction not to merge a
-PR. No review committee, historical PR or runtime result is invented.
+**Recording:** Initially recorded in the local working tree under the then-current
+no-merge instruction. The owner subsequently authorized submission and PR merge;
+that integration does not change the design approval scope or supply runtime evidence.
+P2-W04 implementation and completion artifacts are excluded at the owner’s request;
+the package remains unimplemented and will be restarted separately.
 
 | Approved design | Version | Scope |
 |---|---|---|
