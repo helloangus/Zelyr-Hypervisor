@@ -1,8 +1,13 @@
 # P7-W06 Validation Matrix, Error Model, and Handoff
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Proposed detailed design; owner-directed handshake amendment;
+implementation and validation are not claimed.
+**Scope:** P7-W06 validation matrix, evidence boundaries, and consumer handoff.
+**Version:** v0.2
+**Owner/change context:** P7-W06 design amendment following owner direction
+on AUD-001, 2026-09-28.
 **Parent:** [P7-W06 detailed design](README.md).  
+**Supersedes:** None; refines the existing proposed validation plan.
 All rows below are planned evidence with objective conditions; none claims that
 a test ran. Actual results are recorded only in
 `../../verification/p7-w06-block-wakeup-verification.md`.
@@ -14,7 +19,7 @@ a test ran. Actual results are recorded only in
 | W06-DV01 | P7-V13 | Block release review/test | Run a no-event WFI/WFE workload; observe pCPU dispatches other work or idles within one scheduler decision | No-event block releases pCPU capacity; no busy re-entry of the blocked vCPU | Scheduler-visible blocking; not that all wake sources work |
 | W06-DV02 | P7-V13 | Preexisting-event abort | Post an eligible event before the exit reaches B-1; repeat across interleavings | Every trial yields WokeImmediately or an immediate re-dispatch; the vCPU never strands Blocked | Poll correctness under tested interleavings; not proof of zero races at arbitrary concurrency (W11 amplifies) |
 | W06-DV03 | P7-V14 | Per-source wake matrix | Drive TimerExpiry, VirtualIrq, Notification (internal producer, W-5), Internal events against a Blocked vCPU | Each source alone produces exactly one Runnable transition and one enqueue; no source lost | Source coverage through the single wake entry; not Notification-object semantics (Reserved) |
-| W06-DV04 | P7-V14 | Before/during/after-block race tests | Host-side interleaving harness around B-1/W-1; boundary at intent store, poll, L-1 commit | No lost wakeup, no duplicate running (L-2 holds), every outcome accounted | Race safety within tested interleavings and declared bounds; not a formal proof of the protocol |
+| W06-DV04 | P7-V14 | Handshake state-machine review and before/during/after-block tests | Exhaustively enumerate order-preserving CAS outcomes for event publication, `Intent` claim, `Committing` claim, W02 `Running→Blocked`, and `Blocked` publication; exercise both race winners at every shared-word CAS boundary and the same commit/recovery boundaries in the host harness | Every published event remains pending or has exactly one wake owner; no stranded `Blocked` vCPU, duplicate lifecycle transition, or duplicate enqueue; excluded states remain excluded | Exhaustive coverage of the finite abstract protocol plus host integration behavior; not proof of compiler output, weak-memory implementation, QEMU delivery, or hardware behavior |
 | W06-DV05 | P7-V14 | Invalid-state wakeup exclusion | Drive W-1 against Paused/Stopped/Faulted/Running/Runnable states | Exclusion table (W-7) holds in every state; excluded wakes record events without eligibility | Exclusion determinism; not P7-W07 pause policy itself |
 | W06-DV06 | P7-V14, P7-V18 | Deadline-home timer wake | Blocked vCPU with guest-timer deadline; home pCPU idles; deadline fires | vCPU wakes exactly once, is re-placed per placement rules; host monotonicity (P6-W05) unaffected | Fold + wake path; not hardware timer behavior — QEMU success does not prove real-hardware timing |
 | W06-DV07 | P7-V04/V19 | Accounting coherence at hook points | Count block/immediate-wake/wake events against B-5 hooks | One-to-one hook coverage; counters never regress or double-count | Hook placement; not full W09 semantics (P7-W09 owns those) |

@@ -91,4 +91,4 @@ Before handing W08 work to a reviewer:
   ([P5-W09](../../../p5/plans/p5-w09-telemetry-safe-logging-regression.md),
   [P5-W10](../../../p5/plans/p5-w10-closeout-p6-handoff.md));
 - open items carried forward: O1 runner parameter surface, O2 declared
-  environment facts, P2-ACR-01 unchanged and unresolved.
+  environment facts, ADR-062 option A recorded; formal integration and W12 producer evidence pending.

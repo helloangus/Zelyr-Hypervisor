@@ -7,7 +7,7 @@ claimed.
 ## 1. Scope of validation
 
 W04 validation covers typed send behavior, target attribution and
-accounting convergence, and determinate SPI re-routing in the declared
+unit-separated and controlled-scenario accounting, and determinate SPI re-routing in the declared
 QEMU multi-pCPU environment, plus host-side unit and sequence tests.
 QEMU evidence establishes the mechanism in the reference environment; it
 does not prove general RPC adequacy, scheduler fitness, real-hardware
@@ -26,8 +26,8 @@ Each validation is recorded as **passed**, **failed**, **blocked**, or
 | W04-DV01 → P6-V04 | Entry basis | prerequisite review ([workflow](05-implementation-workflow.md) step 1) | inspect W02/W03 evidence + P3 contracts present; partition resolution recorded | all consumed contracts evidenced; partition resolved by citation | entry integrity; not runtime behavior |
 | W04-DV02 → P6-V04/V05 | Target forms and decomposition | unit + sequence tests | each form's validation, decomposition coverage, determinism, unassigned-row rejection | forms behave per contract; encodings reproducible | mechanism vocabulary; not delivery on all topologies |
 | W04-DV03 → P6-V04 | Eligibility and failure handling | unit tests + QEMU ineligible-target attempt | send toward an offline/failed pCPU in a declared scenario | whole-send rejection with named error, zero writes, accounted | eligibility safety; not P3 lifecycle itself |
-| W04-DV04 → P6-V04 | CPU0→CPU1 Host SGI | QEMU multi-pCPU run | send the validation SGI from the boot pCPU to one secondary; observe receipt | receipt attributable to the intended online pCPU; combined-EOI completion via W03 loop; counters match | target-attributed SGI on QEMU; not real-hardware affinity behavior |
-| W04-DV05 → P6-V05 | Reverse and multi-target; accounting | QEMU runs | CPU1→CPU0; explicit multi-target set; declared IRM form; accounting view sampled | determinate target accounting; convergence (or labeled failed-target drift); no unexplained loss | accounting determinacy; not general messaging fitness |
+| W04-DV04 → P6-V04 | CPU0→CPU1 Host SGI | QEMU multi-pCPU run | send the validation SGI from the boot pCPU to one secondary; observe receipt | receipt attributable to the intended online pCPU; combined-EOI completion via W03 loop; per-target controlled-epoch deltas match | target-attributed SGI on QEMU; not real-hardware affinity behavior |
+| W04-DV05 → P6-V05 | Reverse and multi-target; accounting | QEMU runs | CPU1→CPU0; explicit multi-target set; declared IRM form; accounting view sampled | separate call/write/target/ack/completion units; exact per-target deltas only in exclusive serialized quiesced epochs; coalescing/live/failure samples do not assert loss | accounting determinacy; not general messaging fitness |
 | W04-DV06 → P6-V06 | SPI re-route reaches replacement | QEMU run | disable → change to a second pCPU → enable → assert source → observe new-target receipt; route back | recorded target reached before and after change; no delivery to the old target in the accepted path; events emitted | determinate routing change on QEMU; not load-balancing adequacy |
 | W04-DV07 → P6-V06 | Rejection paths | sequence tests + QEMU where constructible | enabled-SPI change, busy-SPI change, ineligible target | named rejections; state unchanged; retry-by-consumer documented | protocol determinacy; not consumer robustness (their designs') |
 | W04-DV08 → P6-V04–V06 | Non-policy review | static + behavioral review ([01 §5](01-scope-and-foundations.md)) | search for scheduler/reschedule/wakeup/payload/Guest symbols; inspect the generic-event consumer boundary | zero policy-coupled paths; SGI remains a Host mechanism | non-policy commitment; not P7's future design |
@@ -45,8 +45,8 @@ policy (out of scope).
 - *Security model:* Host-internal mechanism with no Guest reachability;
   target namespace is pCPU-only; partition rows prevent accidental use of
   unassigned IDs; no VM-identity coupling exists.
-- *Observability model:* sampled send events, route-change events, drift
-  report, W03 receipt counters; W13 correlates into P6-V24–V26 evidence.
+- *Observability model:* unit-tagged sampled send events, route-change events,
+  controlled-epoch comparisons, W03 receipt/completion counters; W13 correlates into P6-V24–V26 evidence.
 
 ## 4. Handoff checklist
 

@@ -218,3 +218,12 @@ Per the [P7 plan index](../../plans/README.md), W11 consumes this package:
 - **P8** (via P7-W14's handoff, not via this design) may rely only on
   evidenced P7 semantics; no pCPU-management or hotplug policy is created
   here.
+
+## Stage-2 placement prerequisite (2026-10-02)
+
+[AUD-004](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+separates local multi-VM switching from cross-pCPU residency. Affinity/requeue
+onto another pCPU requires evidenced Stage-2 selection, resident-translation
+invalidation and quiescence. Remote reschedule or P3 transport completion alone
+does not supply that guarantee. Affected placement remains blocked until
+producer admission is established.

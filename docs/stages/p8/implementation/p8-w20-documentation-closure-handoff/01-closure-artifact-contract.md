@@ -8,35 +8,41 @@ claimed.
 
 | Artifact group | Authoritative owner | Inputs | Output / non-responsibility |
 |---|---|---|---|
-| Factual machine specification | published under `docs/stages/p8/implementation/` per the W02-governed location, only after approval and evidence | approved machine-contract facts (W02 route); implementation records | the factual `rusthv-arm-virt-v1` contract; it does not select values (W02 route) or define Virtio |
-| Factual Linux boot specification | `docs/stages/p8/implementation/` (same publication rule) | approved boot-contract facts (W03 route); fixture and boot evidence | factual boot inputs/lifecycle; it does not approve loaders or addresses |
-| Factual compatibility policy | `docs/stages/p8/implementation/` (same publication rule) | approved compatibility route (W14) and drift-test evidence | the v1 compatibility and escalation policy; it does not perform drift tests |
+| Versioned machine specification | `docs/machine-types/rusthv-arm-virt-v1-spec-v0.1.md` (W02-governed publication) | approved machine-contract facts and freeze decision (W02 route) | sole normative machine-model source; W20 cites its approved version and evidence, and selects no values or Virtio behavior |
+| Versioned Linux boot contract | `docs/machine-types/linux-boot-contract-v0.1.md` (W03-owned publication) | approved boot facts and pinned external-standard bindings (W03 route) | sole normative boot-input/entry/lifecycle source for this machine; W20 cites its approved version and evidence |
+| Machine compatibility matrix and policy | `docs/abi/rusthv-arm-virt-v1-compatibility.md` (W14-owned publication; exact filename recorded by W14) | approved W02/W03 machine and boot contracts; W14 change classes and drift-test results | sole normative compatibility/change-policy source; fact values cite the owning machine-type contracts |
 | P8 validation report and evidence index | `docs/stages/p8/verification/` | per-package verification records W01–W19 | indexed evidence with statuses; it re-runs and re-judges nothing |
 | Limitations and unresolved-decision register | `docs/stages/p8/verification/` (referenced from the validation report) | owning packages' recorded limits and escalations | the consolidated limit/conflict list; it resolves nothing |
 | Unsafe/dependency delta record | `docs/stages/p8/verification/` (referenced from the validation report) | per-package unsafe inventories and dependency changes under P0 governance | the stage-level delta; it audits on top of, not instead of, package reviews |
 | P9 consumer statement | `docs/stages/p8/verification/` (referenced from the validation report) | evidenced facts only ([02](02-closure-workflow-and-handoff.md) §4) | the bounded handoff; it contains no Virtio content |
 | Closure review record | `../../verification/p8-w20-documentation-closure-handoff-verification.md` (created when review runs) | the gate matrix evaluation | gate statuses and the closure decision *inputs*; it does not itself declare P8 closed |
 
-The artifact named in the second column is the sole authoritative home for
-its content; other documents link, never duplicate. The stage implementation
-index remains owned by the stage index itself — W20 adds its design rows
-through the coordinator's process, not by editing plans or the task book.
+The first three rows name the only normative homes for their respective
+contracts. W20 does not republish or supersede them under the stage
+implementation directory. Its stage-local closure artifacts link the approved
+contract version, owning decision, implementation record, verification record,
+and any deviation or unresolved limitation. The stage implementation index
+remains owned by the stage index itself — W20 adds its design rows through the
+coordinator's process, not by editing plans or the task book.
 
 ## 2. Publication rule
 
-A factual document from §1 is published only when **both** hold:
+A normative contract in the first three rows is published by its owning route
+only after its own approval gate holds: W02's freeze gate for the machine
+specification, W03's boot-fact and standard-binding review for the boot
+contract, and W14's approved-fact admission for the compatibility policy.
+W20 cannot approve or publish a missing contract by assembling a closure
+report. At closure, W20 additionally requires:
 
-1. its governing decision exists (machine values approved through the W02
-   route; boot-contract facts approved through W03; compatibility rules
-   approved through W14); and
-2. the implementation and verification records it states actually exist and
-   are linked.
+1. each cited normative contract has the approved status and version required
+   by its owner; and
+2. the implementation and verification records supporting the factual closure
+   statements actually exist and are linked.
 
-Until both hold, the artifact group's row in the gate matrix is
-`missing` or `blocked`, and the document must not exist in draft form that
-could be mistaken for factual content. Drafts live only inside the approved
-design documents (like this one), which carry the status header that
-distinguishes them.
+Until both hold, the artifact group's closure gate is `missing` or `blocked`.
+Proposed designs remain explicitly proposed and cannot be cited as published
+contract or runtime evidence. Closure summaries may record absent contracts
+and evidence without inventing their contents.
 
 ## 3. Document-kind discipline
 
@@ -47,8 +53,9 @@ the kinds must never merge:
 plan            bounded work statement (docs/stages/p8/plans/) — intent, not state
 detailed design proposed/approved design (docs/stages/p8/implementation/<slug>/) —
                 what may be built; never evidence
-implementation  factual records (implementation/<slug>-record.md, factual
-                specifications) — what was built and decided, with evidence links
+implementation  factual stage records (implementation/<slug>-record.md) —
+                what was built and decided; normative machine/ABI contracts
+                remain in machine-types/ and abi/
 verification    evidence and review outputs (verification/) — what ran and passed,
                 failed, blocked, or was not run
 ```

@@ -242,11 +242,12 @@ designed by P4 against this policy through
   single-variable publication — Release/Acquire), the busy-wait rules (its
   WFE/SEV waiting owns the Reserved trigger, must state its bounds, and
   must forbid waits under locks), and the misuse checklist.
-- **W08** receives `SpinLock` for its single-flight initiation lock, the
-  ladder (its lock is class `Infrastructure`), the bounded-wait rules for
-  completion polling, and the reactive-wait requirement recorded in
-  [04 §5](04-code-contracts-atomic-and-ordering-policy.md) (a CPU waiting
-  to initiate must remain able to service its own reception slot).
+- **W08** receives BW-6 single-attempt protocol admission (owner-selected A),
+  BW-1 bounded collection and BW-4 receiver service, as defined in
+  [04 §5](04-code-contracts-atomic-and-ordering-policy.md). BW-2 prohibits
+  held SpinLock/data guards during collection. W08 admission is protocol
+  state, not an Infrastructure lock or a third generic lock flavor.
+
 - **W09** receives the Diagnostics-class rules for console serialization on
   exceptional paths and the fatal-path no-lock rule (Diagnostics only,
   bounded try-lock, best-effort fallback).

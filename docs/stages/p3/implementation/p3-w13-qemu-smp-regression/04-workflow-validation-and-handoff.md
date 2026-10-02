@@ -165,3 +165,15 @@ Implementation record: `../p3-w13-qemu-smp-regression-record.md`
 `../../verification/p3-w13-qemu-smp-regression-verification.md` (created
 only when evidence exists). Neither exists today; this design claims no
 result.
+
+## W08 timeout regression admission (2026-10-02)
+
+Carry [W08 amendment 07](../p3-w08-tlb-shootdown-transport/07-timeout-ownership-remediation.md)
+and W12's receiver-pause scenarios into the transport evidence inventory.
+Host-controlled interleavings prove only their declared model/implementation
+scope; do not relabel them QEMU SMP evidence. Pending survives timeout, mixed
+ready/busy target sets are refused before publication, and reuse follows late
+completion. Owner-selected A adds TransportBusy contention, receiver service,
+checked release and terminal-retention DV05 scenarios. The synchronization
+policy choice is resolved; missing implementation/evidence keeps execution
+cells blocked/not-run until actual prerequisites and evidence permit admission.

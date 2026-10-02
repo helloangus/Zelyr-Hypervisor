@@ -18,13 +18,13 @@ read-only discovery. Implementation proceeds only when:
   agreed call point for installation and the stack-transfer contract;
 - [P3-W05](../p3-w05-smp-boot-synchronization/README.md)'s readiness-signal
   contract is agreed;
-- the P2 page-allocation contract and the P1 address-space coverage
-  statements are available as reviewed deliverables.
+- the P2 page-allocation contract and `P2-HOST-MAP` allocated-frame access
+  contract are available as reviewed deliverables with applicable evidence.
 
 Stop and obtain direction when: the P1 design reserves `TPIDR_EL2`
 (Architecture Change Request with the P1 owner — do not pick another
-register silently); allocated memory is outside the P1-mapped regions
-(same route); a consumer asks W04 for slot contents/protocols (boundary
+register silently); allocated memory lacks the P2 producer's mapped-access
+guarantee (record `P2-HOST-MAP` as blocked); a consumer asks W04 for slot contents/protocols (boundary
 violation — that is the consumer's design); or the register mechanism
 cannot be tested without hardware (raise the seam design; do not embed
 QEMU in unit tests).
@@ -75,8 +75,8 @@ confirm the quarantine path for W02's scaffolding.
 Acceptance: no CPU_ON-time stack sharing; transfer is one-way; boot CPU
 records its P1 boot stack in its header without switching.
 
-Failure/blocker: an address-space constraint (stack not reachable under
-the P1 map) is an Architecture Change Request route — stop and record.
+Failure/blocker: a stack without the P2 mapped-access and lifetime guarantee
+is a `P2-HOST-MAP` prerequisite failure — stop and record.
 
 Evidence: implementation record.
 

@@ -88,8 +88,8 @@ For each stage, keep work strictly separated:
 
 ```text
 task-book-v*.md             what must be done
-plans/                      approved implementation-level design
-implementation/             implementation notes and traceability
+plans/                      bounded work-package plans
+implementation/             detailed designs, implementation notes, and traceability
 verification/               evidence and completion report
 ```
 

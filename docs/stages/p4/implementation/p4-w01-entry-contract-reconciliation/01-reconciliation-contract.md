@@ -34,6 +34,7 @@ state` (verification record with real evidence), `assumed status`
 | R02 | EL2 exception vectors, syndrome capture, fatal boundary | P1-W05/P1-W07; P1-V08, P1-V09, P1-V11, P1-V12 | exception-diagnostic contract + evidence | W04, W06 | Guest exits land in an EL2 path that captures ESR/ELR/FAR-class context; P4 extends, not replaces, the vector baseline |
 | R03 | EL2 architectural-state baseline (routing, traps, timer access, EL1/EL0 preparation) | P1-W04; P1-V07 | EL2 baseline contract + evidence | W04 | Guest-entry control-register programming starts from the documented EL2 baseline |
 | R04 | Host Stage-1 address space and post-MMU environment | P1-W08; P1-V13, P1-V14 | host address-space description | W02 | Host mapping attributes are known; Stage-2 work must not invalidate the Host Stage-1 contract |
+| R04-MAP | Host access to ordinary allocated frames | [P2 mapping-owner decision](../../../p2/implementation/p2-contract-reconciliation-record.md#p2-acr-02--ordinary-allocated-frame-host-mapping-aud-003); `P2-HOST-MAP` | Assigned producer's explicit coverage, attributes, lifetime, rollback and evidence | W02/W03 | P1 R04 is bootstrap-only; missing P2 contract or applicable evidence blocks table writes and Guest-image loading |
 | R05 | Ordered initialization lifecycle and stable idle | P1-W09; P1-V15 | lifecycle contract | W04 | Guest entry is reached through the declared stable runtime state |
 | R06 | Reference QEMU environment and boot regression automation | P1-W10; P1-V16, P1-V17; P0 QEMU runner plan (P0-W09) | automation contract + evidence | W05, W08 | P4 automation consumes the existing runner boundary; QEMU stays the reference environment, not an architecture definition |
 | R07 | Platform discovery → normalized platform facts (CPU topology, capabilities, console, timer, PSCI facts) | P2-W02; P2-V03, P2-V04 | PlatformInfo contract + evidence | W02, W03 | P4 reads normalized facts/capabilities, never reparses DTB and never branches on board/QEMU names |
@@ -41,7 +42,7 @@ state` (verification record with real evidence), `assumed status`
 | R09 | Safe physical-page allocation/free with accounting | P2-W04; P2-V06, P2-V10 | allocation contract + evidence | W02, W03 | Stage-2 pages and Guest RAM come only from this allocator; zero protected-page returns is inherited as a hard invariant |
 | R10 | Dynamic small-object allocation | P2-W05; P2-V07 | allocation contract + evidence | W02, W04 | Guest/vCPU control structures may use dynamic allocation with explicit failure handling |
 | R11 | Platform/memory inspection facts | P2-W06; P2-V08 | inspection contract | W06, W07 | Diagnostics may reference inspection outputs without treating inspection as a control API |
-| R12 | P2 consumer contract, limitations, and P2-ACR-01 visibility | [P2-W10](../../../p2/plans/p2-w10-p3-p4-handoff-contract.md); P2-V12, P2-V13 | P3/P4 handoff record | all P4 packages | P4 consumes the stated inputs/limitations; **P2-ACR-01 stays visible and unresolved** (see §4) |
+| R12 | P2 consumer contract, limitations, and P2-ACR-01 visibility | [P2-W10](../../../p2/plans/p2-w10-p3-p4-handoff-contract.md); P2-V12, P2-V13 | P3/P4 handoff record | all P4 packages | P4 consumes the stated inputs/limitations; **P2-ACR-01 tracks ADR-062 formal integration and W12 delivery** (see §4) |
 | R13 | Logical pCPU identity, physical-CPU lifecycle, online set | P3-W01–W03; consolidated by [P3-W14](../../../p3/plans/p3-w14-p4-smp-handoff.md); P3-V01–V03 | SMP handoff record | W02, W04 | P4 binds a Guest to an online pCPU's identity without equating pCPU with vCPU and without a permanent boot-CPU assumption |
 | R14 | Per-CPU local state foundation (stack, identity, exception-local state, current-vCPU reservation) | P3-W04; P3-V04, P3-V09 | SMP handoff record | W04 | The world-switch discovers per-CPU context through the P3-declared mechanism; no implicit global current-CPU state |
 | R15 | Shared-state synchronization semantics and lock ordering | P3-W06; P3-V06, P3-V10 | SMP handoff record | W02, W04 | Stage-2 mutation and vCPU state obey the documented atomic/lock/IRQ rules |
@@ -108,14 +109,12 @@ Every matrix row that is not `delivered` receives exactly one classification:
   itself (for example a required object model the ADR leaves deferred).
   Handling: same as above, with an ADR proposal as the resolution path.
 
-Standing item: **P2-ACR-01** (`ADR Required`, recorded in the P2 task book §3)
-conflicts the ADR P2 roadmap bullet ("define minimal `MemoryObject` /
-`MemoryRegion` structures") with the P2 task book's prohibition on designing
-P4's object system. W02 and W03 touch this area. W01's duty is to keep
-P2-ACR-01 visible in the gap list and in the W02/W03 consumer rows; neither
-W01 nor the P4 designs may resolve it. The P4 designs therefore define
-stage-local memory handles without claiming to establish the ADR-level
-`MemoryObject`/`MemoryRegion` model.
+Standing item: **P2-ACR-01** now has owner direction ADR-062 option A:
+P2-W12 supplies the common object/region foundation; P4-W02/W03 consume it.
+Their revised detailed designs remove raw-range ownership and plain alloc/free
+fallbacks. Formal ADR/design integration, producer implementation and runtime
+evidence remain pending. W01 records these gates without inventing an alternate
+P4 backing authority or treating proposed interfaces as delivered.
 
 Failure-boundary statement inherited by every consumer: if a row later
 delivers differently than the assumed contract (different mechanism name,

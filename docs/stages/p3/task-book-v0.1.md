@@ -3,6 +3,7 @@
 **Stage ID:** P3
 **Stage name:** Host SMP and per-CPU foundation
 **Status:** Implementation-planning baseline; work and evidence are not claimed
+**Version:** v0.1
 **Scope:** AArch64 host-physical-CPU SMP foundation on QEMU `virt`
 **Owner/change context:** P3 planning set derived from the P3 stage source task book
 **Upstream:** P0 engineering baseline; P1 AArch64 EL2 runtime; P2 platform discovery and memory infrastructure

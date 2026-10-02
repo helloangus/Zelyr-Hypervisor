@@ -4,7 +4,8 @@ Chinese readers can use the [Chinese edition](task-book-v0.1.zh-CN.md).
 
 **Stage ID:** P0  
 **Stage name:** Repository, Specification & Toolchain Baseline  
-**Status:** Defined; not an implementation-completion claim  
+**Status:** Defined; not an implementation-completion claim
+**Version:** v0.1
 **Owner/change context:** P0 engineering baseline  
 **Supersedes:** the previous unstructured P0 task-book layout in this path  
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)

@@ -3,11 +3,16 @@
 **Stage ID:** P4
 **Stage name:** Stage-2 与 Rust Validation Guest v0
 **Status:** Planning baseline; implementation and validation are not claimed
-**Owner/change context:** P4 first controlled Guest-EL1 execution loop
+**Version:** v0.2
+**Owner/change context:** P4 first controlled Guest-EL1 execution loop; owner-authorized AUD-004 producer extension, 2026-10-02
 **Supersedes:** the root-level `Rust Type-1 Hypervisor — P4 Stage Task Book v0.1.md` source document
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)
 **Upstream stages:** P0–P3
 **Primary downstream stage:** P5 — Hypercall、对象句柄与 Capability v0
+
+The base W01–W09 / V01–V16 scope below remains the single-Guest P5 handoff.
+[Section 9](#9-owner-authorized-p7-producer-extension) adds separately accepted
+W10 / V17–V22 for P7; base completion does not prove this extension.
 
 ## 1. Purpose and boundary
 
@@ -121,6 +126,7 @@ APIs, data structures, assembly boundaries, algorithms, or test results.
 | P4-W07 | P4 behavior is repeatable and emits required vCPU/Stage-2 telemetry and counts. | P4-V10–P4-V12 |
 | P4-W08 | QEMU `virt` automated integration regression determines P4 positive, fault, recovery, and repeat outcomes. | P4-V13–P4-V15 |
 | P4-W09 | Implemented facts, limitations, verification evidence, and the P5 handoff are recorded without turning temporary P4 facts into later contracts. | P4-V16 |
+| P4-W10 | Separately accepted multi-VM Stage-2 context, translation residency and retirement producer contract for P7; §9. | P4-V17–V22 |
 
 Every package has exactly one plan in [plans/](plans/README.md). Completion
 evidence belongs in `verification/`; implementation and detailed-design records
@@ -146,6 +152,8 @@ flowchart LR
   W06 --> W08
   W07 --> W08
   W08 --> W09[P4-W09 closeout/handoff]
+  W09 --> W10[P4-W10 separate Stage-2 extension]
+  W10 --> P7[P7 capability admission]
 ```
 
 P4-W02 and P4-W03 may proceed after P4-W01 when their individual detailed
@@ -233,3 +241,46 @@ semantics.
 | Stage-2 page-table representation, mapping algorithm, locking, VMID allocation, and assembly boundary | Implementation Choice | resolve in approved P4 detailed design under ADR constraints |
 | difference between QEMU behavior and AArch64 architectural semantics | Specification Investigation | cite applicable architecture/specification basis; do not let QEMU define Core semantics |
 | missing P0–P3 prerequisite contract or contradictory memory/SMP handoff | Architecture Change Request / ADR Required | stop the affected decision and record the conflict |
+
+## 9. Owner-authorized P7 producer extension
+
+On 2026-10-02 the owner approved the reviewed
+[producer-scope decision](implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+("同意"). S2-MULTIVM-SCOPE now has an authorized P4 owner and bounded scope:
+[P4-W10](plans/p4-w10-multivm-stage2-handoff.md). This supplement promotes only
+the following producer requirements from the base stage's reserved multi-space
+boundary. It does not redefine the original single-Guest exit criteria or P5
+handoff. Subsequent detailed-design owner approval is recorded in the W10
+design entry; this supplement does not claim runtime evidence.
+
+| Requirement | Required extension outcome | Package / validation |
+|---|---|---|
+| P4-X01 | Multiple live roots with distinct non-recycled VMID identities, explicit capacity and exhaustion | W10 / P4-V17 |
+| P4-X02 | Per-pCPU installed-context authority distinct from space lifetime; validated old→new selection | W10 / P4-V18 |
+| P4-X03 | Inactive-space mutation visibility and tracking of CPUs that may retain old translations | W10 / P4-V19 |
+| P4-X04 | Invalidation/quiescence before releasing tables/backing; failed completion retains resources and never deactivates another space | W10 / P4-V20 |
+| P4-X05 | Explicit pre-change refusal, verified-safe and indeterminate failure outcomes for P7-owned admission unwind | W10 / P4-V21 |
+| P4-X06 | Capability-specific producer evidence, cross-pCPU limits and P7 handoff | W10 / P4-V22 |
+
+| ID | Evidence sought | Success condition |
+|---|---|---|
+| P4-V17 | Identity/lifetime review and Host/target cases | distinct live spaces keep independent roots/VMIDs; exhaustion refuses without alias/reuse; no undocumented recycling |
+| P4-V18 | Installed-context review and reference-QEMU rotation | A→B→A, same-space, idle and wrong-old-context cases select the expected root/VMID; equal IPA/different backing stays isolated |
+| P4-V19 | Mutation/residency model and reference-QEMU cases | mutate inactive A while B runs; returning and cross-pCPU use cannot access stale permissions/backing; resident set includes former executors |
+| P4-V20 | Retirement/failure model and target evidence | destroy inactive A without changing current B; pending selection/installed reference/stale translations prevent reclaim; failed quiescence retains resources |
+| P4-V21 | Failure classification and consumer-contract review | producer establishes safe context or stops entry and retains resources; P7-W02/W04 own post-gate unwind; no false automatic Runnable/requeue claim |
+| P4-V22 | Extension closeout and P7 capability review | design, implementation and V17–V21 evidence linked by capability; local-only limits cannot authorize cross-pCPU placement; base P4/P5 claims unchanged |
+
+W10 follows evidenced W01–W09 and P2/P3 producer inputs. P7 consumer contract
+review supplies requirements, not an implementation prerequisite back-edge.
+P7-W01 admits evidenced capabilities; W02/W04 own dispatch unwind; W05/W08 own
+scheduling/placement policy; W10/W11 own consumer workload acceptance.
+
+Full extension closure requires V17–V22, including cross-pCPU residency and
+retirement evidence. Local-only progress may be recorded but is not W10 closure.
+Host models, reference-QEMU execution and hardware evidence remain distinct.
+VMID recycling/rollover, hotplug, dynamic provisioning, migration and throughput
+optimization stay Reserved/Out of Scope per W10; P7 policy remains outside P4.
+Representation/serialization/capacity are Implementation Choices; architectural
+invalidation ordering is Specification Investigation; any ADR conflict is ADR
+Required. No accepted ADR or formal Guest/public ABI is changed by this plan.

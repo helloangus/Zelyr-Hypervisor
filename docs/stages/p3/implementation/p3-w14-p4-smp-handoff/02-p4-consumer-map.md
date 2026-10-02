@@ -97,3 +97,15 @@ that P4 independently designs:
 Each item cites the reserving authority (P3 task book §2 Reserved list;
 P4 task book §1 Required/Reserved) so the boundary is checkable, not
 traditional.
+
+## R7 timeout ownership qualification (2026-10-02)
+
+R7 must carry [W08 amendment 07](../p3-w08-tlb-shootdown-transport/07-timeout-ownership-remediation.md):
+TimedOut is an observation, not cancellation, quiescence or reclamation authority.
+Pending slots cannot be reused; TargetsBusy refuses the selected set before
+publication; late completion permits later reuse. P4 must retain descriptor-
+referenced resources under its own lifetime contract. Owner-selected A adds
+TransportBusy admission refusal; P4 must define any retry as bounded and
+receiver-responsive, with no fairness assumption or held data-lock guard.
+The W06/W08 policy conflict is reconciled; R7 remains planned/blocked until
+final design admission, actual prerequisites and implementation/evidence exist.

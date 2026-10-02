@@ -250,7 +250,7 @@ Concurrency/allocation context: gate sequence runs with IRQ masking per P3
   the queue before gating); O(1) checks; no allocation.
 Errors and failure guarantee: NotActive (scheduler mode Inactive);
   NotDispatchable (state != Runnable at gate time — lost race, caller
-  requeues); PlacementIneligible (predicate false); SlotOccupied (the pCPU
+  returns to the control owner; enqueue requires W05 eligibility/state recheck); PlacementIneligible (predicate false); SlotOccupied (the pCPU
   still holds a current vCPU — invariant-violation-grade, also recorded via
   the audit path). Failure guarantee: all-or-nothing; a failed gate leaves
   both cell and slot unchanged.
@@ -262,12 +262,11 @@ Logic:
   assert pcpu.current_vcpu.is_none() else return Err(SlotOccupied)  # audit-grade
   if !is_dispatchable(vcpu.state) { return Err(NotDispatchable) }
   if !eligibility(pcpu) { return Err(PlacementIneligible) }
-  match try_transition(cell, Dispatch, ctx(SchedulerCore)):
-      Ok(Running) -> pcpu.current_vcpu = Some(vcpu)
-                     mark_trace(GateResult { pcpu, vcpu, Admitted })
-                     return Ok(EntryPermit)
-      Err(e)      -> mark_trace(GateResult { pcpu, vcpu, Rejected(e) })
-                     return Err(e.into())
+  // Checks above are repeated inside the private owner commit helper.
+  // It takes only the cell leaf-lock under local IRQ masking, validates the
+  // existing Dispatch transition, and commits state + slot + attempt once.
+  // It does not call the lock-taking try_transition while holding that lock.
+  return commit_admission_with_engine(cell, pcpu, eligibility)
 Validation: host tests for each rejection and the success interleaving
   (W02-DV04); QEMU P7-V02 (entry occurs only through the gate).
 ```
@@ -422,3 +421,14 @@ AdmissionError { NotActive, NotDispatchable, PlacementIneligible,
 All contracts above are subject to the W02 constraint set: no policy
 parameters, no Guest-influenced input, no allocation or long work in IRQ
 context, leaf-lock discipline, and engine-only state mutation.
+
+## Post-admission failure boundary (2026-10-02)
+
+The [owner abort contract](06-pre-entry-abort.md) defines the bounded
+DispatchAttempt/EntryPermit identity, atomic admission and abort, complete
+producer cleanup bundle, control races and queue/accounting handoff. Contract
+2.1 uses this atomic commit and non-Copy permit; Contract 2.2 handles only an
+actual Entered Guest exit. P7-W04 calls abort only before Entering and after
+verified cleanup from every prepared subsystem. Runtime admission remains
+blocked until the owner operation and producer cleanup have implementation and
+evidence. No direct slot reset, forged exit or queue insertion substitutes for it.

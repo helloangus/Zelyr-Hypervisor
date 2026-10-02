@@ -260,3 +260,14 @@ transition that ends E1/E2 availability, and the enumeration of instances.
 The register also records the compatibility finding for P7-IN-05: P4's
 direct-entry path is compatible because it is confined to E2 by P7's
 boundary.
+
+## P7-IN-05 AUD-004 admission qualification (2026-10-02)
+
+[Stage-2 handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+qualify IN-05: P4's single-space/current-path activation is insufficient for
+multi-VM dispatch. S2-MULTIVM-SCOPE/INSTALL/RETIRE and P7-DISPATCH-UNWIND are
+explicit blocked prerequisites, carried through W04/W05/W08 and W10/W11.
+The owner authorized the [P4-W10 producer extension](../../../p4/plans/p4-w10-multivm-stage2-handoff.md)
+on 2026-10-02. Scope ownership is resolved; detailed design/consumer acceptance,
+implementation and evidence remain pending. No P7 package may repair Stage-2
+internals or treat the planned activation contract as an evidenced API.

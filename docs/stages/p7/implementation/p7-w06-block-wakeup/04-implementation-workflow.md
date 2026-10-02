@@ -1,8 +1,13 @@
 # P7-W06 Implementation Workflow and Acceptance
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Proposed detailed design; owner-directed handshake amendment;
+implementation and validation are not claimed.
+**Scope:** Ordered P7-W06 implementation steps and acceptance criteria.
+**Version:** v0.2
+**Owner/change context:** P7-W06 design amendment following owner direction
+on AUD-001, 2026-09-28.
 **Parent:** [P7-W06 detailed design](README.md).
+**Supersedes:** None; refines the existing proposed workflow.
 
 ## 1. Preconditions and failure boundary
 
@@ -65,9 +70,12 @@ Suggested observation: host-side unit tests for B-1/B-2 outcomes under the
 P0-W08 host testing baseline (when present).
 
 Acceptance: every B-1 outcome is reachable in host tests; no `unsafe` beyond
-the audited P1/P3 boundaries this path already calls into; the two-phase
-ordering in §5 of [01](01-block-wakeup-architecture.md) is preserved
-(reviewer-checkable pairing comments).
+the audited P1/P3 boundaries this path already calls into; every transition in
+the shared atomic handshake in §5 of [01](01-block-wakeup-architecture.md) is
+preserved and reviewed against P3-W06 ordering rules. W06-DV04 must enumerate
+all atomic race winners at event publication, `Intent`, `Committing`, the W02
+`Running→Blocked` transition, and publication of `Blocked`; each published
+event must remain pending or have exactly one wake owner.
 
 Failure/blocker: an unreachable outcome means an assumed seam is missing —
 stop per §1.
@@ -100,9 +108,12 @@ Implement W-1's full outcome table; ensure enqueue (S-2) and reconsideration
 absent at implementation time, code against their assumed signatures and mark
 the call sites as pending their records.
 
-Acceptance: the exclusion table passes a state-by-state test; concurrent
-wake/block interleaving tests (bounded, host-side) show no lost wake and no
-duplicate run under the test's interleavings.
+Acceptance: the exclusion table passes a state-by-state test; deterministic
+handshake modeling covers every finite protocol interleaving and atomic race
+winner, and bounded host-side wake/block tests exercise the same commit and
+recovery boundaries with no lost wake or duplicate run under tested
+interleavings. This is evidence for the implementation and tested scope, not a
+general weak-memory or hardware proof.
 
 Failure/blocker: a race the protocol cannot close under the S-1 rules is a
 design defect — stop and escalate; do not add ad-hoc sleeps or retry loops.

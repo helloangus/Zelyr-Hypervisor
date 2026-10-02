@@ -2,7 +2,9 @@
 
 The normative P4 scope is [task-book-v0.1.md](task-book-v0.1.md). Start a
 specific package from the [work-package plan index](plans/README.md), which
-maps P4-W01 through P4-W09 to its prerequisites and downstream consumers.
+maps P4-W01 through P4-W10 to their prerequisites and consumers. W01–W09
+retain the base single-Guest scope; [W10](plans/p4-w10-multivm-stage2-handoff.md)
+is a separately accepted, owner-authorized Stage-2 producer extension for P7.
 
 This directory separates stage planning, approved detailed design and
 implementation traceability, and verification evidence. A P4 work-package plan

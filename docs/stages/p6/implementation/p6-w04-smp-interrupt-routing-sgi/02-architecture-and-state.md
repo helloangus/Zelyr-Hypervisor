@@ -9,7 +9,7 @@
 |---|---|---|---|---|---|
 | `sgi-target` | `SgiTarget` forms, eligibility evaluation, decomposition into SGI1R encodings | none (pure over the sets) | PcpuId values, ledger views, affinity map | encodings + validated target lists | Does not emit; no policy on who may send |
 | `sgi-send` | Emission and send accounting | per-sender send counters | validated targets | SGI1R writes, accounting entries | Does not validate (done upstream); no consumer semantics |
-| `sgi-accounting` | Correlation of send and receipt records; drift report | global per-SGI send totals; receipt mirrors of W03 counters | send records; W03 stats | accounting views, drift events | No enforcement, no timeout, no rebalancing |
+| `sgi-accounting` | Unit-tagged send/receipt observation | W04 counters; W03 remains receipt authority | send records; W03 stats | accounting views, controlled-scenario comparisons | No enforcement, no timeout, no rebalancing |
 | `spi-routing` | Route-change protocol, route registry, route events | route table (per supported SPI: current affinity, enabled state) | change requests | IROUTER writes under lock; events | No routing policy; no trigger-type changes; no Guest routes |
 
 Placement follows the established crate layering; map by layer if the tree
@@ -47,14 +47,16 @@ table as a documented mechanism fact, not a frozen contract.
 
 ### 2.3 `SendRecord` and accounting views
 
-Per sending pCPU: monotone counters per SGI ID and per decomposition
-write. Global view (sampled, lock-free): per-SGI send totals vs summed
-receipt counters from W03's stats. Drift report: emitted as an event on
-sampling divergence beyond zero where the target set's readiness
-guarantees convergence (failed-target divergence is expected and labeled).
-No timeouts, no retransmission — SGIs are not messages; the accounting
-exists to make P6-V04/V05 evidence determinate, not to add reliability
-semantics the hardware does not need.
+Per sender/SGI: accepted calls, register writes and intended attempts for each
+target are separate units. Per receiver/SGI: W03 owns acknowledge and completion
+counts. A send receipt records intended destinations, never remote delivery.
+Concurrent samples are approximate; counter overflow invalidates exact deltas.
+
+No general equality relates writes to receipts, nor attempts to receipts under
+same-ID overlapping sends. [Amendment 07](07-accounting-units-remediation.md)
+permits per-target equality only in an exclusive, serialized, quiesced validation
+epoch. Other observations are not labeled loss or unexplained hardware drift.
+W04 adds no message identity, timeout, retransmission or consumer completion.
 
 ### 2.4 `SpiRouteEntry` and route state machine
 
@@ -100,7 +102,8 @@ checkpoint, W01 step-1 record).
 - Senders: any pCPU, any thread context where interrupts are not
   concurrently reconfigured; send is a single system-register write per
   decomposition — no lock (the write is atomic at the architectural
-  level). Send counters are per-sender (no cross-CPU writes).
+  level). Send counters are per-sender; IRQ preemption still requires bounded atomic
+  updates per W13. A live aggregate is not a coherent counter snapshot.
 - Eligibility evaluation: acquire reads of P3 and W02 ledger views; no
   lock; the validation-then-emit order substitutes for locking
   ([01](01-scope-and-foundations.md) §4 states the residual race and its
@@ -119,7 +122,7 @@ checkpoint, W01 step-1 record).
 | Empty target set after decomposition | Rejected (`EmptyTargetSet`); counted |
 | SGI1R write on a not-yet-group-1-enabled local interface | Unreachable: sender is by definition `LocalReady` (interface enabled) |
 | Route change on enabled or busy SPI | Rejected (`RouteEnabled` / `RouteBusy`); state unchanged |
-| Send/receipt drift (non-failed target) | Drift event + report entry; investigated as a hardware/anomaly diagnostic; never auto-corrected |
+| Unequal live send/receipt samples | Unit-tagged observation only; no inferred loss. Controlled test mismatch is a scenario failure with its premises and limits recorded. |
 | P3 handoff partition conflict | Recorded conflict per [01 §1.3](01-scope-and-foundations.md); no local renumbering |
 
 No W04 failure panics; all are named results or reported anomalies
@@ -127,9 +130,11 @@ consistent with the P3/W03 failure vocabularies.
 
 ## 5. Telemetry
 
-Events under the P0 namespace: `sgi.send` (sender, sgi id, target form,
-write count — rate-limited or sampled), `sgi.receipt_sample` (via W03
-stats surface; W04 adds none in IRQ context), `sgi.drift` (sgi id, send
-total, receipt total, labeled expected/unexpected), `spi.route_change`
-(spi, old affinity, new affinity, result). W13 correlates these for
+Events under the P0 namespace distinguish accepted call, encoding-write count,
+intended target attempts, rejection and W03 acknowledgement/completion. Include
+SGI/target identity, run/epoch, sample mode and overflow status. W13 owns final
+schema/storage. Remove the proposed generic sgi.drift expected/unexpected verdict;
+controlled-scenario comparisons must carry the exclusive/quiesced premises.
+W04 adds no new IRQ-context aggregation. W13 maps these to
+
 P6-V24–V26.

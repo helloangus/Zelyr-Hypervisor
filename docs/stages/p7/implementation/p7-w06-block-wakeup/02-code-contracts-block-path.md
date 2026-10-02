@@ -1,9 +1,15 @@
 # P7-W06 Code Contracts — Blocking Path
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Proposed detailed design; owner-selected handshake direction;
+implementation and validation are not claimed.
+**Scope:** W06 blocking-path outcome, eligibility poll, block/wake phase
+transitions, and lifecycle handoff.
+**Version:** v0.2
+**Owner/change context:** P7-W06 design amendment following owner direction
+on AUD-001, 2026-09-28.
 **Parent:** [P7-W06 detailed design](README.md).  
-Scope: contracts for the block path only. Wake-path contracts are in
+**Supersedes:** None; refines the existing proposed block-path contract.
+Wake-path contracts are in
 [03-code-contracts-wakeup-path.md](03-code-contracts-wakeup-path.md). Names are
 stage-local design freedom owned by this design (rationale in the parent
 README, decision 3/4/8); they must be reconciled with the W02 module contract
@@ -23,7 +29,8 @@ Purpose and caller: make a WFI/WFE-class Guest exit scheduler-visible as the
                     vCPU, after P4 has classified the exit as blocking-class.
 Inputs / outputs: VcpuRef — validated scheduler handle to the current vCPU.
                   BlockExitHint — Wfi | Wfe (trace/accounting hint only).
-                  BlockOutcome — Blocked | WokeImmediately(EventSet) | NotBlocked(reason).
+                  BlockOutcome — Blocked | WokeImmediately(EventSet) |
+                  WokeDuringCommit | NotBlocked(reason).
 Preconditions: caller is the scheduler exit path; entity == current vCPU of
                this pCPU (L-3); exit classification already validated (P-1);
                IRQ context of the pCPU, no scheduler lock held by caller.
@@ -32,14 +39,20 @@ Postconditions: Blocked → the vCPU lifecycle state is Blocked (via L-1), the
                 recorded, and the caller proceeds to the scheduler decision.
                 WokeImmediately → state unchanged (still Running), eligible
                 events returned to the caller, no capacity released.
+                WokeDuringCommit → W02 performed Running→Blocked and the
+                handshake assigned this path wake duty; W02 performed
+                Blocked→Runnable, the vCPU was enqueued exactly once, current
+                registration was cleared, and the scheduler decision follows.
                 NotBlocked(reason) → state unchanged; reason is diagnostic
                 (e.g. pause raced in, exit not blocking-class).
-State and ownership change: block-intent marker set and cleared within this
-                call; the lifecycle owner of the vCPU state moves Running→Blocked
-                through L-1; no memory is allocated or freed.
+State and ownership change: this path owns `block_wake` phase transitions
+                Open→Intent→Committing→Blocked, or the abort/recovery paths
+                specified in architecture §5; lifecycle transitions remain
+                owned by L-1; no memory is allocated or freed.
 Concurrency/allocation context: runs in pCPU IRQ/exit context; must be bounded
                 and allocation-free; takes the lifecycle lock only inside the
-                L-1 transition; spinlocks only per P3-W06 (S-1); never sleeps.
+                L-1 transition; coordination CAS operations follow P3-W06
+                (S-1); never sleeps.
 Errors and failure guarantee: unknown or unclassifiable exit → NotBlocked,
                 no state change, diagnosed via the P4-W06 boundary; L-1
                 rejection (invalid transition, e.g. a pause raced in) →
@@ -53,9 +66,11 @@ Logic: see the blocker pseudocode in
        [01-block-wakeup-architecture.md](01-block-wakeup-architecture.md) §5;
        not runnable production code.
 Validation: P7-V13 (no-event block releases pCPU; preexisting event aborts
-            the block); unit tests for WokeImmediately on each source; the
-            not-a-current-vCPU precondition must be unrepresentable or
-            asserted.
+            the block); deterministic interleavings prove each event is
+            consumed before block, delegated to the committing blocker, or
+            handled after Blocked publication; test exact-once W02 transitions
+            and enqueue. The not-a-current-vCPU precondition must be
+            unrepresentable or asserted.
 ```
 
 ## B-2. `poll_blocking_eligibility`
@@ -64,11 +79,11 @@ Validation: P7-V13 (no-event block releases pCPU; preexisting event aborts
 Name and stability: poll_blocking_eligibility(entity: VcpuRef) -> Eligibility;
                     internal; stable within P7.
 Purpose and caller: evaluate whether any eligible pending event exists; called
-                    by B-1 inside its two-phase re-check and by tests.
+                    by B-1 inside the block/wake handshake and by tests.
 Inputs / outputs: VcpuRef; Eligibility = { eligible: bool, sources: EventSet }.
-Preconditions: caller holds the acquire ordering established by B-1's intent
-               store; no locks held that the event producers also take (S-1
-               ordering rules apply).
+Preconditions: caller reads the event bits from `block_wake`; phase and event
+               bits are one atomic coordination domain; no locks are held that
+               event producers also take (S-1 ordering rules apply).
 Postconditions: reports a consistent snapshot; true only for sources defined
                 eligible in [01-block-wakeup-architecture.md](01-block-wakeup-architecture.md) §3.
 State and ownership change: none (read-only).
@@ -76,7 +91,7 @@ Concurrency/allocation context: bounded, allocation-free, IRQ-safe.
 Errors and failure guarantee: none; absent events report false.
 Security/authorization checks: none beyond the trusted internal callers;
                 producer authorization happened at post_wake_event (W-1).
-Logic: single acquire-load of the pending set; timer eligibility additionally
+Logic: read a consistent `block_wake` value; timer eligibility additionally
        consults the vCPU deadline versus the P6-W05 monotonic now.
 Validation: unit tests covering each source alone, combined sources, and
             empty sets; determinism check under P7-V13.
@@ -86,7 +101,8 @@ Validation: unit tests covering each source alone, combined sources, and
 
 ```text
 Name and stability: enum BlockExitHint { Wfi, Wfe }; enum BlockOutcome
-                    { Blocked, WokeImmediately(EventSet), NotBlocked(BlockDeclineReason) };
+                    { Blocked, WokeImmediately(EventSet), WokeDuringCommit,
+                    NotBlocked(BlockDeclineReason) };
                     enum BlockDeclineReason { NotRunning, TransitionRejected,
                     UnclassifiedExit }; internal; stable within P7.
 Purpose and caller: vocabulary for accounting hooks (P7-W09) and for the

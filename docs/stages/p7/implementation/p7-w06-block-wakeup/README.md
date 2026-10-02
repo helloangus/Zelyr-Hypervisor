@@ -1,21 +1,28 @@
 # P7-W06 Blocking and Event Wakeup — Detailed Implementation Design
 
 **Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+claimed; owner-selected handshake direction.
 **Scope:** Scheduler-visible WFI/WFE blocking, eligible-event wakeup, and
 lost-wakeup/duplicate-running prevention required by
 [P7-W06](../../plans/p7-w06-block-wakeup.md).  
-**Owner/change context:** P7-W06 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2
+**Owner/change context:** P7-W06 design amendment following owner direction
+on AUD-001, 2026-09-28.
+**Supersedes:** None; refines the existing proposed design in this path.
 
 ## Purpose and use
+
+Following the owner's AUD-001 direction, the proposed W06 design uses a shared
+atomic coordination word. W06-DV04 and P7-V14/P7-V25 remain required before the
+finding can be considered evidenced as resolved; no implementation or runtime
+closure is claimed here.
 
 This is the implementation-level design for P7-W06. It converts the bounded
 work-package plan into concrete blocking and wakeup mechanics: the conditions
 under which a vCPU exit makes it `Blocked`, the per-vCPU wake-event model with
-enumerated wakeup sources, the two-phase block/wake protocol that prevents lost
-wakeups, and the exclusion rules that stop ineligible vCPUs from being woken
-into execution. It deliberately does **not** design P6 event-delivery
+enumerated wakeup sources, the shared atomic block/wake handshake that prevents
+lost wakeups, and the exclusion rules that stop ineligible vCPUs from being
+woken into execution. It deliberately does **not** design P6 event-delivery
 internals, generic wait-queue structures, a Notification IPC object, runqueue
 topology, device models, or any scheduling policy; those remain with P6,
 P7-W05, and later stages.
@@ -89,7 +96,7 @@ Classification:
 | Block release of pCPU capacity (WFI/WFE) | [block-path contracts](02-code-contracts-block-path.md) | P7-V13 |
 | Blocked eligibility and event-to-runnable behavior | [architecture](01-block-wakeup-architecture.md) §3–§4, [wakeup contracts](03-code-contracts-wakeup-path.md) | P7-V13, P7-V14 |
 | Timer, vIRQ, Notification, internal-event wakeup | [wakeup contracts](03-code-contracts-wakeup-path.md) §2–§5 | P7-V14 |
-| Before/during/after-block race acceptance | [architecture](01-block-wakeup-architecture.md) §5, protocol contracts §2/§4 | P7-V14; race-density stress is [P7-W11](../p7-w11-stress-invariants/README.md) |
+| Before/during/after-block race acceptance | [architecture](01-block-wakeup-architecture.md) §5, protocol contracts §2/§4 | W06-DV04 finite interleaving enumeration and host harness; P7-V14; race-density stress is [P7-W11](../p7-w11-stress-invariants/README.md), P7-V25 |
 | Invalid-state wakeup exclusion | [wakeup contracts](03-code-contracts-wakeup-path.md) §6 | P7-V14 |
 | Cross-CPU and pause interaction requirements (review only) | [architecture](01-block-wakeup-architecture.md) §6 | [workflow](04-implementation-workflow.md) step 4 review |
 | Block/wakeup evidence and handoff to W08–W11 | [validation and handoff](05-validation-and-handoff.md) | P7-V13–V14 evidence locations; handoff checklist |
@@ -109,7 +116,7 @@ boundary, cited by plan path; no contract below is evidenced in this tree.
 | No-event WFI/WFE releases pCPU (P7-V13) | No code exists; P4 plans WFI/WFE exit handling ([P4-W04](../../../p4/plans/p4-w04-vcpu-entry-exit.md)) | Assumed P4 exit classification delivering WFI/WFE as distinct exit conditions; block path defined here | Without classified blocking exits there is nothing for the scheduler to observe | P4 (classification); P7-W06 (block mechanics) | P7-V13 block evidence |
 | Preexisting event does not strand vCPU (P7-V13) | Absent | Pre-block eligibility poll consuming P6 pending-event facts (assumed P6-W06/W07 contracts) | Blocking with a pending eligible event must abort before capacity release | P6 (event facts); P7-W06 (poll) | P7-V13 |
 | Applicable events eventually wake eligible vCPUs (P7-V14) | Absent | Wake-event post/consume protocol with enumerated sources | Wakeup must have one entry point all sources use, or sources diverge | P7-W06 (this design) | P7-V14 wake evidence |
-| No lost wakeup (P7-V14) | Absent | Two-phase block/wake ordering protocol | A wake between eligibility poll and state change is otherwise lost | P7-W06; ordering rules per [P3-W06](../../../p3/plans/p3-w06-concurrency-synchronization.md) | P7-V14; P7-V25 race stress (W11) |
+| No lost wakeup (P7-V14) | Absent | Shared atomic block/wake handshake over phase and pending-source bits | One compare-exchange domain assigns abort, commit-recovery, or post-commit wake duty | P7-W06; exact ordering per [P3-W06](../../../p3/plans/p3-w06-concurrency-synchronization.md) | W06-DV04; P7-V14; P7-V25 race stress (W11) |
 | No duplicate running (P7-V14) | Absent | W02 single-running invariant (assumed contract L-1/L-2) + wake transitions only through it | A wake must never create a second concurrent execution of one vCPU | P7-W02; P7-W06 consumes | P7-V14 with P7-V04 invariant checks |
 | Invalid-state wakeup excluded (P7-V14) | Absent | Wake-exclusion rules keyed on W02 lifecycle states | Paused/Stopped/Faulted vCPUs must gain pending events, not eligibility | P7-W02 (states); P7-W06 (rules) | P7-V14 invalid-wake cases |
 | Blocked Guest timer still wakes (task book §2 wakeup sources) | Absent | Deadline-home rule folding vCPU deadlines into the last-owning pCPU's host deadline (P6-W05 per-pCPU ownership) | A blocked vCPU's deadline must remain observable by some online pCPU | P6-W05 (timer ownership); P7-W06 (fold rule) | P7-V14 timer-wake case |
@@ -142,12 +149,16 @@ is not repaired here.
    distinct sources are independently visible until consumed. Rationale: P7-V14
    names exactly these sources; coalescing bounds IRQ-context work.
    Authority: task book §2 Required; stage-local naming owned here.
-4. **Two-phase block/wake protocol.** The blocker sets a block intent, re-checks
-   pending events, and aborts the block if any are eligible; the waker records
-   the event with release ordering, then checks the intent/state and performs
-   the eligibility transition. Exact memory-order spellings follow P3-W06's
-   handed-down rules. Rationale: this is the minimal protocol that closes the
-   before/during/after race window. Authority: plan scope item 3;
+4. **Shared atomic block/wake handshake.** One per-vCPU coordination word
+   contains both the block phase and pending-source bits. The blocker claims
+   `Intent`, then `Committing`, before asking W02 to perform `Running → Blocked`.
+   A waker records its source in the same compare-exchange domain and changes
+   `Intent → WakeDuringIntent` or `Committing → WakeDuringCommit` when it wins
+   those races. The blocker must abort the former and complete
+   `Blocked → Runnable` plus enqueue for the latter. Once `Blocked` is
+   published in the coordination word, the waker owns the W02 eligibility
+   transition. Exact memory-order spellings follow P3-W06; W02 remains the sole
+   lifecycle-transition authority. Authority: plan scope item 3;
    [P3-W06](../../../p3/plans/p3-w06-concurrency-synchronization.md) for
    synchronization semantics.
 5. **Deadline home for blocked vCPUs.** A vCPU's Guest-timer deadline stays
@@ -186,7 +197,7 @@ is not repaired here.
    [02-code-contracts-block-path.md](02-code-contracts-block-path.md).
 3. Implement the wakeup path per
    [03-code-contracts-wakeup-path.md](03-code-contracts-wakeup-path.md),
-   including the two-phase protocol and exclusion rules.
+   including the shared atomic handshake and exclusion rules.
 4. Follow [04-implementation-workflow.md](04-implementation-workflow.md) for
    step order, acceptance conditions, and blocker handling.
 5. Record planned and actual evidence per

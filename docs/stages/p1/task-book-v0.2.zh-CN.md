@@ -2,12 +2,13 @@
 
 **Translation status:** Current
 **Translation source:** [English source](task-book-v0.2.md)
-**Source blob:** `88ef67539c743ce72edab41c83d19ea6646c9091`
+**Source blob:** `c19f2c6ce09a424c538a6cdd72dbfe5e8b9cd37d`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](task-book-v0.2.md)具有权威性。
 
 **阶段 ID：** P1
 **阶段名称：** AArch64 EL2 最小启动
 **状态：** 当前修订后的规划基线；实施与验证证据属于工作包记录，不属于本任务书。
+**版本：** v0.2
 **所有者／变更背景：** P1 NC6 验收移交 P6，2026-09-26。
 **替代：** [P1 任务书 v0.1](task-book-v0.1.md)。
 **主管文档：** [架构基线 ADR](../../adr/adr-000-architecture-baseline-v0.1.md)、[ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md)、[文档索引](../../README.zh-CN.md)和 [Plan Agent 指南](../../development/plan-agent-guidelines.md)。

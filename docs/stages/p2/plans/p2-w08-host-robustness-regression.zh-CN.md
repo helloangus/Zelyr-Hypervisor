@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](p2-w08-host-robustness-regression.md)
-**Source blob:** `5e72b765502e0237eb986b9d99e39c55e0fddf7b`
+**Source blob:** `58d13f8e67b92a3da4d803de9a4c698ac9b4213e`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](p2-w08-host-robustness-regression.md)具有权威性。
 
 **状态：** 已规划的工作包；不声称已实施。
@@ -42,3 +42,13 @@ P2-V10 要求 P2-J 每组都有真实、可复现的证据：错误输入的有�
 
 W09 可将已建立的 Host 侧安全基线与参考平台集成结合。
 W10 可记录证据位置和未测试的限制。
+
+## P2-ACR-02 规划修订
+
+W11 补充 Host 覆盖、属性／别名、所有权／借用生命周期、受保护／域外拒绝、部分映射回滚及复用前解除映射／失效的断言。W08 在 P2-V10／P2-V14 下纳入这些 Host 模型用例，目标证据单独记录。
+
+ADR-062 责任方已选方向后续（2026-10-02）：在对应生命周期／验收边界消费
+[W12 通用所有权／视图基础](p2-w12-minimal-memory-objects.zh-CN.md)及 P2-V15 证据。
+W08 拥有 Host 负面／生命周期场景，W09 拥有实际集成 Host 访问，W10 按条件交接，W11 拥有转换适配器。
+W12 Host 模型先于 W11，不依赖其硬件；W04-MAP 保持独立。受影响编码仍须正式 ADR 集成及获批详细设计，
+不推断对象或运行交付。

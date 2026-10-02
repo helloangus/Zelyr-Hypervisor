@@ -38,7 +38,7 @@ Name and stability: SpinLock<T> — internal; one instance per protected
 Purpose and caller: thread-context mutual exclusion for shared state that
     is never reachable from an interrupt-enabled or exception-handler
     context; constructed and used by the consumer design that owns the
-    data (W08's initiation lock is the first P3 consumer).
+    data. W08 admission is separate BW-6 protocol state, not a lock consumer.
 Inputs / outputs: new(data: T, class: LadderClass) -> Self;
     lock(&self) -> SpinLockGuard<'_, T>;
     try_lock(&self) -> Option<SpinLockGuard<'_, T>>;

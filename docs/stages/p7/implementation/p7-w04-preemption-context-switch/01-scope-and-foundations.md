@@ -1,5 +1,11 @@
 # P7-W04 Scope, Foundations, and Prerequisite Contracts
 
+**AUD-004 admission:** [Producer handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+are required before multi-VM address-space switching. P4 single-space activate
+does not establish this capability. S2-MULTIVM-SCOPE/INSTALL/RETIRE and
+P7-DISPATCH-UNWIND remain pending; no implementation or execution is claimed.
+
+
 **Status:** Proposed detailed design; implementation not claimed.  
 **Parent:** [P7-W04 detailed design](README.md).
 

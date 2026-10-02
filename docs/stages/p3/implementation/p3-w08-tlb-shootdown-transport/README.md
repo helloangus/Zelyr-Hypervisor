@@ -1,5 +1,7 @@
 # P3-W08 TLB Shootdown Transport — Detailed Implementation Design
 
+**Current admission (2026-10-02):** [Amendment 07](07-timeout-ownership-remediation.md) removes Pending supersession. The owner selected W08-SYNC option A on 2026-10-02: single-attempt protocol admission, TransportBusy on contention, no SpinLock across collection. W06/W08 contracts are reconciled below; final design admission, implementation and execution evidence remain pending.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Scope:** The cross-CPU request, acknowledgement, and completion transport
@@ -8,7 +10,9 @@ selection, request consumption, completion collection, timeout and failure
 diagnostics — required by
 [P3-W08](../../plans/p3-w08-tlb-shootdown-transport.md).  
 **Owner/change context:** P3-W08 implementation handoff.  
-**Supersedes:** None.
+**Version:** v0.2
+**Supersedes:** Timeout supersession terms corrected on 2026-10-02; see
+[ownership amendment](07-timeout-ownership-remediation.md).
 
 ## Purpose and use
 
@@ -70,9 +74,10 @@ design → Coding Guidelines. Binding constraints:
   transport is P4's design; the transport exists for the non-broadcast
   case and for operations lacking a broadcast form.
 - [P3-W06](../p3-w06-concurrency-synchronization/README.md) is binding:
-  the single-flight initiation lock is `SpinLock` class `Infrastructure`
-  (LOL rank 3), completion polling obeys BW-1 bounds, and the
-  reactive-wait rule BW-4 is what makes the design deadlock-free.
+  BW-6 explicitly admits the W08 single-attempt protocol, BW-2 prohibits
+  held data-lock guards during collection, BW-1 bounds polling and BW-4
+  requires reception-responsive collection or caller-owned bounded retry.
+
 - [P3-W03](../p3-w03-physical-cpu-lifecycle/README.md)'s `OnlineSet` is
   the targeting universe; [P3-W04](../p3-w04-per-cpu-runtime/README.md)
   owns the `TlbReceptionSlot` placement (cache-line aligned, zeroed at
@@ -130,7 +135,7 @@ remain conditions for implementation, not claims.
 | Target/mask/broadcast selection is defined | No selection concept exists | `TargetMask` over the dense logical id space with validation against W03's `OnlineSet` and defined initiator exclusion | Target selection that ignores online-ness would send requests to parked CPUs — unaccountable completions | W08 mask type; W03 universe | W08-DV01/DV02 |
 | Acknowledgement and completion are diagnosable | None | Per-target state machine (Empty→Pending→Completed) with sequence tags and release/acquire edges | Completion must mean something checkable, or P4 inherits a guessed protocol | W08 state machine | W08-DV03 |
 | Invalid/offline exclusion | Nothing excludes | Fail-closed selection: mask ∩ online set, exclusions reported | P3-V08's wording requires the exclusion be *diagnosable*, not silent | W08 rule; W03 gate | W08-DV04 |
-| Concurrent-request behavior defined | Undefined | The single-flight initiation rule with its deadlock analysis (BW-4 reactive wait) | Two concurrent initiators would need per-target arbitration — complexity P3 cannot validate | W08 (stage-local freedom, recorded; revisit trigger P4) | W08-DV05 |
+| Concurrent-request behavior defined | Undefined | Single-attempt admission; TransportBusy; bounded responsive collection; no fairness guarantee | Two concurrent initiators would need per-target arbitration — complexity P3 cannot validate | W08 (stage-local freedom, recorded; revisit trigger P4) | W08-DV05 |
 | Timeout/failure diagnosable | No timer exists (P6 owns timers) | Bounded-poll collection with a recorded bound and the unacked set in the timeout result | An unbounded collection could hang the initiator forever with no diagnostic | W08 (W02 POLL_BOUND pattern) | W08-DV06 |
 | Explicit semantic gap recorded | n/a | The no-op bound operation statement + the opaque-descriptor rule | Work step 6 and P3-V08 require the gap be explicit, not implied | W08 | W08-DV07 |
 
@@ -146,18 +151,14 @@ interrupt-controller design; no new decision blocker is outstanding here.
    the task book's Reserved split and P3-V08's "asserts no Stage-2 TLBI
    semantics"; the alternative (designing VA/VMID fields now) would
    pre-design P4 and freeze semantics no authority has fixed.
-2. **Single-flight initiation: at most one outstanding transport
-   operation system-wide, guarded by a W06 `SpinLock` (class
-   `Infrastructure`), held from request publication through completion
-   collection.** Concurrent initiators therefore have exactly defined
-   behavior (serialize); targets are never blocked (lock-free
-   consumption). Rationale: the plan requires defined concurrent
-   behavior; per-target pipelining needs throughput evidence P3 cannot
-   produce; the lock is bounded and its class citable. The deadlock risk
-   this creates (an initiator waiting on a target that is waiting to
-   initiate) is removed by W06's BW-4 reactive-wait rule, made binding
-   for W08 in [04 §5](04-code-contracts-transport-initiator.md).
-   Revisit trigger recorded: P4 pipelining per address space.
+2. **Serialized initiation/collection; no per-target overwrite while Pending.**
+   Only one initiation/collection call owns the publication authority at a time.
+   Timed-out target operations remain outstanding. Owner-selected A uses
+   single-attempt protocol admission; contention returns TransportBusy.
+   W06 BW-6 specifies admission; BW-2 stays intact because no SpinLock/data
+   guard spans collection. BW-4 applies to collection and bounded caller retry.
+   No fairness, forced recovery or wall-clock progress is promised.
+
 3. **Broadcast = online set minus initiator; the initiator is never a
    transport target of its own request.** A shootdown's local invalidation
    is part of P4's *operation*, executed by the initiator itself; the
@@ -175,15 +176,13 @@ interrupt-controller design; no new decision blocker is outstanding here.
    ADR cross-CPU invariant; this is precisely the "synchronization and
    invalidation semantics" P3 must define at transport level without
    choosing the TLBI operation.
-5. **Timeout by bounded poll, unacked set returned; no timer.** The
-   collection loop has a recorded bound constant (the W02 `POLL_BOUND`
-   pattern); on exhaustion the initiator gets `TimedOut { unacked }` and
-   the per-target slot states remain readable for diagnosis. A target
-   that never completes leaves its request Pending; a later request to
-   the same target supersedes it by sequence. Rationale: no timer exists
-   before P6; a hung initiator with no diagnostic is the failure P3-V08
-   forbids; superseding-by-sequence keeps the transport usable after a
-   timeout (recorded recovery behavior).
+5. **Timeout retains receiver ownership; no timer or cancellation.** Bounded
+   collection returns observed acked/unacked sets. Pending descriptors stay
+   immutable; a subsequent request preflights all selected slots and refuses
+   with TargetsBusy if any remain Pending, without publishing any target.
+   Reuse requires acquire-observed Completed. Late completion is legal;
+   a permanently stalled target remains occupied. Unrelated target sets can
+   progress. See [amendment 07](07-timeout-ownership-remediation.md).
 6. **Wake through W07 kind 1; targets consume on wake or poll.** This
    design claims kind 1 per W07's reservation and defines its payload as
    opaque to W07 (a hint byte W08 may use, e.g., zero at P3). Targets

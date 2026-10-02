@@ -150,3 +150,17 @@ Destinations:
 
 No status may appear in any design or record without its evidence entry;
 `planned` is the only honest status before implementation exists.
+
+## W08 timeout ownership follow-up (2026-10-02)
+
+The [W08 amendment](../p3-w08-tlb-shootdown-transport/07-timeout-ownership-remediation.md)
+requires Host schedules pausing reception after control read and during operation,
+then timeout/retry over ready and Pending targets. TargetsBusy publishes zero
+targets; Pending is never reset for fixture cleanup. Resume the original receiver,
+observe late completion, then verify reuse and quiesced completion counts.
+Carry these as W08-DV06 / P3-V08 and W12 failure inputs into W13 regression.
+Owner-selected A also requires DV05 pauses at preflight/publication/collection:
+competitors return TransportBusy without writes and still service reception.
+Verify checked release on success/TargetsBusy/timeout and terminal retention.
+The design conflict is reconciled; implementation and execution remain pending.
+No tests ran here.

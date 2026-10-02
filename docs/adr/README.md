@@ -132,6 +132,7 @@ edits.
 |---|---|---|
 | [ADR-000](adr-000-architecture-baseline-v0.1.md) ([English translation](adr-000-architecture-baseline-v0.1.en.md)) | Architecture baseline v0.1 | Accepted |
 | [ADR-061](adr-061-defer-p1-asynchronous-vector-validation-to-p6.md) ([Chinese translation](adr-061-defer-p1-asynchronous-vector-validation-to-p6.zh-CN.md)) | Defer executed EL2 asynchronous-vector validation from P1 to P6 | Accepted |
+| [ADR-062](adr-062-p2-minimal-memory-object-foundation.md) ([Chinese translation](adr-062-p2-minimal-memory-object-foundation.zh-CN.md)) | Clarify the P2 minimal memory-object foundation | Proposed |
 
 New standalone ADRs append a row here when they reach Accepted; a Proposed
 ADR may carry an index row marked Proposed.

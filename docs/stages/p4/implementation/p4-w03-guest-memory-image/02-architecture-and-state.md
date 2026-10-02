@@ -1,154 +1,91 @@
 # P4-W03 Architecture, Objects, and State Model
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
-**Parent:** [P4-W03 detailed design](README.md).
+**Status:** Approved detailed design (project owner) v0.2, 2026-10-02; implementation and runtime evidence are not claimed.
+**Parent:** [W03](README.md). Read the revised [code contracts](03-code-contracts-guest-memory.md)
+and [W12 foundation](../../../p2/implementation/p2-w12-minimal-memory-objects/README.md).
 
 ## 1. Logical modules
 
-| Module | Responsibility | Owned state | Inputs | Outputs | Non-responsibility |
-|---|---|---|---|---|---|
-| `gm-layout` | The temporary P4 IPA-layout record: constants and their validation (version tag, alignment, non-overlap, containment in the P2-declared reference RAM) | the record values | P2 boot-map facts (M7) | `GuestLayout` value object | runtime memory decisions; mapping operations |
-| `gm-ram` | Guest RAM object: allocate, zero, expose write views, boot-info write, release | page run, lifecycle state, size | allocator, layout | `GuestRam`, `MappingGrant`s, `GuestRamView` | mapping into Stage-2 (W02), image contents |
-| `gm-image` | Image representation and validation: view type, bounds checks, route convention (flat/base-entry) | none persistent (view over build-provided bytes) | embedded byte slice (M5) | `GuestImage`, validated copy plan | embedding mechanism itself (build governance), scenario semantics (W05) |
-| `gm-loader` | The load procedure: validate → boot-info → copy; deterministic order; event emission | none (operates on `GuestRam`) | `GuestRam`, `GuestImage`, scenario id | loaded-and-initialized Guest input set for W04 | vCPU construction (W04), Stage-2 activation (W02) |
-
-Layering: all modules are Core-side (no architecture registers here); the
-only Arch coupling is the HVA write path permitted by the Host Stage-1
-contract (M4). No board/SoC/QEMU names; layout defaults cite the P2-declared
-reference facts rather than hardcoding QEMU folklore.
+`gm-layout` owns versioned temporary IPA values and validation; `gm-ram` owns
+MemoryObject control capabilities and content state; `gm-image` validates the
+embedded flat image; `gm-loader` sequences initialization and requests architecture
+code-visibility preparation. W12 owns backing, W11 owns Host views and W02 owns
+Guest mapping leases. No module duplicates allocator accounting or sysreg access.
 
 ## 2. Core objects and ownership
 
 ### 2.1 `GuestLayout` (value object, module `gm-layout`)
 
-- Versioned constants (layout version tag; changing values is a version bump
-  and a cross-consumer review event): `RAM_BASE_IPA` (`GuestPhysAddr`),
-  `RAM_SIZE` (`ByteLen`), `IMAGE_LOAD_IPA`, `STACK_TOP_IPA`, `STACK_SIZE`,
-  `BOOT_INFO_IPA`, `CONSOLE_PAGE_IPA`, plus derived derived-invariants
-  (image + stack + boot-info all inside RAM, pairwise disjoint, alignment ≥
-  page).
-- Owner: this package; consumers: W02 (mapping requests), W04 (entry/stack),
-  W05 (Guest-side expectations).
-- Non-responsibility: it does not describe any future machine layout
-  (W01 A4).
+Fixed Guest IPA values are independent of allocator-selected HPA. This replaces
+the old identity assumption without imposing physical-placement requirements on
+W04. The flat binary is linked for this versioned temporary Guest layout. Image,
+stack and boot-info are inside RAM and disjoint; base console is outside RAM.
+Layout changes require review with W04/W05/W08 and a version bump; no P8 ABI.
 
 ### 2.2 `GuestRam` (module `gm-ram`)
 
-- **Owned state:** the allocated page run (HPA range), lifecycle state, the
-  Guest-use accounting marks (M3).
-- **Immutable after construct:** base HPA, size.
-- **Not owned:** mapping state in Stage-2 (W02's ledger), image bytes
-  (build-owned), the vCPU (W04).
-- **Destruction:** `release` returns pages to the allocator and clears
-  accounting marks; illegal only after Stage-2 mappings over the region are
-  destroyed (D8 sequencing; asserted by parameter — the caller passes
-  evidence of unmap, enforced by API shape per
-  [03 §3.6](03-code-contracts-guest-memory.md)).
+Holds MemoryObject control capability, usable size, layout and content state.
+W12's store holds the unique full W04 allocation handle. GuestRam cannot release
+it while any view or use pin remains, including quarantined transactions. W02
+owns only leases and does not return Guest backing directly to the allocator.
 
 ### 2.3 `GuestImage` (module `gm-image`)
 
-- Non-owning view `{ bytes: &[u8] }` over the build-embedded blob with
-  identity metadata (build identity from the P0 version baseline for
-  diagnostics).
-- Validation is separate from representation: a `GuestImage` may exist
-  unvalidated (for diagnostics); loading uses only a `ValidatedImagePlan`.
+Non-owning embedded byte view and build identity. Validation produces a checked
+object-relative copy plan; HVA is never part of its ownership authority.
 
 ### 2.4 `BootInfo` (module `gm-loader`)
 
-- Fixed-layout, little-endian, explicit-width block written into Guest RAM
-  (P4 test convention D4). Representation is explicit per field
-  (Coding Guidelines: never serialize raw Rust struct memory as a contract).
-- Written once by the loader; read-only to the Guest after validation; not
-  modified again by EL2 during the run.
+Explicit little-endian fields, zero reserved bytes and deterministic checksum.
+No raw Rust-struct serialization. Base P4 Guest validates it independently.
+The W10 RAM-only fixture is a separate extension asset, not a silent change to
+this base test convention or a shared-console device model.
 
 ## 3. Guest RAM lifecycle state machine
 
-```text
-            allocate()            init+load()            release()
-  [absent] -----------> Allocated(Zeroed) ----------> Loaded ------> Released
-                             |                          |
-                             |     (mapping grants)     |
-                             +------> Mapped-in-S2 ----+  (W02 destroy first,
-                                     (W02 ledger)        then release)
-```
-
-Rules:
-
-- `Allocated(Zeroed)` is the deterministic base state: after allocation, the
-  whole region is zero-filled before anything else (D6). Reinitialization for
-  a same-session repeat returns the region to exactly this state (the
-  re-init entry re-zeroes; W07 consumes this).
-- `Loaded` is reached only through the loader's full validation+copy
-  procedure; partial loads are impossible (all-or-nothing contract).
-- Mapping into Stage-2 is *not* a state of `GuestRam`; it is W02 ledger state
-  over grants produced here. The sequencing duty (D8) is recorded on both
-  sides: W02 destroy must precede `release`.
-- `Released` is terminal; use of a released `GuestRam` is a type-level
-  impossibility (consuming move) plus an accounting check.
-
-No ADR VM-lifecycle states are implemented here; this machine is the memory
-object's own lifecycle, deliberately narrower than the future VM `Loading`
-stages (P10+ owns those).
+`Allocated -> Zeroed -> Loaded -> Released`; a post-write failure enters
+Failed/Retained. Zeroed/Loaded describe bytes, not whether mappings exist.
+W12/W02 are the sole view-state authorities. Guest entry needs Loaded plus
+committed Guest mappings and W04 execution permission. Failed data cannot enter.
+Re-init is allowed only after all Guest mappings retire and an exclusive Host
+writer is reacquired. Quarantine is not an implicit retryable state.
 
 ## 4. Sequencing and integration contract
 
-Construction order for one P4 Guest run (consumers shown in parentheses):
+1. Validate layout/image/scenario and create the W02 space.
+2. Allocate/adopt Guest backing into W12; map a W11 Host RW region.
+3. Validate full serialization/copy plan, zero every usable byte, write BootInfo
+   and image; complete code-visibility preparation and end the byte callback.
+4. Revoke the Host writer completely; reserve W12 disjoint Guest regions and map
+   them into W02. The base console uses its separate authority.
+5. Construct vCPU; select the space, acquire its execution lease and enter via W04.
+6. On teardown stop/exit Guest and retire its execution lease, explicitly detach
+   the installed context, then unmap/destroy with completed resident retirement.
+7. W12 permits take_back only after every view/pin has ended; W03 frees the exact
+   returned W04 handle. Failed free remains an owned resource.
 
-```text
-1. create address space            (W02)
-2. allocate + zero Guest RAM       (W03)
-3. produce mapping grants for RAM, console page, and code-execution view
-                                   (W03 -> W02 map)
-4. validate image plan             (W03)
-5. write boot-info + copy image    (W03)   [Guest RAM now deterministic]
-6. construct vCPU from layout + scenario id (W04)
-7. activate space; enter Guest     (W02/W04)
-...
-N. stop vCPU                       (W04)
-N+1. destroy address space         (W02)   [before any page release]
-N+2. release Guest RAM             (W03)
-```
-
-Same-session repeat (W07's P4-V10 scenario): repeat steps 2–7 with a fresh
-`GuestRam` (or a verified re-init to the `Allocated(Zeroed)` base); no state
-may leak between iterations through this package's objects. Which repeat form
-the repeatability design selects is W07's; W03's duty is that both forms are
-supportable (fresh allocation and in-place re-init).
+Same-session repeats may use new objects or explicitly retire/reinitialize the
+old object. Both obey steps 2–7; no stale Guest mapping may coexist with the loader
+writer. Merely clearing a vCPU run-state does not authorize memory reuse.
 
 ## 5. Deterministic-initialization contract
 
-- Order is fixed: zero whole region → boot-info block → image bytes at
-  `IMAGE_LOAD_IPA`. Nothing else writes Guest RAM during construction.
-- After a load, every byte of Guest RAM has a defined value: zeros except the
-  boot-info block and the image span. Reads-before-writes by the Guest
-  therefore observe defined data (supports VG-002-class determinism).
-- The boot-info block's content is a pure function of (layout, image plan,
-  scenario id) — no timestamps, no randomness, no addresses that vary run to
-  run (P4-V03 determinism; W01 A8 evidence conventions).
-- The image bytes themselves are build-deterministic inputs; W03 does not
-  transform them (no relocation processing — that would be an ELF-property).
+Successful content is all zeros except deterministic BootInfo and image bytes.
+Input validation happens before stores; later hardware/write failure may leave
+partial bytes and cannot claim rollback to zero. Failed content is inaccessible
+to Guest; only a safely reacquired writer may explicitly reinitialize it.
 
 ## 6. Concurrency model
 
-- All W03 operations run during Guest setup/teardown, before the Guest runs
-  and after it stops; no Guest execution is concurrent with loader writes
-  (W04's run-loop ownership).
-- The allocator's own locking (P3-era semantics, assumed) covers allocation;
-  `GuestRam` methods take `&mut self`, so object-level races are impossible
-  by construction in P4's single-setup-thread model.
-- The write path (D7) may run with interrupts masked for the duration of the
-  bounded copy (copy size ≤ layout image bound), or unmasked if the copy is
-  restartable — P4 fixes the simpler masked variant and records the latency
-  non-goal; a preemption-friendly design is later-stage work.
-- AP behavior during setup: P3-established idle semantics; no cross-CPU
-  invalidation is needed because Stage-2 mappings are created before
-  activation and destroyed after deactivation (W02 sequencing).
+Setup/teardown run with no Guest access to these objects. W12 rejects overlapping
+Host-writable and Guest views even on different CPUs. Bounded Host callbacks do
+not escape; external use is explicitly pinned. Base W11 is boot-only: actual P4
+SMP access needs its reviewed P3 adapter and cross-CPU completion. W10 extends
+Stage-2 retirement; it does not automatically extend Host Stage-1 or instruction
+visibility. No lock is held across copying, hardware callbacks or transport wait.
 
 ## 7. Telemetry points (W03-scope)
 
-Routed through the P0 baseline (W01 A8): `gm.ram.allocate`, `gm.ram.release`,
-`gm.load.plan`, `gm.load.copy`, `gm.bootinfo.write`, each carrying region
-identifiers and sizes, never Guest data content. W07 consumes counts for
-repeatability; W06 can correlate fault IPAs with layout constants through the
-record.
+P0-routed allocate/load/retire/release events carry object/region/space identity,
+size, phase and retained vs completed outcome. Do not log Guest content. W07
+counts successful initialization and actual free separately from retained failures.

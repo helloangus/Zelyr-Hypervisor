@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](p2-w09-qemu-integration-regression.md)
-**Source blob:** `2282cc383a1a11004f9fb168d0b0b8eb5248fb58`
+**Source blob:** `63fa28ca28dcd06085081035b516c075252c8d38`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](p2-w09-qemu-integration-regression.md)具有权威性。
 
 **状态：** 已规划的工作包；不声称已实施。
@@ -42,3 +42,13 @@ P2-V01–V10 仍需分别满足；本计划不声称已执行这些验证。
 
 W10 可引用证据位置，并区分已运行／未运行结果。P3／P4 获得参考平台输入基线，
 而不是真实硬件证明。
+
+## P2-ACR-02 规划修订
+
+W11 是新增前提。在受支持的参考配置矩阵中，按 P2-V11／P2-V14 覆盖代表性栈、页表和镜像缓冲区样本的实际分配帧 Host 访问及清理／复用。保持 P1 启动连续性，将样本与 P3／P4 执行分开，不推断 SMP 或硬件证据。
+
+ADR-062 责任方已选方向后续（2026-10-02）：在对应生命周期／验收边界消费
+[W12 通用所有权／视图基础](p2-w12-minimal-memory-objects.zh-CN.md)及 P2-V15 证据。
+W08 拥有 Host 负面／生命周期场景，W09 拥有实际集成 Host 访问，W10 按条件交接，W11 拥有转换适配器。
+W12 Host 模型先于 W11，不依赖其硬件；W04-MAP 保持独立。受影响编码仍须正式 ADR 集成及获批详细设计，
+不推断对象或运行交付。

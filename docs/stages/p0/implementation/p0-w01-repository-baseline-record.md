@@ -77,3 +77,11 @@ additional markers.
 The owner selected Apache License 2.0 with `Copyright 2026 Angus Lee` on
 2026-09-17. The root `LICENSE` contains the full approved text. W18 remains
 the owner of any future dependency or third-party notice analysis.
+
+## Design approval provenance clarification (2026-10-02)
+
+The project owner confirmed that there is no separate approval record for the
+P0-W01 detailed design. Its header remains `Proposed`; a contradictory sentence
+in its body has been corrected. This clarification does not change the
+owner-approved license decision above, the historical implementation, or the
+W01 verification result. It does not retroactively certify design admission.

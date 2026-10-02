@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `26f933cad34391085b60e07aa64f3af740039798`
+**Source blob:** `980bf554a0ac82880e8bb50a6bed861e1abbe90b`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 **状态：** 规范性文档治理，规定阅读路径、优先级和文档布局。
@@ -77,8 +77,8 @@ templates/      已批准的项目文档模板
 
 ```text
 task-book-v*.md             要完成什么
-plans/                      已批准的实施级计划
-implementation/             实施说明和可追溯记录
+plans/                      有界工作包计划
+implementation/             详细设计、实施说明和可追溯记录
 verification/               证据和完成报告
 ```
 

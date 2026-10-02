@@ -67,12 +67,14 @@ Target: the `sgi-send` and `sgi-accounting` modules
 ([03](03-code-contracts-sgi-send.md) §2, §4).
 
 Work: implement `send_sgi` with partition checking and per-sender
-counters; implement the accounting view and drift report; register the
+unit-separated counters; implement the labeled accounting view; register the
 generic-event and validation rows' consumers per the partition.
 
 **Acceptance:** unit tests show: validation-before-emission (zero writes
 on rejection), write ordering per decomposition, partition rejection,
-drift computation on synthetic sequences.  
+one-write/multiple-target unit separation, same-ID overlapping signal samples,
+concurrent snapshot labeling, overflow and rejection accounting. Exact deltas
+require amendment 07's controlled per-target scenario; no generic drift formula.
 **Failure/blocker:** receipt counters unavailable from W03 stats → stop;
 reconcile with the W03 contract owner.
 
@@ -111,8 +113,8 @@ Target: `../../verification/p6-w04-smp-interrupt-routing-sgi-verification.md`.
 Work: run the P6-V04/V05/V06 scenarios of
 [06](06-validation-and-handoff.md) §2 in the declared QEMU environment:
 CPU0→CPU1 SGI with receipt attribution; CPU1→CPU0; multi-target and
-declared IRM form; accounting convergence; SPI re-route to a second pCPU
-and back with enable/disable interplay; rejection paths; drift
+declared IRM form; controlled per-target accounting; SPI re-route to a second pCPU
+and back with enable/disable interplay; rejection paths; labeled observation
 observation on the failed-target case if a local failure can be staged
 within declared limits. Record run/not-run per row with the QEMU proof
 boundary.

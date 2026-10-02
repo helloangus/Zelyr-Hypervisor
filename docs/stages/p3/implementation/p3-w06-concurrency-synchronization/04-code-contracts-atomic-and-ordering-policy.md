@@ -53,6 +53,7 @@ owning design must be able to name the pattern (§3) it uses.
 | AP-3 | Independent counters (no ordering-dependent decision reads them mid-flight) | Relaxed fetch_add/store | W11 counter block; send/arrival counters where independent |
 | AP-4 | Multi-variable coherent publication | Release store *plus* one explicit full barrier before it, with recorded justification | W05 `declare_smp_ready` (the only P3 instance); justification: registry + flags + outcomes coherently published |
 | AP-5 | Ownership transfer of a payload via flag exclusivity (lock guard) | lock Acquire / unlock Release | the two lock flavors (§ of [03](03-code-contracts-lock-primitives.md)) |
+| AP-6 | W08 protocol admission (BW-6; owner-selected A) | strong CAS Idle→Active: Acquire/Relaxed; checked Active→Idle: Release/Relaxed | no protected-data borrow; one attempt; receivers independent; subordinate atomic sequence uses Relaxed only under admission |
 
 Rules:
 
@@ -77,7 +78,7 @@ Ranks ascend; a hold-chain (acquire while holding) must ascend strictly:
 |---|---|---|---|
 | 1 | `Lifecycle` | Reserved for any future lock-protected lifecycle surface (W03 needs none — its state words are AP-2 atomics) | — |
 | 2 | `Allocator` | P2 allocator entry points if a P3-side wrapper lock ever exists; allocator internals are P2-owned | leaf: never call out while held; allocation while holding any rank ≥ 2 lock is prohibited (README decision 4) |
-| 3 | `Infrastructure` | cross-CPU coordination tables (W08's single-flight initiation lock is the first instance); future consumer registries | may acquire Diagnostics while held; nothing above |
+| 3 | `Infrastructure` | cross-CPU coordination tables; future consumer registries | may acquire Diagnostics while held; nothing above |
 | 4 | `Statistics` | counter aggregation, telemetry-side structures (W11) | may acquire Diagnostics while held; must not sample lower classes while held |
 | 5 | `Diagnostics` | console/log serialization (normal diagnostics; exceptional paths per CR-5) | leaf: emit only; never acquire any other lock while held |
 
@@ -115,13 +116,28 @@ Rules:
   valid target of cross-CPU requests) must remain able to service them
   while it waits for anything. A wait loop that would make the CPU
   unresponsive as a target is prohibited; the owning design interleaves
-  its reception consumption into the wait (the pattern W08's initiation
-  wait uses). This rule is what makes W08's single-flight wait deadlock-free.
+  its reception consumption into the wait (W08 collection and explicit bounded
+  caller retry). This is not a BW-2 exception or a fairness guarantee.
 - BW-5: Unbounded spinning requires a recorded design decision naming why
   no bound is knowable; "it should finish quickly" is not a rationale.
   (W07's idle-context `wait` is the sanctioned P3 instance — it is an
   idle terminal state, not a wait for progress, and W06 records it here as
   the cross-referenced exception.)
+
+- BW-6 (W08 protocol admission, owner-selected A on 2026-10-02): W08 may
+  serialize publication/collection with boot-global atomic Idle/Active(cpu).
+  Exactly one strong compare-exchange attempt; contention returns TransportBusy.
+  This grants no protected-data borrow and introduces no third generic lock
+  flavor. No SpinLock/data-lock guard is held during collection, and receivers
+  never acquire admission. A private non-Copy token authorizes checked owner
+  release (Acquire admission; Release retirement). TargetsBusy releases without
+  publication; Completed/TimedOut copy results before release. Fatal partial
+  publication retains admission/slots/resources; no Drop/unwind unlock or steal.
+  Retries are caller-owned, bounded and reception-responsive (BW-4); no hidden
+  acquisition loop or fairness promise. A halted initiator may strand admission.
+  See [W08 contract](../p3-w08-tlb-shootdown-transport/04-code-contracts-transport-initiator.md).
+  This is an explicit protocol-state classification under atomic policy, not
+  authorization for arbitrary private locks or BW-2 exceptions.
 
 ## 6. Misuse checklist (MIS)
 
@@ -171,3 +187,12 @@ gathered and which W12/W13 build on:
   model of the host; they do not prove AArch64 SMP behavior on QEMU or
   hardware — that is W12/W13's declared territory, using these limits as
   the base layer.
+
+## W08-SYNC decision (2026-10-02)
+
+The owner selected A ("就按A来") from the
+[W08 decision record](../p3-w08-tlb-shootdown-transport/07-timeout-ownership-remediation.md).
+BW-6 records the coordinated protocol contract; BW-2 remains unchanged. The
+previous W08 SpinLock across collection is superseded, including its claimed
+BW-4 exception. Direction selection and documentation reconciliation do not
+prove production implementation, P3 prerequisites or executed DV05 evidence.

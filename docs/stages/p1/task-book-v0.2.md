@@ -5,6 +5,7 @@ Chinese readers can use the [Chinese edition](task-book-v0.2.zh-CN.md).
 **Stage ID:** P1
 **Stage name:** AArch64 EL2 Minimum Bring-up
 **Status:** Current amended planning baseline; implementation and validation evidence remains in package records, not this book
+**Version:** v0.2
 **Owner/change context:** P1 NC6 acceptance transfer to P6, 2026-09-26
 **Supersedes:** [P1 task book v0.1](task-book-v0.1.md)
 **Governing documents:** [Architecture baseline ADR](../../adr/adr-000-architecture-baseline-v0.1.md), [ADR-061](../../adr/adr-061-defer-p1-asynchronous-vector-validation-to-p6.md), [documentation index](../../README.md), and [Plan Agent guide](../../development/plan-agent-guidelines.md)

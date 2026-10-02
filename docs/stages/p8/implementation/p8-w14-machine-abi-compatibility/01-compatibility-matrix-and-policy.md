@@ -12,8 +12,12 @@ and policy document**, created at implementation time. Its home is
 contracts"); the exact file name is recorded in the implementation record when
 created (suggested: `docs/abi/rusthv-arm-virt-v1-compatibility.md`). It is the
 sole authoritative home of the matrix, change classes, escalation rules, test
-plan, and firewall rules defined here. Other documents may link to it but must
-not restate values.
+plan, and firewall rules defined here. The matrix's `value` cells are cited
+comparison baselines, not independent definitions: each must identify the
+approved machine-type contract and version from which it was copied. A source
+contract change requires re-review of the affected cells; W14 cannot approve a
+new machine or boot value by editing the matrix. Other documents link to the
+matrix rather than restating its policy or values.
 
 Every fact value cited in the matrix comes from one authoritative source:
 

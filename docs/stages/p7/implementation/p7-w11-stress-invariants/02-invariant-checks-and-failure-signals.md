@@ -103,3 +103,13 @@ Classification rules:
 What repetition proves and does not prove: repeated passes increase coverage
 of the swept windows; they do not bound the probability of unexercised races
 and must never be summarized as a statistical guarantee.
+
+## AUD-004 stress coverage (2026-10-02)
+
+Include the [Stage-2 handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+in address-space isolation and failure injection: same-IPA A→B→A, inactive
+mutation/teardown, expected-old-context mismatch, partial-install failure and
+post-gate unwind. Check lifecycle/current-slot/queue consistency separately
+from root/VMID and Guest memory observations. Cross-pCPU placement additionally
+requires resident-translation evidence. Missing producer/unwind contracts keep
+these cells blocked; model scheduling alone is not Stage-2 execution evidence.

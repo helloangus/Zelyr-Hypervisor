@@ -36,7 +36,7 @@ Name and stability: GuestTimerCtl — bitfield view of the CTL register (logical
 Fields per the architected timer: ENABLE, IMASK, ISTATUS; reserved bits must
   be written zero and read as zero
 ISTATUS note: read-only for the Guest and reports the assertion condition
-  (§3 of [02](#3-register-semantics-contracts)), not hardware-pin state
+  (§3 of [02](#3-register-semantics-contracts-m2)), not hardware-pin state
 ```
 
 ## 2. Time-source contracts (M1)

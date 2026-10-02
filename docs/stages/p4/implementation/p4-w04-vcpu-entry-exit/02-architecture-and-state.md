@@ -72,7 +72,7 @@ not designed here. No board/SoC/QEMU names.
                             Stopped (cause: Controlled | GuestFault | BudgetExhausted)
                                 |
                             destroy()   [teardown sequencing: vCPU stopped ->
-                                         space destroy (W02) -> GuestRam release (W03)]
+                                         detach installed context -> space destroy (W02) -> GuestRam release (W03)]
 ```
 
 Rules:
@@ -99,7 +99,7 @@ Rules:
 
 ```text
 1. run preconditions validated (state, space, budget)     [vcpu-run]
-2. Stage-2 space activated for this pCPU                  [W02 activate]
+2. Stage-2 installed tuple checked; execution lease acquired [W02 selector/entry]
 3. EL1 architectural baseline restored                    [D5]
 4. Guest context restored into the live register file     [ws-switch entry stub]
 5. host PSTATE (DAIF) masked and saved; host SP saved     [ws-switch]
@@ -196,3 +196,7 @@ host-side (P4-C01/C02 evidence basis).
 the P0 baseline (W01 A8). W06 correlates frames; W07 counts; W08 matches
 markers. Events never carry Guest data content beyond PC/IPA-class
 addresses already required for diagnosis.
+
+Actual exit retires the W02 execution lease after context save; each re-entry
+acquires a new matching lease. A stopped vCPU does not by itself detach the
+installed context or retire residual translations.

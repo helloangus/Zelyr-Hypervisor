@@ -93,3 +93,12 @@ conclusions (W13).
 Review rule: loop/queue code that encodes anything from the Reserved rows,
 or policy code that touches queue internals or the gate, is a review
 failure.
+
+## Multi-VM producer admission (2026-10-02)
+
+W04 switching must satisfy [AUD-004](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+before this loop enters different VMs. Independent objects or successful gate
+admission alone do not prove selected Stage-2 context. Recoverable activation
+failure requires verified hardware cleanup and W02 admission unwind before
+requeue. S2-MULTIVM-SCOPE/INSTALL/RETIRE and P7-DISPATCH-UNWIND remain open;
+affected M:N/multi-VM acceptance is blocked, not a scheduler fallback mode.

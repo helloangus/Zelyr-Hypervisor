@@ -56,9 +56,9 @@ Before handing W06 to a reviewer, provide:
 - the declared contention limits (04 §7) confirmed as recorded constants
   with rationale;
 - the consistency verdict per delivered W02–W05 protocol (DV04);
-- the declared ladder census rows for planned consumers (W08/W09/W11);
+- the declared ladder census rows for planned consumers (W09/W11), with W08 BW-6 in the atomic-state census;
 - open items for W07 (WFE/SEV bounds and idle-wait declaration), W08
-  (Infrastructure-class lock, BW-4 reactive wait), W09 (CR-4/CR-5
+  (BW-6 admission, no held data-lock guard, BW-4 receiver service), W09 (CR-4/CR-5
   citation), W10 (MIS/LOL as audit criteria), W11 (Statistics class,
   AP-3 counters, contention hooks), W14/P4 (policy as the synchronization
   contract) — without resolving their contracts here;

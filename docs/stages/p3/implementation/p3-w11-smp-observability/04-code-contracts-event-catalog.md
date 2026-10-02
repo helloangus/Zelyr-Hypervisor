@@ -182,3 +182,14 @@ its coverage consequence; unresolved gaps at W11 closure are listed in
 [06-validation-and-handoff.md](06-validation-and-handoff.md) §3 and block
 only the affected P3-V11 coverage, per the validation matrix's honest-
 status rule.
+
+## W08 timeout observation accounting (2026-10-02)
+
+For [W08 amendment 07](../p3-w08-tlb-shootdown-transport/07-timeout-ownership-remediation.md),
+distinguish TransportBusy admission refusals, TargetsBusy target-preflight refusals,
+TimedOut initiator observations,
+and eventual target completions. Busy does not increment published-target counts.
+Late completion is not a new initiation and does not rewrite an old timeout result.
+Compare target completion totals at declared quiescence, not at timeout.
+Exact event IDs and storage stay W11-owned; no frozen schema or runtime evidence
+is claimed by this proposed contract correction.

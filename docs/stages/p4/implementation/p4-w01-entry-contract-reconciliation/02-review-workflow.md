@@ -86,7 +86,7 @@ review is re-raised as a conflict per [01 §4](01-reconciliation-contract.md).
 Target: gap and conflict list section of the implementation record.
 
 Work: for every non-`delivered` row, apply the §4 classification rules. Verify
-that P2-ACR-01 appears as `ADR Required` and remains unresolved, that the A9
+that P2-ACR-01 records owner option A and its remaining integration/delivery gates, that the A9
 scenario-provenance open question is recorded, and that no classification
 resolves a labeled item locally.
 
@@ -133,7 +133,7 @@ revision.
 |---|---|---|---|---|
 | W01-DV01 → P4-V01 | matrix completeness review | inspect the executed matrix against [01 §2](01-reconciliation-contract.md) R01–R21 plus consumer-added rows | every row has contract/evidence/assumed status and ≥1 consumer; all citations resolve at the recorded revision | the entry boundary is enumerable; not that any upstream mechanism works |
 | W01-DV02 → P4-V01 | assumption-ledger review | compare recorded A1–A9 items against ADR/task-book text | every item bound with authority; no undocumented P4 assumption remains in W02–W09 designs' inputs | the P4 interpretation baseline is explicit; not that consumers actually complied (checked at their reviews) |
-| W01-DV03 → P4-V01 | gap classification review | re-derive labels per [01 §4](01-reconciliation-contract.md) from the recorded rows | every gap labeled; P2-ACR-01 visible and unresolved; no local resolutions | conflicts are surfaced honestly; not that they are resolved |
+| W01-DV03 → P4-V01 | gap classification review | re-derive labels per [01 §4](01-reconciliation-contract.md) from the recorded rows | every gap labeled; P2-ACR-01 direction recorded, formal integration/delivery pending; no local resolutions | conflicts are surfaced honestly; not that they are resolved |
 | W01-DV04 → P4-V01 | consumer handoff review | read the handoff section as each of W02–W09 | each consumer can name its accepted rows, blocked acceptances, and failure boundary without inventing inputs | handoff readiness; not that the consumers are implemented |
 | W01-DV05 → P4-V01 | repeatability check | re-run two matrix rows end-to-end (for example R09 and R17) from a clean reading | the second execution reproduces the recorded status deterministically from the tree | the review procedure is stable; not upstream correctness |
 | W01-DV06 → P4-V01 | scope purity review | search the record for implementation claims, upstream repairs, or mechanism decisions | none present; record contains review content only | W01 stayed a reconciliation package; not P4 runtime correctness |
@@ -154,7 +154,7 @@ Before handing W01 to a reviewer, verify:
   authority; the record cites paths, not recollections;
 - the record states the reviewed revision and date and can be re-run;
 - W02–W09 consumer sections exist and name their blocked acceptances;
-- P2-ACR-01 and the A9 provenance open question are present and unresolved;
+- P2-ACR-01 delivery gates and the A9 provenance question are explicitly tracked;
 - the record contains no completion claim, and evidence locations point to
   `../p4-w01-entry-contract-reconciliation-record.md` and
   `../../verification/p4-w01-entry-contract-reconciliation-verification.md`

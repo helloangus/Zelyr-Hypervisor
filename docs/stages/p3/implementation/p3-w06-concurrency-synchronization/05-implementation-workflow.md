@@ -116,9 +116,10 @@ Target: host-side harness (test-side) + review.
 
 Work: build the L-4 model check over the construction-site census; at
 W06 closure the census contains W06's own reference consumers' planned
-entries (W08 initiation lock = Infrastructure; W09/W11 Diagnostics and
+entries (W09/W11 Diagnostics and
 Statistics class notes) as *declared* rows, with real instances arriving
-as those packages land.
+as those packages land. W08 admission belongs in the atomic-state census
+under BW-6, not the lock construction census.
 
 Acceptance: the model check runs and reports the declared census
 acyclic; the check is part of the host test entry.
@@ -143,8 +144,8 @@ verification record, only for what was run.
 
 - W07 must declare its WFE/SEV bounds and its idle-wait status (BW-3/5)
   in its design; W06's policy already reserves the semantics.
-- W08 must construct its initiation lock with
-  `LadderClass::Infrastructure` and satisfy BW-4.
+- W08 must satisfy BW-6 single-attempt protocol admission and BW-4; its
+  collection holds no SpinLock/data-lock guard (BW-2).
 - W09/W11 must cite CR-4/CR-5 and LOL ranks in their designs.
 - W10 must consume MIS-1..MIS-12 and LOL-R4 as audit criteria.
 These obligations are part of the handoff checklist; W06 performs none of

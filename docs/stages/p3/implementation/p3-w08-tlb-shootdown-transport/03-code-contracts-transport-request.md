@@ -1,5 +1,7 @@
 # P3-W08 Code Contracts — Request Encoding and Target Consumption
 
+**Current admission (2026-10-02):** [Amendment 07](07-timeout-ownership-remediation.md) removes Pending supersession. The owner selected W08-SYNC option A on 2026-10-02: single-attempt protocol admission, TransportBusy on contention, no SpinLock across collection. W06/W08 contracts are reconciled below; final design admission, implementation and execution evidence remain pending.
+
 **Status:** Proposed detailed design; implementation and validation are not
 claimed.  
 **Parent:** [P3-W08 detailed design](README.md).
@@ -13,13 +15,14 @@ serialized, never guest-visible.
 
 ```text
 Name and stability: TransportRequestSeq — newtype over u16, wrapping;
-    internal; assigned by the initiator under the single-flight lock.
-Purpose and caller: tags a request so superseded/stale slot state is
+    internal; assigned by the initiator under the sole admission token.
+Purpose and caller: tags a request so completion pairing is
     detectable; callers: initiate ([04 §3](04-code-contracts-transport-initiator.md)),
     consume (§5 below).
-Preconditions / postconditions: monotonic per boot under single-flight;
-    wrap handled by equality comparison only (never ordering) — a target
-    matches `control.seq == expected`, so wrap is safe.
+Preconditions / postconditions: assigned under serialized initiation;
+    modulo increment; equality only, never ordering. Wrap safety requires no
+    Pending reuse and serialized collection, not equality alone (amendment 07).
+    This tag is not a unique external operation identity or resource lease.
 Concurrency/allocation context: plain value.
 Errors and failure guarantee: n/a.
 Security/authorization checks: n/a.
@@ -72,7 +75,8 @@ Inputs / outputs: fields —
 Preconditions / postconditions: after init (§4): state Empty, seq
     arbitrary-but-recorded (0), descriptor 0, reserved 0. Invariant —
     descriptor is written only before the Pending CAS and read only
-    while Pending/Completed of the same seq.
+    while Pending of the same seq; no old descriptor/resource access follows
+    release publication of Completed. Timeout does not shorten this lifetime.
 State and ownership change: W04 zero-fill → W08 init → live for boot.
 Concurrency/allocation context: no allocation; the only cross-CPU RMWs
     are the two CAS edges (initiator-owned and target-owned
@@ -120,15 +124,20 @@ Inputs / outputs: none; returns the number of requests consumed
     pipelines).
 Preconditions / postconditions: precondition — caller is the slot owner
     (calls through `current()`'s area, never the cross-CPU table).
+    Consumption and bound operations are non-reentrant on that CPU; duplicate
+    wakes do not authorize concurrent consumption. P6 IRQ delivery needs review.
     Postcondition — if control read Pending{seq}: descriptor read
     (acquire), bound operation executed (P3: TransportNoop), control
     CAS Pending→Completed (release) for the same seq, completions
     incremented; returns 1. If Empty/Completed: returns 0, no writes.
 State and ownership change: own slot per above.
-Concurrency/allocation context: acquire loads; one CAS; no allocation;
-    no lock; the bound operation is invoked with no lock held and no
-    W06 ladder obligation (P3's placeholder does nothing; P4's binding
-    inherits the same context rule).
+Concurrency/allocation context: acquire loads; one AcqRel/Acquire CAS (W06
+    AP-2; the release edge publishes completion); no allocation;
+    entry and execution hold no lock; receivers never acquire admission.
+    P3 Noop is non-reentrant, never waits and takes no locks. Collection may
+    invoke reception while owning protocol admission, which grants no data
+    borrow. Future P4 bindings require their own reviewed bounded context.
+
 Errors and failure guarantee: an illegal control encoding or a seq
     mismatch against the descriptor's pairing window is corruption —
     fatal diagnostic; consumption never "skips" a Pending request
@@ -147,9 +156,9 @@ Logic (pseudocode):
         bound_operation(desc)                     # P3: TransportNoop
         if slot.control.compare_exchange(
                pack(Pending, c.seq), pack(Completed, c.seq),
-               Release, Acquire).is_err():
-            fatal_invariant()                     # single-flight makes
-                                                  # contention impossible
+               AcqRel, Acquire).is_err():
+            fatal_invariant()                     # no Pending reuse +
+                                                  # non-reentrant sole receiver
         slot.completions += 1
         return 1
 

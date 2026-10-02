@@ -47,3 +47,16 @@ is claimed by this plan.
 
 W09 may combine the established host-side safety baseline with reference-platform
 integration. W10 may record evidence locations and untested limitations.
+
+## P2-ACR-02 planning amendment
+
+W11 supplies additional assertions for checked Host coverage, attributes/aliases, owner/borrow lifetime, protected/outside-domain rejection, partial-map rollback and unmap/invalidation before reuse. Include these host-model cases in W08 under P2-V10/P2-V14; target evidence remains separate.
+
+Owner-selected ADR-062 follow-up (2026-10-02): consume the
+[W12 common ownership/view foundation](p2-w12-minimal-memory-objects.md) and
+P2-V15 evidence at the corresponding lifetime/acceptance boundary. W08 owns
+Host negative/lifetime scenarios, W09 owns actual integrated Host access, W10
+owns condition-specific handoff, and W11 owns the translation adapter. W12
+Host modeling precedes W11 and does not require its hardware; W04-MAP remains
+independent. Formal ADR integration and approved detailed designs are still
+required before affected coding; no object or runtime delivery is inferred.

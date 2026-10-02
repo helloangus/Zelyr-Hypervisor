@@ -10,3 +10,7 @@ references, and the per-topic governance baselines (toolchain, build targets,
 build choices, documentation itself, and the integration workflow). Entries
 here constrain work; read the routed section that applies to your task
 starting from the [documentation index](../README.md).
+
+Audit findings and supporting evidence are maintained under
+[Testing: documentation audit](../testing/documentation-audit/README.md),
+separate from this directory’s governing guidance.

@@ -1,5 +1,11 @@
 # P7-W04 Context-Switch Code Contracts
 
+**AUD-004 admission:** [Producer handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md)
+are required before multi-VM address-space switching. P4 single-space activate
+does not establish this capability. S2-MULTIVM-SCOPE/INSTALL/RETIRE and
+P7-DISPATCH-UNWIND remain pending; no implementation or execution is claimed.
+
+
 **Status:** Proposed detailed design; implementation not claimed.  
 **Parent:** [P7-W04 detailed design](README.md).
 
@@ -47,10 +53,10 @@ State and ownership change: see the step table below — every mutation is
 Concurrency/allocation context: schedulable context; IRQ-masked per the P3
   scheduler-critical-section rule for the quiesce..gate window; allocation
   avoided on the hot path (fixed-size records); no cross-CPU operations.
-Errors and failure guarantee: named per step below; all-or-nothing for `to`
-  — a failed activation leaves `to` undispatched (`Runnable`, requeued) and
-  the pCPU idle-capable; `from` handling is never rolled back (it is
-  already out of the Guest).
+Errors and failure guarantee: named per step. No all-or-nothing hardware
+  guarantee is inferred. Retry requires producer-verified safe context plus
+  W02-owned admission unwind; indeterminate hardware state blocks entry and
+  retains resources. Outgoing Guest exit is never rolled back.
 Security/authorization checks: no Guest-influenced input participates; the
   sequence consumes predecessor mechanisms only.
 ```
@@ -79,10 +85,9 @@ Ordering notes (normative):
   except the deliberate, single-`Running` handover inside steps 1→4 — the
   gate performs `Dispatch` for `to` only after step 1 released `from`.
 - Steps 5–7 (activation) happen after gating (`to` is `Running`) and before
-  step 9 (entry): an activation failure must be recoverable, which is why
-  the sequence treats steps 5–7 errors as candidate containment, and step
-  9 errors as invariant-grade (entry after successful activation is
-  expected not to fail).
+  step 9 (entry). Failures are classified by hardware-change boundary and
+  verified cleanup. W02 must unwind the committed admission before any requeue;
+  the specified [W02 abort operation](../p7-w02-scheduler-admission-lifecycle/06-pre-entry-abort.md) and its production evidence are required; indeterminate installed state blocks recovery.
 - The deadline (step 8) is armed before entry so the slice covers the full
   Guest execution window; arming after entry would open a monopolization
   window.
@@ -95,7 +100,9 @@ Purpose and caller: input/output data of the sequence.
 Inputs / outputs: SwitchError in { GateRejected(AdmissionError),
   ActivationFailed(ActivationStage), DeadlineArmFailed(DeadlineError),
   InvariantViolation } — ActivationStage in { AddressSpace, VirtualTimer,
-  VgicState } naming the failing isolation class.
+  VgicState } naming the failing isolation class. ActivationFailed is emitted
+  to the picker only after verified hardware cleanup and W02 admission unwind;
+  an indeterminate hardware context cannot use this recoverable result.
 Preconditions / postconditions: error carries enough context for the
   diagnostics record (pcpu, from, to, stage, underlying error).
 State and ownership change: per 1.1.
@@ -125,24 +132,25 @@ verification, not here.
 
 ## §3 Failure containment for activation errors
 
-When steps 5–7 fail for candidate `to`:
+When steps 5–7 fail for the candidate:
 
-1. Do not enter the Guest; `to` remains `Runnable` and is requeued
-   undispatched-this-round (via W05 operations) with
-   `mark_trace(SwitchFailed { vcpu: to, stage, error })`.
-2. The loop proceeds to its next decision (next candidate or idle — W05/
-   W08); no automatic retry of the same candidate within the same loop
-   pass.
-3. The failure is recorded with the failing stage; a per-vCPU failure
-   counter (W09 rendering) makes repetition visible. A candidate failing
-   activation repeatedly is escalated as an invariant investigation record
-   (blocked/failed evidence per the W01 §5 discipline) — it is never
-   silently retried forever, and never marked `Faulted`, because the
-   failure is not Guest-caused.
-4. If the failure classification (per the P5/P0 boundary) turns out to be
-   a genuine hypervisor invariant violation (e.g., corrupt saved state),
-   the fatal path applies instead — the classification is made against the
-   predecessor taxonomy, not locally invented.
+1. Do not enter Guest. Obtain the producer's classification: refused before
+   hardware change, verified known safe resulting context, or indeterminate
+   hardware context. A bare error is insufficient.
+2. Only a verified safe result permits W02-owned post-gate admission unwind,
+   deadline/P6 cleanup and then W05 requeue or idle. The gate already committed
+   Running/current_vcpu; direct slot writes, fake Guest exits and queue-only
+   rollback are forbidden. P7-DISPATCH-UNWIND remains a missing contract.
+3. An indeterminate/partially changed context retains resources and prevents
+   further entry on the affected path under the governing invariant/failure
+   policy. It is not ordinary requeue or a Guest-caused Faulted transition.
+4. Record candidate, pCPU, isolation class, verified context and cleanup result.
+   A safe retry remains bounded per loop pass; outgoing exit stays committed.
+
+See [producer handoff requirements](../../../p4/implementation/p4-w02-stage2-address-space/06-multivm-handoff-requirements.md).
+These requirements do not provide a register implementation or an approved
+unwind API. A failure later in the sequence must also retire any successfully
+installed earlier state before reporting a safe recovery.
 
 ## §4 What the sequence deliberately does not do
 
@@ -157,3 +165,13 @@ When steps 5–7 fail for candidate `to`:
   allocator internals; predecessor mechanisms do.
 - It does not account CPU time (W09 consumes trace points and timestamps
   from the sequence's marks; accumulation policy is W09/W05).
+
+## Concrete owner abort binding
+
+Use W02's [abort_admission contract](../p7-w02-scheduler-admission-lifecycle/06-pre-entry-abort.md).
+The EntryPermit carries CPU/vCPU/epoch, and the per-CPU attempt remains Admitted
+until all preparation succeeds. Build the complete cleanup bundle by reversing
+all completed P6/P4 preparation; a safe P4 selection result alone is insufficient.
+After a successful abort, hand AbortedCandidate to W05 for control/eligibility
+recheck, never unconditional enqueue. Mark Entering only immediately before the
+architecture entry operation; subsequent uncertainty cannot take this abort path.

@@ -90,4 +90,4 @@ Before handing W07 work to a reviewer:
   observability baseline and limitations to
   [P4-W09](../p4-w09-closeout-p5-handoff/README.md);
 - open items carried forward: O1 grammar acknowledgment, O2 cross-build
-  stability boundary, P2-ACR-01 unchanged and unresolved.
+  stability boundary, ADR-062 option A recorded; formal integration and W12 producer evidence pending.

@@ -103,4 +103,4 @@ Before handing W06 work to a reviewer:
   capability/limitation notes to
   [P4-W09](../p4-w09-closeout-p5-handoff/README.md);
 - open items carried forward: O1 probe carriage, O2 joint-review
-  acknowledgment, P2-ACR-01 unchanged and unresolved.
+  acknowledgment, ADR-062 option A recorded; formal integration and W12 producer evidence pending.

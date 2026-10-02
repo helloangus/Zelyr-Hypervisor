@@ -92,7 +92,7 @@ book P6-ENTRY gating and the plans-index ordering W02, W03 → W04).
 |---|---|---|---|---|---|
 | Evidence-backed cross-pCPU SGI | No SGI send path exists; P3 notification is a plan | Typed send mechanism over ICC_SGI1R with per-target accounting ([03](03-code-contracts-sgi-send.md) §2, §4) | "Target-attributed" evidence requires both a send-side record and a receipt-side record that can be correlated | W04; W03 provides receipt counting | W04-DV04/DV05 |
 | Declared SGI target forms | None exist | `SgiTarget` type with validated forms and decomposition rules ([03](03-code-contracts-sgi-send.md) §2) | "Declared" forms must be enumerable and each must have one behavior | W04 | W04-DV02 |
-| Target-accounting and completion | W03 counters exist as design | Accounting convergence rule (send records vs per-pCPU receipt counters) with drift reporting | P6-V05 requires "determinate target accounting", which is a cross-side property | W04 + W03 counters | W04-DV05 |
+| Target-accounting and completion | W03 counters exist as design | Unit-separated observation and controlled per-target validation (amendment 07) | P6-V05 requires "determinate target accounting", which is a cross-side property | W04 + W03 counters | W04-DV05 |
 | Supported SPI target changes | W02 routes all SPIs to the boot pCPU; no change path exists | Quiesced route-change protocol under the distributor lock ([04](04-code-contracts-spi-routing.md) §3) | A route change racing delivery is exactly the indeterminacy P6-V06 forbids | W04 | W04-DV06 |
 | Eligibility vs online/offline state | P3 lifecycle is a plan | Eligibility predicate over P3 online set ∩ W02 LocalReady set, evaluated atomically at send time | Sending to an ineligible target must have a named outcome, not undefined behavior | W04; P3/W02 supply the sets | W04-DV03 |
 | No scheduler-policy claim | n/a | Explicit non-responsibility list and SGI-ID partition that carries no policy meaning ([01](01-scope-and-foundations.md) §5) | The mechanism must be usable by P7 without P6 having chosen policy | W04 vocabulary; P7 owns policy | W04-DV08 review |
@@ -132,13 +132,13 @@ no decision blocker is outstanding for this design.
    validated multi-target set — the send is validated fully before the
    first SGI1R write). Authority: task book "target eligibility and
    failure handling with online/offline pCPU state".
-6. **SGI completion is the W3 combined-EOI rule; W04 adds target
-   accounting on top:** the sending pCPU records a send entry; each
-   receiving pCPU's W03 dispatch records the receipt; drift between send
-   and receipt totals is reportable, never auto-corrected, and no timeout
-   is imposed (a not-yet-ready target legitimately holds an SGI pending at
-   its GICR until it enables SGIs — W02's disabled baseline makes this
-   deterministic rather than lost).
+6. **SGI receipt/completion stay W03-owned:** W04 separately counts accepted
+   calls, register writes and intended target attempts. None is a remote
+   completion receipt. Concurrent same-ID signals may coalesce; exact per-target
+   comparison is permitted only in the controlled serialized/quiesced scenarios
+   of [amendment 07](07-accounting-units-remediation.md). A normal live mismatch
+   does not establish loss. W04 adds no general timeout/retransmission protocol.
+
 7. **SPI routing changes are quiesced and locked:** a route change
    requires the SPI disabled and inactive (checked, not assumed), is
    performed under the distributor-scoped lock, orders the IROUTER write

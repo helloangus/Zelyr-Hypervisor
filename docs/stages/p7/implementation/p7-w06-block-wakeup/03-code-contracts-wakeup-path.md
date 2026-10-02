@@ -1,10 +1,15 @@
 # P7-W06 Code Contracts — Wakeup Path
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Proposed detailed design; owner-selected handshake direction;
+implementation and validation are not claimed.
+**Scope:** W06 event publication, block/wake coordination, eligibility
+transition, source adapters, and exclusion rules.
+**Version:** v0.2
+**Owner/change context:** P7-W06 design amendment following owner direction
+on AUD-001, 2026-09-28.
 **Parent:** [P7-W06 detailed design](README.md).  
-Scope: contracts for event recording, eligibility transition, source adapters,
-and exclusion rules. Naming authority as stated in
+**Supersedes:** None; refines the existing proposed wake-path contract.
+Naming authority is as stated in
 [02-code-contracts-block-path.md](02-code-contracts-block-path.md).
 
 ---
@@ -26,17 +31,18 @@ Inputs / outputs: VcpuRef; WakeEventSource = TimerExpiry | VirtualIrq |
 Preconditions: entity is a live vCPU (VM/vCPU lifetime owned by the P4/P5
                boundary); source is one of the four; callable from IRQ or
                thread-like scheduler context on any pCPU.
-Postconditions: the source flag is pending (coalesced per source) with release
-                ordering. If the vCPU was Blocked, its state is now Runnable
-                (via L-1) and it is enqueued under placement (S-2/C-1) with a
-                reconsideration request (S-3). In every outcome the event is
-                not lost: AlreadyRunnable/Excluded leave it pending for a
-                defined consumption point (B-1 re-check, Guest re-entry).
-State and ownership change: pending-event record of the vCPU; potentially its
-                lifecycle state through L-1; runqueue membership through S-2.
-Concurrency/allocation context: IRQ-safe; bounded work in IRQ context (set
-                flag + short locked section only); allocation-free; ordering
-                pairings per [01-block-wakeup-architecture.md](01-block-wakeup-architecture.md) §5.
+Postconditions: the source bit and block phase are updated in one
+                compare-exchange domain. If the phase is Intent, the waker
+                claims WakeDuringIntent; if Committing, it claims
+                WakeDuringCommit; if Blocked, the waker performs the W02
+                Blocked→Runnable transition and enqueues exactly once. In
+                every other state the event remains pending for a defined
+                consumption point.
+State and ownership change: `block_wake` word; potentially lifecycle state
+                through L-1; runqueue membership through S-2.
+Concurrency/allocation context: IRQ-safe; bounded compare-exchange loop and
+                W02 transition per P3-W06 (S-1); allocation-free and never
+                sleeping. Exact ordering follows S-1 and architecture §5.
 Errors and failure guarantee: enqueue failure (S-2 surface error, e.g.
                 placement now empty) → the vCPU is Runnable with no queue;
                 this is an invariant violation surfaced per the P0-W14
@@ -47,7 +53,7 @@ Security/authorization checks: this entry is hypervisor-internal; Guests
                 reach it only through authorized producers (P6-W07 rights
                 checks for vIRQ; P5 dispatch for Guest-initiated control);
                 no capability is accepted here.
-Logic: the waker pseudocode in [01-block-wakeup-architecture.md](01-block-wakeup-architecture.md) §5.
+Logic: the waker pseudocode in [01-block-wakeup-architecture.md](01-block-wakeup-architecture.md) §5; an event observed in Intent or Committing transfers wake duty to the blocker and the waker returns without a lifecycle transition.
 Validation: P7-V14 all-source wake evidence; lost-wakeup race matrix
             (before/during/after-block); P7-V25 amplification by W11.
 ```
@@ -64,13 +70,17 @@ Purpose and caller: atomically clear and return pending events at the two
 Inputs / outputs: VcpuRef; returns the cleared source set.
 Preconditions: caller is one of the two consumption points; vCPU is Running
                (re-entry point) or under B-1's intent (block re-check).
-Postconditions: pending set is empty; returned set is complete (no event
-                lost between read and clear — swap semantics).
-State and ownership change: pending-event record only.
-Concurrency/allocation context: IRQ-safe, allocation-free, single atomic swap.
+Postconditions: eligible pending bits selected at the atomic update are
+                returned and cleared; concurrently published later bits remain
+                pending. The block phase is preserved by the same CAS domain.
+State and ownership change: event bits in `block_wake`; phase unchanged.
+Concurrency/allocation context: IRQ-safe, allocation-free, bounded CAS loop
+                following P3-W06 (S-1); never clear or overwrite a phase owned
+                by a concurrent blocker/waker.
 Errors and failure guarantee: none.
 Security/authorization checks: none beyond internal callers.
-Logic: atomic swap-to-empty of the pending record.
+Logic: atomically clear only the selected event bits while preserving the
+       observed phase; retry if a concurrent phase/source update wins.
 Validation: P7-V13 (a preexisting event prevents the block); P7-V14 (no
             stranded events); unit tests for swap atomicity.
 ```

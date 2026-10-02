@@ -1,7 +1,6 @@
 # P4-W03 Code Contracts — Guest Memory and Image
 
-**Status:** Proposed detailed design; implementation and validation are not
-claimed.  
+**Status:** Approved detailed design (project owner) v0.2, 2026-10-02; implementation and runtime evidence are not claimed.
 **Parent:** [P4-W03 detailed design](README.md).  
 **Companion:** module and lifecycle semantics in
 [02-architecture-and-state.md](02-architecture-and-state.md).
@@ -25,10 +24,10 @@ the P0 baseline (M1) and are not redefined here.
   construction, W05 Guest expectations, W08 automation documentation.
 - **Inputs/outputs:** constants; validation returns disjointness/alignment/
   containment errors.
-- **Preconditions/postconditions:** `validate` proves (a) every special
-  region lies inside RAM, (b) regions are pairwise disjoint and page-aligned,
+- **Preconditions/postconditions:** `validate` proves (a) image, stack and boot-info lie inside Guest RAM while the console
+  page lies outside RAM, (b) these extents are disjoint and page-aligned,
   (c) `max_image_size` leaves the stack and boot-info regions intact, (d)
-  values fit within the P2-declared reference RAM (M7). The validate check
+  the usable backing size is supported by P2 while IPA values fit W02 geometry (M7). The validate check
   runs once at construction setup and aborts setup on failure (fatal setup
   invariant — the layout is host-authored, so failure here is a build
   contract error, not a Guest event).
@@ -67,132 +66,63 @@ the P0 baseline (M1) and are not redefined here.
 
 ### 3.1 `GuestRam::allocate`
 
-- **Name and stability:** `fn allocate(allocator: &mut PageAllocator,
-  layout: &GuestLayout) -> Result<GuestRam, GuestMemoryError>`. Internal.
-- **Purpose and caller:** obtain the bounded Guest RAM region (P4-B01);
-  called by the P4 minimal VM setup.
-- **Inputs/outputs:** allocator handle and layout; returns the object or a
-  named error.
-- **Preconditions:** allocator satisfies M2/M3; `layout.validate()` already
-  passed; RAM size is a whole number of pages.
-- **Postconditions:** a contiguous page run of exactly `ram_size` is owned by
-  the object; pages marked Guest-use in accounting (M3); contents are *not*
-  yet assumed zero until `init_zeroed` runs (allocation and zeroing are
-  separate so a failure between them cannot be mistaken for a deterministic
-  state).
-- **State/ownership change:** allocator accounting → `GuestRam` ownership;
-  state `Allocated`.
-- **Concurrency/allocation:** allocates; no other locks held; not in IRQ
-  context.
-- **Errors:** `OutOfPages`, `AccountingUnavailable` (M3 boundary — recorded
-  gap path, degraded to plain alloc/free per
-  [01 §2](01-scope-and-foundations.md)).
-- **Security:** the allocator's protected-range exclusion is the guarantee
-  that no protected page is included; W03 adds no second source of pages.
-- **Logic:**
+Inputs: validated layout, W04 allocator and W12 store. Request a contiguous
+usable page count through W04 allocate_contiguous(PageCount), then move the returned
+AllocatedFrames into W12. GuestRam owns only the resulting MemoryObject control
+capability, layout binding and initialization state. W12 retains the full buddy
+block while exposing only the requested usable prefix; no `mark_guest_use` or
+invented `alloc_run` API is assumed. Failure before adoption returns the original
+handle for explicit W04 free; failed free retains its returned handle.
 
-```text
-allocate(allocator, layout):
-    pages = layout.ram_size / PAGE_SIZE            // exact by precondition
-    run = allocator.alloc_run(pages)?              // contiguous per D1
-    allocator.mark_guest_use(run)?                 // M3; gap-degradable
-    return GuestRam { run, state: Allocated }
-```
-
-- **Validation:** unit tests with allocator stubs: success, OOM,
-  accounting-failure path; host-side only until P2 delivers (M2 evidence
-  gates P4-V03, not this unit work).
+The temporary Guest IPA layout is independent of the selected HPA. A fixed flat
+binary can remain linked at its documented Guest IPA without requiring W04 to
+allocate a particular physical address. This supersedes old identity placement
+(D2), an implementation choice under task-book §8; no P8 machine ABI is created.
+The base layout/BootInfo format remains a versioned P4 test convention.
 
 ### 3.2 `GuestRam::init_zeroed`
 
-- **Name and stability:** `fn init_zeroed(&mut self) -> Result<(),
-  GuestMemoryError>`. Internal.
-- **Purpose:** establish the deterministic base state (`Allocated(Zeroed)`).
-- **Preconditions:** state `Allocated`.
-- **Postconditions:** every byte of the region is zero; state
-  `Allocated(Zeroed)`; callable again later as re-init (repeat support).
-- **Concurrency:** bounded write loop; interrupts masked for the duration
-  (D7 discipline; size ≤ layout RAM bound — small in P4).
-- **Errors:** none expected; any fault here is a fatal Host-memory invariant
-  (escalates per P0 failure classification).
-- **Security:** zeroing removes any cross-run residue dependence (P4-V10
-  support, W07).
-- **Logic:** page-wise zero stores via the write view (§3.5).
-- **Validation:** determinism tests: init → read-back pattern checks;
-  repeat-init equivalence.
+Require an exclusive W12 Host RW region mapped by W11 and no Guest view or
+external-use pin. Initialize every usable byte through scoped MaybeUninit writes;
+only after completion mark Zeroed. Allocated does not mean Zeroed. Re-init first
+stops Guest, retires every old Guest region through W02, obtains a fresh Host
+writer and repeats initialization. Stopping a vCPU alone does not retire mappings.
 
 ### 3.3 `GuestRam::mapping_grants`
 
-- **Name and stability:** `fn mapping_grants(&self) -> Result<[MappingGrant;
-  N], GuestMemoryError>` — RAM grant (Normal, cacheable, RW, XN per
-  sub-region plan) plus console-page grant (Device, RW, XN). Internal;
-  consumed by W02 `map`.
-- **Purpose:** produce the validated mapping inputs (W02 D8) from owned
-  pages (P4-B01 → Stage-2 hand-over).
-- **Preconditions:** state `Allocated(Zeroed)` or later; grants not yet
-  produced (or regenerable deterministically — P4 regenerates from
-  constants; the grants carry no uniqueness).
-- **Postconditions:** grants cover exactly the RAM region and the console
-  page; flags follow the layout's permission plan (the sub-region plan is
-  layout-authored, loader-applied: data region RW+XN, code window R+X, and
-  a read-only test window carried in boot-info for the W05 permission
-  scenarios).
-- **Errors:** `LayoutMismatch` if region arithmetic disagrees with the
-  validated layout (internal invariant — fatal class).
-- **Security:** flags are host-authored; no Guest influence.
-- **Validation:** grant-vs-layout agreement tests; joint tests with W02 map
-  (positive) in the integrated workflow.
-- **Note:** the data/code permission split is recorded as a P4 test
-  convention enabling W05's VG-005/VG-006 permission scenarios; it is not a
-  general memory-protection policy.
+`reserve_guest_regions(&mut self, space_id, storage)` is the replacement API;
+this heading retains the old navigation name. Require Loaded, successful
+instruction-visibility preparation for code, and completely retired Host writer.
+Reserve non-Copy W12 region leases covering disjoint RX code, R test/boot-info
+and RW/XN data/stack extents. All remaining RAM has an explicit disjoint default
+RW/XN extent; gaps/overlaps are validation failures. Slot capacity is preflighted;
+if any reservation fails, cancel every still-Reserved lease without publication.
+Once submitted to W02, only its transaction protocol may retire it. Grants cannot
+be regenerated from layout constants or queried HPA values.
+
+The console is not RAM: a separate base-console authority produces one exact
+Device RW/XN ConsoleWindowGrant from verified platform facts and W04's exclusive
+console-use convention. No W12 object or W04 free is associated with it. W10
+RAM-only extension fixtures omit this grant and do not share the base console.
 
 ### 3.4 `GuestRam::release`
 
-- **Name and stability:** `fn release(self, unmap_proof: Stage2Released)
-  -> Result<(), GuestMemoryError>` (consuming). Internal.
-- **Purpose:** return pages to the allocator; end the object's life.
-- **Preconditions:** `unmap_proof` evidences that all Stage-2 mappings over
-  the region are destroyed (W02 destroy's return value; D8 sequencing).
-- **Postconditions:** pages freed; Guest-use accounting cleared; object
-  consumed.
-- **Errors:** free failures surface (leak reporting), never swallowed.
-- **Security:** zeroing before free is not required for Guest RAM by the P4
-  threat model (Host-owned RAM reuse), but a debug-feature zero is permitted;
-  the *accounting* release must be exact (hard P2 safety gate inheritance).
-- **Validation:** release-after-destroy test; double-release impossible by
-  type; accounting restoration check.
+`release(self, store, allocator) -> ReleaseOutcome` asks W12 to take_back the
+object. Any Reserved, Publishing, Live, Revoking, Quarantined view or use pin
+returns Busy with the object retained. There is no unscoped Stage2Released proof.
+On success, free the exact original full allocation handle via W04 free_contiguous. Free failure
+returns an owned failure handle; record it as retained, never successful release.
+W02 destroy/unmap completion removes its own leases, but cannot free GuestRam.
 
-### 3.5 Host write view (module `gm-ram`, `unsafe`)
+### 3.5 Host write view (module `gm-ram`)
 
-- **Name and stability:** `unsafe fn write_slice(&mut self, offset: ByteLen,
-  src: &[u8])` — the single bounded writer (D7). Internal.
-- **Purpose and caller:** loader writes (boot-info, image copy) into Guest
-  RAM through Host virtual addresses.
-- **Inputs/outputs:** region-relative offset and source bytes.
-- **Preconditions (SAFETY obligations):** (1) `self` owns the frames and
-  they are Host-Stage-1-mapped (M4); (2) `offset + src.len()` computed with
-  checked arithmetic and proven ≤ region size *before* any store; (3) no
-  concurrent writer (single setup thread; `&mut self`).
-- **Postconditions:** exactly `src.len()` bytes stored at `offset`.
-- **Errors:** none internal; the safe wrapper returns
-  `RangeOverflow`-class errors when the checked bound fails (never performs
-  the store).
-- **Security:** the Guest cannot reach this path; bounds are the P4-V03
-  "prohibited overwrite" defense.
-- **Logic:**
-
-```text
-write_slice(offset, src):                       // unsafe entry
-    end = offset.checked_add(src.len()) else return Err(RangeOverflow)
-    if end > region_size: return Err(RangeOverflow)
-    // SAFETY: frames owned+self-mapped via Host Stage-1 (M4);
-    //          bound proven above; exclusive &mut self.
-    store bytes at hva(base + offset .. end)
-```
-
-- **Validation:** boundary unit tests (offset at end, one-past-end refusal,
-  zero-length writes); unsafe-inventory entry with the three-point SAFETY
-  pattern.
+`write_slice(mapped, offset, src)` is a safe wrapper over W11's scoped byte
+callback. Check offset+length and usable-region bounds before stores; write via
+MaybeUninit elements, never reconstruct an HVA slice from an HPA or a layout.
+Zero-length at end is allowed; one-past-end or overflow rejects without mutation.
+The callback lifetime cannot escape, overlap revoke or an external-use pin.
+Architecture unsafe resides in W11's audited view construction and P4's
+instruction-visibility backend; W03 does not add another raw-pointer writer.
 
 ## 4. `GuestImage` and load-plan contracts (module `gm-image`)
 
@@ -215,7 +145,7 @@ write_slice(offset, src):                       // unsafe entry
   misaligned, or out-of-position images are rejected before any byte is
   written.
 - **Inputs/outputs:** image view + validated layout → copy plan
-  (destination IPA/HVA pairs, length) or error.
+  (destination IPA, object-relative offset and length; no HVA authority) or error.
 - **Preconditions:** layout already validated.
 - **Postconditions:** plan covers exactly `image.len()` bytes at
   `IMAGE_LOAD_IPA`; plan arithmetic is pre-checked (destination end ≤ RAM
@@ -250,57 +180,44 @@ validate_image_plan(image, layout):
 
 ### 5.1 `load_guest`
 
-- **Name and stability:** `fn load_guest(ram: &mut GuestRam, image:
-  &GuestImage, scenario: ScenarioId) -> Result<GuestInput, GuestMemoryError>`.
-  Internal.
-- **Purpose and caller:** the complete P4-B03/B05 construction: validate →
-  boot-info → copy, in fixed order; called by the P4 minimal VM setup.
-- **Inputs/outputs:** initialized RAM (state `Allocated(Zeroed)`), image
-  view, scenario id → `GuestInput` (entry IPA, stack top, boot-info IPA,
-  scenario id — the pure-function inputs W04 constructs the vCPU from).
-- **Preconditions:** `ram` zeroed; `ram`'s mapping grants already mapped into
-  the (not yet active) address space — mapping-before-load is *not*
-  required for correctness (loader writes via Host addresses), but the P4
-  order maps first so a load can never succeed into an unmappable region;
-  scenario id already validated against the W05-owned table.
-- **Postconditions:** Guest RAM in `Loaded` state with the deterministic
-  content of [02 §5](02-architecture-and-state.md); `GuestInput` returned.
-- **State/ownership:** `GuestRam` state transitions to `Loaded`; no ownership
-  transfers.
-- **Concurrency:** runs in setup context; bounded, IRQ-masked writes.
-- **Errors:** all validation errors from §4.2; write-path errors cannot occur
-  post-validation (plan proven in-bounds) — any fault is fatal-invariant
-  class.
-- **Failure guarantee:** all-or-nothing: a failure anywhere leaves RAM in the
-  zeroed base state (the copy is preceded by complete validation; boot-info
-  write precedes image copy, and both are in-region proven).
-- **Security:** Guest input does not exist yet (Guest has not run); all
-  inputs are host-authored and validated. The defensive posture exists for
-  the *Guest-side* parse (W05) and for repeat safety.
-- **Logic:**
+Inputs: GuestRam in Allocated/Zeroed, image, scenario and live W11 Host writer;
+output is a PreparedGuestInput (entry, stack, boot-info IPA and scenario), not
+permission to enter Guest. Validate layout, scenario, complete image copy plan
+and BootInfo serialization before the first write. Zero whole usable region,
+write boot-info, copy image, and perform P4 architecture code-visibility
+preparation for the future Guest execution profile. Finish the byte callback,
+fully revoke Host writer, then mark Loaded and permit Guest-region reservation.
+After W02 mappings commit, the caller may construct/enter the vCPU through W04.
 
-```text
-load_guest(ram, image, scenario):
-    plan = validate_image_plan(image, layout)?     // §4.2
-    ram.reinit_zeroed()                            // deterministic base
-    write BootInfo block at layout.boot_info       // §2
-    ram.write_slice(plan.offset_of_image_load, image.bytes)   // §3.5
-    ram.state = Loaded
-    emit gm.load.copy
-    return GuestInput { entry: layout.image_load, stack_top: layout.stack_top,
-                        boot_info: layout.boot_info, scenario }
-```
+Validation rejection leaves prior bytes unchanged. A failure after stores begin
+may leave partially initialized bytes; mark Failed/Retained, never Loaded and
+never enter Guest. If Host mapping can be safely retired, later explicit re-init
+may start from a full zero-fill; if completion is uncertain, quarantine until
+restart. There is no false all-or-nothing byte rollback guarantee.
 
-- **Validation:** end-to-end host tests with a stubbed RAM region;
-  determinism test: two loads produce byte-identical regions; negative suite
-  per §4.2; integrated on-target evidence via W08 (P4-V03).
+For the admitted AArch64 profile, code-visibility preparation cleans the written
+code to the required instruction-unification point, orders it, invalidates the
+relevant instruction context and completes the required barriers. Its backend
+binds the initialized object/code range and intended execution CPU set. Base P4
+supports its one admitted CPU; W10 must extend preparation to all entry CPUs
+before execution. The backend returns a private PreparedCode receipt bound to ObjectId, code
+extent, content epoch and prepared CPU set. A later writable Guest mapping
+invalidates it. W02 checks it before enabling execute, and W10 checks CPU-set
+coverage before entry; adding another execution CPU requires new preparation
+while the code is quiescent. A local data write or TLB acknowledgment is not proof
+of cross-CPU instruction visibility. Exact cache-operation/reference review is part
+of architecture admission, not delegated to Guest or generic W12.
+
+Tests cover rejection-before-write, deterministic bytes for identical inputs,
+mid-copy fatal injection with no GuestInput exposure, instruction-preparation
+failure, Host revoke failure, and Guest grant rejection when Host writer remains.
+Integrated P4-V03 demonstrates actual target load and entry; Host buffers do not.
 
 ## 6. Error model recap
 
-`GuestMemoryError`: `OutOfPages`, `AccountingUnavailable`, `ImageEmpty`,
-`ImageTooLarge`, `Misaligned`, `DestinationOverlap`, `RangeOverflow`,
-`LayoutMismatch`, `ReleaseOrderViolation`. All are VM-facing recoverable
-values for consumers; `LayoutMismatch` and any write-path fault are
-host-authored-contract violations and escalate through the P0 failure
-classification (fatal for setup), because they indicate a broken build
-contract rather than a Guest event (W01 A2).
+Recoverable preflight errors: OutOfPages, Capacity, ImageEmpty, ImageTooLarge,
+Misaligned, DestinationOverlap, RangeOverflow, Busy and unsupported profile.
+LayoutMismatch is a host-authored contract violation. After stores/publication,
+Retained explicitly reports partial initialization or unknown mapping completion;
+unknown hardware state is fail-stop. No error silently converts retained backing
+to free pages or treats a partial image as a valid Guest input.
