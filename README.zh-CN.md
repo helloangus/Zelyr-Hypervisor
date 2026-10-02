@@ -2,7 +2,7 @@
 
 **Translation status:** Current
 **Translation source:** [English source](README.md)
-**Source blob:** `3aa3621f1f2016ebb5dc2ea03466aafdf1fa9cff`
+**Source blob:** `0f18b3e2700977c83d7c204a8f29de3dd1b02137`
 **Authority:** 本文是供中文读者使用的译文；[英文原文](README.md)具有权威性。
 
 Zelyr 是以 AArch64 和 Rust 为先的 Type-1 Hypervisor。QEMU `virt` 是参考平台；
@@ -13,6 +13,55 @@ P1 在单个 Host CPU 上启动至稳定的 Non-secure EL2，具有 Host Stage-1
 
 从 [AGENTS.md](AGENTS.md) 和[文档索引](docs/README.zh-CN.md)开始。贡献者与 agent
 在开展非简单工作前必须阅读这两份文档；仅阅读本 README 并不授权修改代码或架构。
+
+## 在 QEMU 上构建和启动
+
+在仓库根目录执行。需要安装 `rust-toolchain.toml` 固定的 Rust 工具链、Python 3、
+LLVM（`llvm-objcopy`）和 `qemu-system-aarch64`；参见
+[工具链基线](docs/development/toolchain-baseline.md)。
+
+```sh
+cargo build --target aarch64-unknown-none-softfloat -p hypervisor
+scripts/p1-image --output target/p1/manual-boot.img
+qemu-system-aarch64 -machine virt,virtualization=on,gic-version=3 \
+  -cpu cortex-a57 -smp 1 -m 128M -display none -monitor none \
+  -serial stdio -kernel target/p1/manual-boot.img
+```
+
+这是供人工观察的交互式启动。出现 `ZELYR P1 STABLE` 后，当前 P2 路径还会输出
+intake、discovery 和 boot-map 结果。按 Ctrl-C 停止 QEMU。镜像转换器添加必要的
+ARM64 Image 头并记录来源；它拒绝覆盖已有镜像或配套记录，因此重新构建时请选择
+新的输出名称。
+
+## QEMU 验证
+
+使用现有自动化入口保存证据并限制执行时间：
+
+```sh
+scripts/qemu-runner run --profile p1-boot-smoke \
+  --param boot-smoke=target/p1/manual-boot.img --timeout 8
+scripts/p1-boot-regression --cycles 100 --image target/p1/manual-boot.img
+python3 docs/stages/p2/verification/p2-w01-w02-smoke.py \
+  --image target/p1/manual-boot.img --output target/p2-smoke-readme
+python3 docs/stages/p2/verification/p2-w03-runtime.py \
+  --image target/p1/manual-boot.img \
+  --elf target/aarch64-unknown-none-softfloat/debug/hypervisor \
+  --output target/p2-bootmap-readme
+```
+
+重复运行时使用新的证据目录。P1 命令检查 P1 标记，不证明 P2 完成。P2 验证配方
+覆盖各自工作包的限定范围；W03 还需要 AArch64 GNU binutils。这些检查不证明
+硬件、Guest 或整个 P2 阶段完成。场景输入和证据边界参见
+[P1 故障验证配方](docs/stages/p1/verification/p1-w11-negative-fault-validation-verification.md)
+和 [P2 W03 验证记录](docs/stages/p2/verification/p2-w03-boot-memory-map-ownership-verification.md)。
+
+保留的脚本各有用途：
+
+- `p1-image`：QEMU 配方所需的镜像转换与来源记录。
+- `qemu-runner` / `p1_runner.py`：共享的 QEMU 进程、超时与证据管理。
+- `p1-boot-regression`：重复启动判定；`p1-w11-verify`：成对故障检查。
+- `p1_w10_marker_control.S` 和 `test_p1_*.py`：验证夹具及工具测试。
+- `check-doc-translations.py`：CI 文档翻译检查。
 
 ## 顶层布局
 
